@@ -8,6 +8,8 @@ import { WizardLayout } from '@/components/io-connect/WizardLayout';
 import { backgrounds } from '@/data/backgrounds';
 import { GDPR_FOOTER } from '@/lib/gdpr';
 
+import type { AttendeeProfile } from '@/types';
+
 interface GalleryPhoto {
   id: string;
   photoCode: string;
@@ -17,6 +19,7 @@ interface GalleryPhoto {
   originalPhotoUrl: string;
   compositedPhotoUrl: string;
   createdAt: string;
+  attendeeProfile?: AttendeeProfile;
 }
 
 const GALLERY_FILTERS = [
@@ -93,6 +96,8 @@ export default function GalleryPage() {
       compositedPhotoUrl: photo.compositedPhotoUrl,
       originalPhotoUrl: photo.originalPhotoUrl,
       backgroundId: photo.backgroundId,
+      promptId: photo.promptId,
+      attendeeProfile: photo.attendeeProfile,
       createdAt: photo.createdAt,
     });
   };
@@ -110,7 +115,7 @@ export default function GalleryPage() {
         <div className="text-center space-y-2 io-heading-block">
           <h2 className="wizard-title io-heading-block__title">Community Gallery</h2>
           <p className="wizard-subtitle io-heading-block__subtitle">
-            Tap a photo to view full size, download, or print
+            Tap a photo to view, download, print, or share to social
           </p>
         </div>
 

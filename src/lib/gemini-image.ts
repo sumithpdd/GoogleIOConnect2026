@@ -26,7 +26,8 @@ function buildImageEditPrompt(prompt: string, background: string): string {
   return `Using the provided portrait photo, apply this edit: ${prompt}${theme}
 
 Make the transformation clearly visible (environment, lighting, style, or effects as described).
-Preserve the person's face and identity so they remain recognizable. Keep the full head and shoulders visible — do not crop the top of the head.
+Preserve the person's face and identity so they remain recognizable — expressive, well-lit, and the emotional center of an interactive scene. Keep the full head and shoulders visible — do not crop the top of the head.
+Encourage natural pose and scene interaction (hands, gaze, movement) when described in the prompt.
 
 CRITICAL — subject integration (single unified photo, NOT a collage):
 - Remove the entire original background from the input (room, wall, bed, furniture, ceiling, indoor clutter).

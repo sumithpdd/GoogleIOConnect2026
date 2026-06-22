@@ -34,7 +34,7 @@ export function GdprConsentBlock({
           onChange={(e) => onTermsChange(e.target.checked)}
           className="mt-1 w-4 h-4 accent-google-yellow shrink-0"
         />
-        <span className="text-io-muted group-hover:text-white transition">
+        <span className="text-io-muted group-hover:text-io-text transition">
           {GDPR_CHECKBOX_TERMS}{' '}
           <button
             type="button"
@@ -58,7 +58,7 @@ export function GdprConsentBlock({
           className="mt-1 w-4 h-4 accent-[#c9b4cc] shrink-0 disabled:opacity-40"
         />
         <span
-          className={`text-io-muted transition ${!termsAccepted ? 'opacity-50' : 'group-hover:text-white'}`}
+          className={`text-io-muted transition ${!termsAccepted ? 'opacity-50' : 'group-hover:text-io-text'}`}
         >
           {GDPR_CHECKBOX_GALLERY}
         </span>

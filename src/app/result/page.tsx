@@ -153,7 +153,7 @@ export default function ResultPage() {
                 <img
                   src={originalPhoto}
                   alt="Your original photo"
-                  className="w-full rounded-lg border border-white/15 object-contain max-h-[360px] bg-black/50 mx-auto"
+                  className="w-full rounded-lg border border-io-border object-contain max-h-[360px] io-photo-well mx-auto"
                 />
                 <button
                   type="button"
@@ -182,7 +182,7 @@ export default function ResultPage() {
               <img
                 src={compositedPhoto}
                 alt="Your AI-transformed photo"
-                className="io-result-photo w-full max-w-xs mx-auto rounded-lg border-2 border-white/20 object-contain aspect-[100/148] bg-black/40"
+                className="io-result-photo w-full max-w-xs mx-auto rounded-lg border-2 border-io-border object-contain aspect-[100/148] io-photo-well"
               />
               <button
                 type="button"
@@ -222,19 +222,19 @@ export default function ResultPage() {
           <div className="grid grid-cols-2 gap-4 wizard-card p-5 text-sm">
             <div>
               <p className="text-io-subtle">Scene</p>
-              <p className="font-bold text-white">{selectedBackground.name}</p>
+              <p className="font-bold text-io-text">{selectedBackground.name}</p>
             </div>
             <div>
               <p className="text-io-subtle">Magic</p>
-              <p className="font-bold text-white">{selectedPrompt.title}</p>
+              <p className="font-bold text-io-text">{selectedPrompt.title}</p>
             </div>
             <div>
               <p className="text-io-subtle">Created by</p>
-              <p className="font-bold text-white">{session.userName}</p>
+              <p className="font-bold text-io-text">{session.userName}</p>
             </div>
             <div>
               <p className="text-io-subtle">Code</p>
-              <p className="font-bold text-white">{photoCode}</p>
+              <p className="font-bold text-io-text">{photoCode}</p>
             </div>
           </div>
 

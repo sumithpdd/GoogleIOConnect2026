@@ -163,7 +163,7 @@ export default function ProcessingPage() {
             </div>
 
             <p className="text-xs text-io-subtle flex items-center justify-center gap-2">
-              Powered by <strong className="text-white/80">Gemini</strong>
+              Powered by <strong className="text-io-text">Gemini</strong>
             </p>
           </>
         )}

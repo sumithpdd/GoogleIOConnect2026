@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { usePhotoBoothStore } from '@/store/photo-booth';
-import { prompts, CITY_CATEGORIES, getPromptsByCategory } from '@/data/prompts';
+import { prompts, CITY_CATEGORIES, getPromptsByCategory, PROMPT_GUARDRAILS } from '@/data/prompts';
 import { sanitizePrompt } from '@/lib/prompt-sanitizer';
 import { WizardLayout } from '@/components/io-connect/WizardLayout';
 import { HeadingMotion, PageMotion } from '@/components/io-connect/PageMotion';
@@ -11,25 +11,34 @@ import { useEffect, useState } from 'react';
 
 const SUGGESTION_PROMPTS = [
   {
-    label: 'Hello Berlin',
-    text: 'Hello Berlin portrait with Brandenburg Gate, gradient code braces { } and I/O Connect Berlin 2026 event art on black',
+    label: 'Portal moment',
+    text: 'Stepping through giant Google gradient code braces with Brandenburg Gate behind — face lit by portal glow, welcoming arrival at I/O Connect Berlin',
   },
   {
-    label: 'GDG London',
-    text: 'GDG London community at I/O Connect Berlin — on stage in Berlin with Hello Berlin art and Google developer event lighting',
+    label: 'Bear hug',
+    text: 'High-fiving a colorful United Buddy Bear on a sunny Berlin street — laughing, face beaming, community party energy',
   },
   {
-    label: 'I/O Connect art',
-    text: 'Google I/O Connect Berlin official art style — globe, cloud, Android, sparkle and gradient braces overlapping on black',
+    label: 'Gemini orbit',
+    text: 'Gemini sparkle stars orbiting my head like satellites — face sharp, inspired expression, yellow AI halo on black',
   },
   {
-    label: 'Berlin landmarks',
-    text: 'Berlin landmarks collage — Brandenburg Gate, TV Tower and Buddy Bears with Google gradient glow — I/O Connect Berlin 2026',
+    label: 'Keynote stage',
+    text: 'Mid-gesture on I/O Connect Berlin main stage — spotlight on my face, confident speaker energy, GDG London audience bokeh',
+  },
+  {
+    label: 'Mural cameo',
+    text: 'My photoreal face at center of East Side Gallery street art — brush strokes around shoulders, reaching toward the mural',
+  },
+  {
+    label: 'Code storm',
+    text: 'Gradient code and braces swirling around me — calm focused face at the eye of the storm, developer power portrait',
   },
 ];
 
 function promptPreviewText(fullPrompt: string): string {
-  const trimmed = fullPrompt.split(' Google I/O Connect Berlin 2026 photo booth.')[0]?.trim();
+  const idx = fullPrompt.indexOf(PROMPT_GUARDRAILS);
+  const trimmed = idx >= 0 ? fullPrompt.slice(0, idx).trim() : fullPrompt.trim();
   if (!trimmed) return fullPrompt.slice(0, 160);
   return trimmed.length > 160 ? `${trimmed.slice(0, 157)}…` : trimmed;
 }

@@ -69,5 +69,7 @@ export const IO_CONNECT_IMAGE_RULES =
   'Semi-transparent globe, cloud, Android and code-brace motifs like the official Berlin event art. ' +
   'Berlin scenes may include the city\'s famous bear mascot or colorful United Buddy Bear statues as playful community symbols. ' +
   'Remove the subject\'s original indoor/webcam background completely and integrate the person into the scene — never paste the unedited photo on top. ' +
+  'The person must feel inside the experience: natural pose, expressive face, optional hands or body interacting with scene elements (light, mascots, landmarks, particles). ' +
+  'Keep the face sharp, well-lit and clearly recognizable as the hero of the portrait. ' +
   'Do not draw logos, stickers, or text overlays in the scene — the official GDG London Berlin 2026 sticker watermark is added after generation. ' +
   'Photorealistic, celebratory event portrait.';

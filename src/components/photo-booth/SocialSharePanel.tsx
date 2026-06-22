@@ -83,7 +83,6 @@ export function SocialSharePanel({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userName,
-          photoCode,
           promptTitle,
           backgroundName,
           company,
@@ -108,7 +107,6 @@ export function SocialSharePanel({
     }
   }, [
     userName,
-    photoCode,
     promptTitle,
     backgroundName,
     company,
@@ -183,7 +181,7 @@ export function SocialSharePanel({
       const shareData: ShareData = {
         text:
           caption.trim() ||
-          `My Google I/O Connect Berlin 2026 photo — ${photoCode ?? userName}`,
+          `My Google I/O Connect Berlin 2026 photo — ${userName}`,
       };
       if (file) {
         shareData.files = [file];
@@ -210,7 +208,6 @@ export function SocialSharePanel({
           image: compositedPhoto,
           imageUrl: imageUrl,
           userName,
-          photoCode,
           promptTitle,
           backgroundName,
           company,

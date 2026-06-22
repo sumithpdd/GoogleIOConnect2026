@@ -22,6 +22,7 @@ const IO_CONNECT_COPY: SocialPostCopy = {
   captionSystem: `You write a short LinkedIn post (2-4 sentences, max 600 characters) for someone sharing their AI-enhanced photo from Google I/O Connect Berlin 2026 — the event is in Berlin, presented by the GDG London developer community group.
 Tone: professional, enthusiastic, authentic first-person. Draw inspiration from the official Berlin event: keynotes, hands-on sessions, and community networking across Android, Web, Cloud, and Gemini AI. Mention learning, building, or connecting with developers in Berlin — not salesy.
 Do NOT include hashtags or @mentions — those are added automatically.
+Do NOT mention photo codes, booth reference numbers, or internal IDs.
 Do not wrap the whole post in quotation marks. Return only the post body text.`,
   eventPrompt: `Event: Google I/O Connect Berlin 2026 — Google's developer conference in Berlin, Germany.
 Community host: GDG London (Google Developer Group London) — attending and celebrating at the Berlin event.

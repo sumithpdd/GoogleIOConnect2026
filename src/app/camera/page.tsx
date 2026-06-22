@@ -104,14 +104,14 @@ export default function CameraPage() {
                   className="camera-preview-media"
                 />
                 <div
-                  className="pointer-events-none absolute inset-0 flex items-center justify-center px-4"
+                  className="pointer-events-none absolute top-3 right-3 z-[2]"
                   aria-hidden
                 >
                   <Image
-                    src={IO_CONNECT_ASSETS.mainLogo}
+                    src={IO_CONNECT_ASSETS.photoWatermarkLogo}
                     alt=""
-                    width={640}
-                    height={165}
+                    width={96}
+                    height={96}
                     className="camera-preview-logo"
                     priority
                   />

@@ -1,8 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { downloadImage, printPhoto } from '@/lib/photo-actions';
 import { backgrounds } from '@/data/backgrounds';
+import { getPromptById } from '@/data/prompts';
+import { SocialSharePanel } from '@/components/photo-booth/SocialSharePanel';
+import { useAppConfig } from '@/components/providers/app-config-provider';
+import type { AttendeeProfile } from '@/types';
 
 export interface PhotoPreviewData {
   photoCode: string;
@@ -10,6 +14,8 @@ export interface PhotoPreviewData {
   compositedPhotoUrl: string;
   originalPhotoUrl?: string;
   backgroundId?: string;
+  promptId?: string;
+  attendeeProfile?: AttendeeProfile;
   createdAt?: string;
 }
 
@@ -19,6 +25,7 @@ interface PhotoPreviewModalProps {
 }
 
 export function PhotoPreviewModal({ photo, onClose }: PhotoPreviewModalProps) {
+  const { features } = useAppConfig();
   const [downloading, setDownloading] = useState<'original' | 'composite' | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,6 +47,9 @@ export function PhotoPreviewModal({ photo, onClose }: PhotoPreviewModalProps) {
   const hasOriginal = Boolean(photo.originalPhotoUrl);
   const sceneName =
     backgrounds.find((b) => b.id === photo.backgroundId)?.name ?? photo.backgroundId;
+  const promptTitle = photo.promptId
+    ? getPromptById(photo.promptId)?.title
+    : undefined;
 
   const handleDownload = async (type: 'original' | 'composite') => {
     setError(null);
@@ -104,7 +114,7 @@ export function PhotoPreviewModal({ photo, onClose }: PhotoPreviewModalProps) {
                 <img
                   src={photo.originalPhotoUrl}
                   alt={`${photo.photoCode} original`}
-                  className="w-full rounded-xl border border-white/15 object-contain max-h-[50vh] bg-black/50"
+                  className="w-full rounded-xl border border-io-border object-contain max-h-[50vh] io-photo-well"
                 />
               </div>
             )}
@@ -115,7 +125,7 @@ export function PhotoPreviewModal({ photo, onClose }: PhotoPreviewModalProps) {
               <img
                 src={photo.compositedPhotoUrl}
                 alt={`${photo.photoCode} composited`}
-                className="w-full rounded-xl border border-white/20 object-contain max-h-[50vh] bg-black/50"
+                className="w-full rounded-xl border-2 border-io-border object-contain max-h-[50vh] io-photo-well"
               />
             </div>
           </div>
@@ -148,6 +158,24 @@ export function PhotoPreviewModal({ photo, onClose }: PhotoPreviewModalProps) {
               Close
             </button>
           </div>
+
+          {features.socialShare && (
+            <Suspense fallback={null}>
+              <SocialSharePanel
+                imageUrl={photo.compositedPhotoUrl}
+                userName={photo.userName}
+                photoCode={photo.photoCode}
+                promptTitle={promptTitle}
+                backgroundName={sceneName}
+                company={photo.attendeeProfile?.company}
+                companyDescription={photo.attendeeProfile?.companyDescription}
+                role={photo.attendeeProfile?.role}
+                headline={photo.attendeeProfile?.headline}
+                returnPath="/gallery"
+                compact
+              />
+            </Suspense>
+          )}
         </div>
       </div>
     </div>

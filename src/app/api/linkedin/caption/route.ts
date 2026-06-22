@@ -36,7 +36,6 @@ export async function POST(request: NextRequest) {
       companyDescription: body.companyDescription,
       role: body.role,
       headline: body.headline,
-      photoCode: body.photoCode,
     });
 
     return NextResponse.json({

@@ -22,7 +22,7 @@ export default function PrivacyPage() {
 
         {GDPR_SECTIONS.map((section) => (
           <section key={section.title}>
-            <h2 className="text-base font-bold text-white mb-2">{section.title}</h2>
+            <h2 className="text-base font-bold text-io-text mb-2">{section.title}</h2>
             <p className="text-sm text-io-muted leading-relaxed">{section.body}</p>
           </section>
         ))}

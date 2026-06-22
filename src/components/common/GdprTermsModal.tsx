@@ -31,7 +31,7 @@ export function GdprTermsModal({ open, onClose }: GdprTermsModalProps) {
         <div className="space-y-5 text-sm text-io-muted">
           {GDPR_SECTIONS.map((section) => (
             <div key={section.title}>
-              <h3 className="font-bold text-white mb-1">{section.title}</h3>
+              <h3 className="font-bold text-io-text mb-1">{section.title}</h3>
               <p className="leading-relaxed">{section.body}</p>
             </div>
           ))}

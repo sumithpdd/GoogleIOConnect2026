@@ -73,7 +73,6 @@ export async function POST(request: NextRequest) {
         companyDescription: body.companyDescription,
         role: body.role,
         headline: body.headline,
-        photoCode: body.photoCode,
       }));
 
     const imageBuffer = await resolveImageBuffer(body.image, body.imageUrl);

@@ -12,14 +12,23 @@ export interface LinkedInCaptionContext {
   companyDescription?: string;
   role?: string;
   headline?: string;
-  photoCode?: string;
+}
+
+/** Remove any photo-code lines the model may still emit. */
+function stripPhotoCodeFromBody(body: string): string {
+  return body
+    .trim()
+    .replace(/photo\s*code\s*:\s*[^\n.]+[.\s]*/gi, '')
+    .replace(/\bIO\d{2}[A-Z0-9]+\b/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 /** Append required hashtags and mention for the active preset. */
 export function formatLinkedInPost(body: string): string {
   const { hashtags, mention } = resolveSocialPostCopy();
-  const cleaned = body
-    .trim()
+  const cleaned = stripPhotoCodeFromBody(body)
     .replace(/#\w+/g, '')
     .replace(/@\w+/g, '')
     .replace(/\s+/g, ' ')
@@ -53,7 +62,6 @@ async function generateWithGemini(
     context.headline && `LinkedIn headline: ${context.headline}`,
     context.promptTitle && `AI photo theme: ${context.promptTitle}`,
     context.backgroundName && `Scene background: ${context.backgroundName}`,
-    context.photoCode && `Photo code: ${context.photoCode}`,
   ]
     .filter(Boolean)
     .join('\n');

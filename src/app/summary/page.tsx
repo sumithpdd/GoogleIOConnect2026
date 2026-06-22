@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { Suspense, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { BoothLayout } from '@/components/common/BoothLayout';
+import { SocialSharePanel } from '@/components/photo-booth/SocialSharePanel';
+import { useAppConfig } from '@/components/providers/app-config-provider';
 import { usePhotoBoothStore } from '@/store/photo-booth';
 import {
   pickFactsForSession,
@@ -12,14 +14,55 @@ import {
 import { BRAND, BRAND_ASSETS } from '@/lib/branding';
 import { downloadImage, printPhoto } from '@/lib/photo-actions';
 
+function SummarySocialShare({
+  compositedPhoto,
+  userName,
+  photoCode,
+  promptTitle,
+  backgroundName,
+  company,
+  companyDescription,
+  role,
+  headline,
+}: {
+  compositedPhoto: string;
+  userName: string;
+  photoCode?: string;
+  promptTitle?: string;
+  backgroundName?: string;
+  company?: string;
+  companyDescription?: string;
+  role?: string;
+  headline?: string;
+}) {
+  return (
+    <Suspense fallback={null}>
+      <SocialSharePanel
+        compositedPhoto={compositedPhoto}
+        userName={userName}
+        photoCode={photoCode}
+        promptTitle={promptTitle}
+        backgroundName={backgroundName}
+        company={company}
+        companyDescription={companyDescription}
+        role={role}
+        headline={headline}
+        returnPath="/summary"
+      />
+    </Suspense>
+  );
+}
+
 export default function SummaryPage() {
   const router = useRouter();
+  const { features } = useAppConfig();
   const session = usePhotoBoothStore((s) => s.session);
   const capturedPhoto = usePhotoBoothStore((s) => s.capturedPhoto);
   const compositedPhotoUrl = usePhotoBoothStore((s) => s.compositedPhotoUrl);
   const photoCode = usePhotoBoothStore((s) => s.photoCode);
   const selectedBackground = usePhotoBoothStore((s) => s.selectedBackground);
   const selectedPrompt = usePhotoBoothStore((s) => s.selectedPrompt);
+  const attendeeProfile = usePhotoBoothStore((s) => s.attendeeProfile);
   const resetSession = usePhotoBoothStore((s) => s.resetSession);
 
   const composited = compositedPhotoUrl ?? capturedPhoto;
@@ -100,7 +143,7 @@ export default function SummaryPage() {
                 <img
                   src={capturedPhoto}
                   alt="Original"
-                  className="w-full rounded-lg border border-io-border max-h-56 object-contain bg-black"
+                  className="w-full rounded-lg border border-io-border max-h-56 object-contain io-photo-well"
                 />
               </div>
             )}
@@ -109,11 +152,25 @@ export default function SummaryPage() {
               <img
                 src={composited}
                 alt="Your creation"
-                className="w-full rounded-lg border-2 border-google-yellow/50 max-h-56 object-contain bg-black"
+                className="w-full rounded-lg border-2 border-google-yellow/50 max-h-56 object-contain io-photo-well"
               />
             </div>
           </div>
         </section>
+
+        {features.socialShare && composited && (
+          <SummarySocialShare
+            compositedPhoto={composited}
+            userName={session.userName}
+            photoCode={photoCode ?? undefined}
+            promptTitle={selectedPrompt?.title}
+            backgroundName={selectedBackground?.name}
+            company={attendeeProfile?.company}
+            companyDescription={attendeeProfile?.companyDescription}
+            role={attendeeProfile?.role}
+            headline={attendeeProfile?.headline}
+          />
+        )}
 
         <section className="wizard-card p-6 md:p-8 space-y-6">
           <div className="flex items-center gap-4">
@@ -154,7 +211,7 @@ export default function SummaryPage() {
           <img
             src={BRAND_ASSETS.gdgLondonLogo}
             alt="GDG London · Berlin 2026"
-            className="w-full h-auto object-contain p-8 bg-black/40"
+            className="w-full h-auto object-contain p-8 io-photo-well"
           />
           <p className="text-center text-xs text-io-subtle py-3 px-4">
             GDG London · Google I/O Connect Berlin 2026
