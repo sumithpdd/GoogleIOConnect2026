@@ -63,14 +63,14 @@ export function PhotoPreviewModal({ photo, onClose }: PhotoPreviewModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm io-modal-backdrop"
       role="dialog"
       aria-modal="true"
       aria-label="Photo preview"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-4xl max-h-[95vh] overflow-y-auto wizard-card animate-fade-in"
+        className="relative w-full max-w-4xl max-h-[95vh] overflow-y-auto wizard-card io-modal-panel"
         onClick={(e) => e.stopPropagation()}
       >
         <button

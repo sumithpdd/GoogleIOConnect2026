@@ -25,16 +25,16 @@ export function GdprConsentBlock({
 
   return (
     <div className="space-y-4 text-sm">
-      <p className="text-silver-400 leading-relaxed">{GDPR_SUMMARY}</p>
+      <p className="text-io-muted leading-relaxed">{GDPR_SUMMARY}</p>
 
       <label className="flex gap-3 items-start cursor-pointer group">
         <input
           type="checkbox"
           checked={termsAccepted}
           onChange={(e) => onTermsChange(e.target.checked)}
-          className="mt-1 w-4 h-4 accent-[#c9b4cc] shrink-0"
+          className="mt-1 w-4 h-4 accent-google-yellow shrink-0"
         />
-        <span className="text-silver-200 group-hover:text-white transition">
+        <span className="text-io-muted group-hover:text-white transition">
           {GDPR_CHECKBOX_TERMS}{' '}
           <button
             type="button"
@@ -42,7 +42,7 @@ export function GdprConsentBlock({
               e.preventDefault();
               setModalOpen(true);
             }}
-            className="link-sitecore"
+            className="landing-footer-link"
           >
             Read full notice
           </button>
@@ -58,7 +58,7 @@ export function GdprConsentBlock({
           className="mt-1 w-4 h-4 accent-[#c9b4cc] shrink-0 disabled:opacity-40"
         />
         <span
-          className={`text-silver-200 transition ${!termsAccepted ? 'opacity-50' : 'group-hover:text-white'}`}
+          className={`text-io-muted transition ${!termsAccepted ? 'opacity-50' : 'group-hover:text-white'}`}
         >
           {GDPR_CHECKBOX_GALLERY}
         </span>

@@ -8,7 +8,6 @@ import {
   type ReactNode,
 } from 'react';
 import type { AppConfig } from '@/lib/core/app-config';
-import { useRuntimeMode } from './marketplace';
 
 const AppConfigContext = createContext<AppConfig | null>(null);
 
@@ -17,7 +16,6 @@ interface AppConfigProviderProps {
 }
 
 export function AppConfigProvider({ children }: AppConfigProviderProps) {
-  const runtimeMode = useRuntimeMode();
   const [config, setConfig] = useState<AppConfig | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,7 +32,7 @@ export function AppConfigProvider({ children }: AppConfigProviderProps) {
         if (!body.success || !body.data) {
           throw new Error(body.error ?? 'Invalid config response');
         }
-        setConfig({ ...body.data, mode: runtimeMode });
+        setConfig(body.data);
       })
       .catch((err: Error) => {
         if (!cancelled) setError(err.message);
@@ -43,11 +41,11 @@ export function AppConfigProvider({ children }: AppConfigProviderProps) {
     return () => {
       cancelled = true;
     };
-  }, [runtimeMode]);
+  }, []);
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-sc-bg text-sc-text p-6">
+      <div className="min-h-screen flex items-center justify-center bg-io-bg text-io-text p-6">
         <p className="text-red-400">Failed to load app configuration: {error}</p>
       </div>
     );
@@ -55,8 +53,8 @@ export function AppConfigProvider({ children }: AppConfigProviderProps) {
 
   if (!config) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-sc-bg text-sc-text">
-        <p className="text-sc-muted animate-pulse">Loading…</p>
+      <div className="min-h-screen flex items-center justify-center bg-io-bg text-io-text">
+        <p className="text-io-muted animate-pulse">Loading…</p>
       </div>
     );
   }

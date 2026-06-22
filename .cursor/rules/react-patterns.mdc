@@ -1,5 +1,5 @@
 ---
-description: React/Next.js component patterns for the photo booth
+description: React/Next.js component patterns for the I/O Connect photo booth
 globs: "**/*.tsx"
 alwaysApply: false
 ---
@@ -13,4 +13,6 @@ alwaysApply: false
 - Lists: stable `key={item.id}` on mapped elements.
 - Static images: `next/image` for `public/` assets; `<img>` for Firebase Storage URLs.
 - Optional chaining on `session` (`session?.userName`) — store may be uninitialized.
-- Tailwind: silver palette (`silver-400`, `silver-500`), dark bg `#1a1a1a` — see `docs/BRANDING_GUIDE.md`.
+- Page motion: wrap sections with `PageMotion`, grids with `StaggerGrid` from `@/components/io-connect/PageMotion`.
+- Tailwind: `google-*` palette, dark bg — see `docs/BRANDING_GUIDE.md`.
+- I/O Connect assets: `public/branding/io-connect-*.png`, preset from `resolveAppConfig()`.

@@ -1,28 +1,27 @@
 # Architecture Guide - AI Photo Booth
 
-This guide explains how the app is structured and how different parts work together. The app supports **standalone** and **Sitecore Marketplace** modes from the same codebase.
+This guide explains how the app is structured and how different parts work together. The booth is a **standalone** Next.js app — deployed to **Vercel** for the event or run on a **kiosk** browser at the venue.
 
 ## Big Picture: How the App Works
 
 ```
 User Interface (React Components)
             ↓
-Providers (Marketplace SDK + App Config)
+Providers (App Config + API session bootstrap)
             ↓
 State Management (Zustand Stores)
             ↓
 API Routes (Next.js Backend — secured when API_SECRET set)
             ↓
-External Services (Firebase, Gemini AI, optional Sitecore CM)
+External Services (Firebase, Gemini AI)
 ```
 
-## Runtime modes
+## Deployment modes
 
-| Mode | Trigger | SDK | Branding source |
-|------|---------|-----|-----------------|
-| Standalone | Direct URL or `NEXT_PUBLIC_STANDALONE_MODE=true` | Skipped | `APP_*` env vars + `/api/config` |
-| Marketplace | Embedded in Sitecore iframe | `@sitecore-marketplace-sdk` | Same + optional CM |
-| Sitecore Silver | `APP_PRESET=sitecore-silver` | Either | Copenhagen 2026 defaults |
+| Mode | How | Branding source |
+|------|-----|-----------------|
+| **Vercel** | Public URL for guests and gallery | `APP_PRESET=io-connect-2026` + `/api/config` |
+| **Kiosk** | Local dev server or on-site browser (trusted network) | Same preset; `API_SECRET` optional on LAN |
 
 **In Simple Terms:**
 1. User opens the app → sees a **React Component**
@@ -38,16 +37,18 @@ External Services (Firebase, Gemini AI, optional Sitecore CM)
 **Pages** (What users see):
 ```
 app/
-├── page.tsx              # Home page (/)
-├── layout.tsx            # Root layout (shared by all pages)
-├── (photo-booth)/        # Group of pages related to photo booth
-│   ├── input/page.tsx    # User enters name
-│   ├── camera/page.tsx   # Camera or upload photo
-│   ├── backgrounds/page.tsx  # Choose background
-│   ├── prompts/page.tsx   # Choose prompt
-│   ├── processing/page.tsx   # Loading screen
-│   ├── result/page.tsx    # Final photo
-│   └── gallery/page.tsx   # View all photos
+├── page.tsx              # Landing (/)
+├── layout.tsx            # Root layout
+├── input/page.tsx        # User enters name
+├── camera/page.tsx       # Camera or upload photo
+├── backgrounds/page.tsx  # Choose Berlin / I/O Connect scene
+├── prompts/page.tsx      # Choose magic preset
+├── processing/page.tsx   # Gemini loader
+├── result/page.tsx       # Final photo + share
+├── gallery/page.tsx      # Community gallery
+├── admin/page.tsx        # Staff moderation
+├── summary/page.tsx      # Keepsake page (optional)
+└── privacy/page.tsx      # Privacy notice
 ```
 
 **API Routes** (Backend endpoints):
@@ -55,20 +56,21 @@ app/
 app/api/
 ├── config/route.ts           # GET - App branding, backgrounds, prompts
 ├── auth/session/route.ts     # GET - API session cookie (when secured)
+├── session/route.ts          # POST - Booth session metadata
 ├── composit-image/route.ts   # POST - Gemini image generation (secured)
 ├── upload-photo/route.ts     # POST - Save to Firebase (secured)
 ├── gallery/route.ts          # GET - Public gallery
-├── sitecore/status/route.ts  # GET - CM credentials configured?
+├── social/caption/route.ts   # POST - AI social post text
+├── linkedin/*                # Optional OAuth share
 └── admin/*                   # Staff moderation (ADMIN_SECRET)
 ```
 
-**Code split (Sitecore vs generic):**
+**Core libraries:**
 ```
-src/lib/core/          # app-config, api-auth, api-client — no Sitecore dependency
-src/lib/sitecore/      # authoring-api, brand-rules — optional
-src/components/booth/  # BoothLogo, BoothBackdrop — generic
-src/components/sitecore/ # SitecoreAiFlow — optional marketing
-src/components/providers/ # MarketplaceProvider, AppConfigProvider
+src/lib/core/          # app-config, api-auth, api-client
+src/lib/io-connect-brand.ts  # I/O Connect branding rules & assets
+src/components/booth/  # BoothLogo, BoothBackdrop
+src/components/providers/ # AppConfigProvider, ThemeProvider, API session bootstrap
 ```
 
 ### `src/components/` - React Components
@@ -77,20 +79,11 @@ Reusable building blocks:
 
 ```
 components/
-├── photo-booth/          # Booth-specific components
-│   ├── CameraCapture.tsx     # Camera preview and capture button
-│   ├── BackgroundSelector.tsx # Choose background
-│   ├── PromptSelector.tsx    # Choose AI prompt
-│   ├── ProcessingLoader.tsx  # Loading animation
-│   └── ResultActions.tsx     # Save/Share/Print buttons
-├── ui/                   # Generic UI components
-│   ├── Button.tsx        # Reusable button
-│   ├── Card.tsx          # Reusable card container
-│   ├── Modal.tsx         # Popup dialog
-│   └── Input.tsx         # Text input field
-└── common/               # Shared components
-    ├── Header.tsx        # Top navigation
-    └── Footer.tsx        # Bottom info
+├── io-connect/           # Wizard, logos, PageMotion, decorations
+├── photo-booth/          # SocialSharePanel, PhotoPreviewModal
+├── common/               # GDPR, shared layout helpers
+├── providers/            # AppConfigProvider, API session bootstrap
+└── ui/                   # FormField, icons
 ```
 
 ### `src/lib/` - Utilities and Services
@@ -99,11 +92,15 @@ Helper code:
 
 ```
 lib/
-├── firebase.ts           # Firebase initialization
+├── core/                 # app-config, api-auth, api-client
+├── firebase.ts           # Client Firebase initialization
+├── firebase-admin.ts     # Server Firebase Admin
+├── gemini-image.ts       # Gemini image generation client
+├── io-connect-brand.ts   # Brand rules, assets, image guardrails
+├── linkedin/             # Social post copy & OAuth helpers
 ├── validators.ts         # Zod validation schemas
-├── hooks.ts             # Custom React hooks
-├── gemini.ts            # Gemini API client
-└── utils.ts             # Helper functions
+├── hooks.ts              # Custom React hooks
+└── utils.ts              # Helper functions
 ```
 
 ### `src/store/` - State Management
@@ -112,17 +109,11 @@ Zustand stores (like a data container):
 
 ```
 store/
-├── photo-booth.ts       # Photo booth session state
-│   - userName
-│   - selectedBackground
-│   - selectedPrompt
-│   - capturedPhoto
-│   - compositedPhoto
-│   - isProcessing
-└── gallery.ts          # Gallery filters and pagination
-    - searchQuery
-    - selectedCategory
-    - currentPage
+└── photo-booth.ts       # Photo booth session state
+    - userName, userEmail
+    - selectedBackground, selectedPrompt
+    - capturedPhoto, compositedPhoto
+    - isProcessing, photoCode
 ```
 
 ### `src/types/` - TypeScript Definitions
@@ -213,7 +204,7 @@ A component is like a function that returns UI:
 ```typescript
 // Simple component
 export function MyButton() {
-  return <button className="bg-silver">Click me</button>
+  return <button className="bg-google-blue text-white">Click me</button>
 }
 
 // Component with state
@@ -311,11 +302,11 @@ Represents a user's current session:
 A background image option:
 ```typescript
 {
-  id: "heritage",
-  name: "Sitecore Heritage",
+  id: "berlin-brandenburg",
+  name: "Brandenburg Gate",
   imageUrl: "...",
-  description: "...",
-  category: "heritage"
+  description: "Pariser Platz at dusk...",
+  category: "innovation"
 }
 ```
 
@@ -323,10 +314,10 @@ A background image option:
 An AI transformation prompt:
 ```typescript
 {
-  id: "25-years",
-  title: "25 Years Strong",
-  fullPrompt: "Show celebrating 25 years...",
-  category: "heritage"
+  id: "berlin-hello",
+  title: "Hello Berlin",
+  fullPrompt: "Classic Hello Berlin composition...",
+  category: "innovation"
 }
 ```
 
@@ -339,9 +330,9 @@ A final saved photo:
   userName: "John Doe",
   originalPhotoUrl: "...",
   compositedPhotoUrl: "...",
-  backgroundId: "heritage",
-  promptId: "25-years",
-  photoCode: "SILVER2024001",
+  backgroundId: "berlin-brandenburg",
+  promptId: "berlin-hello",
+  photoCode: "IO260001",
   createdAt: Date
 }
 ```
@@ -365,7 +356,7 @@ firestore/
 ### Storage (Firebase Cloud Storage)
 ```
 storage/
-└── sitecore-silver/
+└── io-connect-2026/
     ├── {sessionId}/
     │   ├── original_{timestamp}.jpg
     │   └── composited_{timestamp}.jpg

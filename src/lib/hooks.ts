@@ -37,18 +37,46 @@ export function useCameraCapture() {
   const capturePhoto = useCallback(() => {
     if (!isClient || !videoRef.current || !canvasRef.current) return null;
     try {
-      const context = canvasRef.current.getContext('2d');
-      if (context && videoRef.current) {
-        context.drawImage(videoRef.current, 0, 0);
-        const photoData = canvasRef.current.toDataURL('image/jpeg');
-        setCapturedPhoto(photoData);
-        return photoData;
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+      if (!context || !video.videoWidth || !video.videoHeight) return null;
+
+      const targetAspect = 3 / 4;
+      const vw = video.videoWidth;
+      const vh = video.videoHeight;
+      let sx = 0;
+      let sy = 0;
+      let sw = vw;
+      let sh = vh;
+
+      const videoAspect = vw / vh;
+      if (videoAspect > targetAspect) {
+        sw = vh * targetAspect;
+        sx = (vw - sw) / 2;
+      } else {
+        sh = vw / targetAspect;
+        sy = (vh - sh) / 2;
       }
+
+      const outW = 1200;
+      const outH = 1600;
+      canvas.width = outW;
+      canvas.height = outH;
+      context.drawImage(video, sx, sy, sw, sh, 0, 0, outW, outH);
+
+      const photoData = canvas.toDataURL('image/jpeg', 0.92);
+      setCapturedPhoto(photoData);
+      return photoData;
     } catch (error) {
       console.error('Error capturing photo:', error);
     }
     return null;
   }, [isClient]);
+
+  const clearCapturedPhoto = useCallback(() => {
+    setCapturedPhoto(null);
+  }, []);
 
   const selectFromGallery = useCallback(() => {
     if (!isClient) return;
@@ -101,6 +129,7 @@ export function useCameraCapture() {
     capturedPhoto,
     startCamera,
     capturePhoto,
+    clearCapturedPhoto,
     selectFromGallery,
     handleFileSelect,
     stopCamera,

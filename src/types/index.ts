@@ -1,5 +1,5 @@
 /**
- * Core type definitions for Sitecore Silver Photo Booth
+ * Core type definitions for Google I/O Connect Photo Booth
  */
 
 // User & Session
@@ -10,7 +10,6 @@ export interface PhotoBoothSession {
   createdAt: Date;
 }
 
-/** Maps to SitecoreSilverAttendeeProfile template fields in XM Cloud. */
 export interface AttendeeProfile {
   fullName: string;
   company?: string;
@@ -18,15 +17,6 @@ export interface AttendeeProfile {
   role?: string;
   linkedInUrl?: string;
   headline?: string;
-}
-
-export interface SitecoreAttendeePageResult {
-  itemId: string;
-  path: string;
-  name: string;
-  aiQuote: string;
-  created: boolean;
-  contentEditorUrl?: string | null;
 }
 
 // Photo Models

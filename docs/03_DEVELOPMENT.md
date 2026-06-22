@@ -1,6 +1,6 @@
-# Development Guide - Sitecore Silver Photo Booth
+# Development Guide — Google I/O Connect Photo Booth
 
-This guide explains how to write code for this project.
+This guide explains how to write code for this project. Default preset: **`APP_PRESET=io-connect-2026`** (Berlin booth).
 
 ## Daily Development Workflow
 
@@ -8,7 +8,7 @@ This guide explains how to write code for this project.
 
 ```bash
 # 1. Open terminal in project directory
-cd C:\code\react\CopenhagenSilver
+cd C:\code\react\GoogleIOConnect2026
 
 # 2. Start dev server
 npm run dev
@@ -22,7 +22,6 @@ npm run dev
 |---------|---------|
 | `npm run dev` | Standard dev server (`http://localhost:3000`) |
 | `npm run dev:https` | HTTPS on port 3000 (self-signed cert) |
-| `npm run dev:marketplace` | HTTPS on port **3001** — use with Sitecore Marketplace iframe |
 
 **Dev server will:**
 - Watch for file changes
@@ -94,7 +93,7 @@ export function NewButton({ label, onClick, disabled }: NewButtonProps) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="px-4 py-2 bg-silver-400 text-black rounded hover:bg-silver-500 disabled:opacity-50"
+      className="px-4 py-2 bg-google-blue text-white rounded hover:opacity-90 disabled:opacity-50"
     >
       {label}
     </button>
@@ -162,7 +161,7 @@ interface WelcomeCardProps {
 
 export function WelcomeCard({ title, description }: WelcomeCardProps) {
   return (
-    <div className="bg-silver-100 p-4 rounded">
+    <div className="bg-white/10 p-4 rounded">
       <h2 className="text-xl font-bold">{title}</h2>
       <p className="text-sm text-gray-600">{description}</p>
     </div>
@@ -194,7 +193,7 @@ export function Counter() {
       <p>Count: {count}</p>
       <button 
         onClick={() => setCount(count + 1)}
-        className="px-4 py-2 bg-silver-400 rounded"
+        className="px-4 py-2 bg-google-blue text-white rounded"
       >
         Increment
       </button>
@@ -417,7 +416,7 @@ export default function TestPage() {
       
       <button
         onClick={() => setClicked(!clicked)}
-        className="px-4 py-2 bg-silver-400 text-black rounded"
+        className="px-4 py-2 bg-google-blue text-white rounded"
       >
         Click Me
       </button>
@@ -510,10 +509,10 @@ className="flex flex-col gap-4"    // Vertical stack with spacing
 className="flex flex-row justify-between"  // Horizontal, space between
 className="grid grid-cols-3 gap-4"  // 3-column grid
 
-// Colors
-className="bg-silver-400"          // Silver background
+// Colors (I/O Connect theme)
+className="bg-google-blue"         // Google blue background
 className="text-white"              // White text
-className="border border-silver-300" // Silver border
+className="border border-white/20"  // Subtle border
 
 // Sizing
 className="w-full h-screen"         // Full width and height
@@ -523,7 +522,7 @@ className="rounded"                 // Rounded corners
 className="rounded-lg"              // More rounded
 
 // Effects
-className="hover:bg-silver-500"     // On hover
+className="hover:opacity-90"        // On hover
 className="disabled:opacity-50"     // When disabled
 className="transition-all duration-300"  // Animation
 

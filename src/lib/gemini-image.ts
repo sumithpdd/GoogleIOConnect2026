@@ -1,30 +1,17 @@
 import { GoogleGenAI, Modality } from '@google/genai';
 import { IO_CONNECT_IMAGE_RULES } from '@/lib/io-connect-brand';
-import { SITECORE_IMAGE_BRAND_RULES } from '@/lib/sitecore-brand';
 
 /** GA image model; override with GEMINI_IMAGE_MODEL (e.g. gemini-3.1-flash-image). */
 export const DEFAULT_GEMINI_IMAGE_MODEL = 'gemini-2.5-flash-image';
-
-function isIoConnectPreset(): boolean {
-  return process.env.APP_PRESET === 'io-connect-2026';
-}
-
-function imageBrandRules(): string {
-  return isIoConnectPreset() ? IO_CONNECT_IMAGE_RULES : SITECORE_IMAGE_BRAND_RULES;
-}
 
 const safetyBase = `Output must be appropriate for all ages: no violence, explicit content, or disturbing imagery.
 People must remain fully clothed. Keep faces recognizable.`;
 
 function getSafetySystemInstruction(): string {
-  if (isIoConnectPreset()) {
-    return `You edit photos for the Google I/O Connect London & Berlin 2026 developer photo booth.
+  return `You edit photos for the Google I/O Connect Berlin 2026 developer photo booth — presented by GDG London.
 ${safetyBase}
+Always remove the subject's original background and integrate the person into the requested scene as one seamless portrait — never return a collage with the raw input photo pasted on top.
 ${IO_CONNECT_IMAGE_RULES}`;
-  }
-  return `You edit photos for the Sitecore Silver 25-year anniversary celebration photo booth in Copenhagen.
-${safetyBase}
-${SITECORE_IMAGE_BRAND_RULES}`;
 }
 
 export function getGeminiImageModel(): string {
@@ -36,28 +23,26 @@ function buildImageEditPrompt(prompt: string, background: string): string {
     ? ` Scene / background direction: ${background}.`
     : '';
 
-  const sceneLine = isIoConnectPreset()
-    ? `Scenes must feel like Google I/O Connect 2026 in London and/or Berlin — developer community event with Google gradient accents (not Copenhagen or Sitecore Silver).
-Do not add new logos or text overlays to the scene.`
-    : `Scenes must feel like the Sitecore Silver Celebration in Copenhagen, Denmark in 2026 (Tivoli / Nordic anniversary event — not other cities).
-Do not change, remove, replace, redraw, or be creative with the Sitecore logo or any brand logos. Do not add new logos to the scene.
-Do not show calendar years other than 2026 in the image.`;
-
   return `Using the provided portrait photo, apply this edit: ${prompt}${theme}
 
 Make the transformation clearly visible (environment, lighting, style, or effects as described).
 Preserve the person's face and identity so they remain recognizable. Keep the full head and shoulders visible — do not crop the top of the head.
 
+CRITICAL — subject integration (single unified photo, NOT a collage):
+- Remove the entire original background from the input (room, wall, bed, furniture, ceiling, indoor clutter).
+- Extract only the person and blend them seamlessly into the generated scene with matching lighting, shadows, color grade, and perspective.
+- Do NOT paste the raw input photo as a separate rectangle, strip, or panel (especially not at the bottom of the frame).
+- Do NOT leave any part of the webcam/indoor background visible around the person.
+- Output one photorealistic portrait where the person clearly belongs in the new environment.
+
 CRITICAL — output format:
 - Vertical PORTRAIT only (taller than wide), aspect ratio 2:3 (100×148 mm postcard).
-- The scene MUST fill the entire image edge to edge — no white borders, no empty margins, no letterboxing at top/bottom or sides.
-- Extend background, sky, and environment to all four edges of the frame.
-- Compose the person in the center with the celebration scene filling the full portrait canvas.
+- Do not add logos, stickers, watermarks, or text overlays — branding is applied after generation.
 
-${sceneLine}
-Output a new edited portrait image — do not return the original unchanged.
+Scenes must feel like Google I/O Connect Berlin 2026 — developer conference in Berlin with Google gradient accents.
+Prefer Berlin landmarks, Hello Berlin art, and official I/O Connect Berlin visuals. Do not add new logos or text overlays to the scene.
 
-${imageBrandRules()}`;
+${IO_CONNECT_IMAGE_RULES}`;
 }
 
 export function extractImageBase64FromResponse(response: {

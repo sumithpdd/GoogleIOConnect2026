@@ -1,6 +1,6 @@
-# Troubleshooting Guide - Sitecore Silver Photo Booth
+# Troubleshooting Guide — Google I/O Connect Photo Booth
 
-Solutions to common problems when developing this app.
+Solutions to common problems when developing and deploying this app.
 
 ## Problems When Starting Dev Server
 
@@ -71,7 +71,7 @@ Firebase: Error (auth/network-request-failed)
 - [ ] Internet connection working?
 - [ ] `.env.local` has correct Firebase credentials?
 - [ ] Firebase project exists in [Firebase Console](https://console.firebase.google.com)?
-- [ ] CopenhagenSilver project is selected?
+- [ ] Correct Firebase project selected in [Firebase Console](https://console.firebase.google.com)?
 
 **Solution:**
 
@@ -93,22 +93,9 @@ Firebase: Error (permission-denied)
 **Solution:**
 
 1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Select **CopenhagenSilver** project
+2. Select your Firebase project
 3. Go to **Storage** → **Rules**
-4. Check rules allow uploads:
-
-```
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /sitecore-silver/{allPaths=**} {
-      allow read: if true;
-      allow write: if request.auth != null;
-      allow delete: if request.auth.token.admin == true;
-    }
-  }
-}
-```
+4. Ensure rules allow server uploads under `io-connect-2026/` (Admin SDK bypasses client rules; check bucket name matches env vars)
 
 ### Problem: Images not loading from Firebase
 
@@ -472,7 +459,7 @@ Collection is empty or data not showing
 **Solution:**
 
 1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Select **CopenhagenSilver** project
+2. Select your Firebase project
 3. Go to **Firestore Database**
 4. Check collection **photobooth**
 

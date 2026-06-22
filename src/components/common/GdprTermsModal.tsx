@@ -19,16 +19,16 @@ export function GdprTermsModal({ open, onClose }: GdprTermsModalProps) {
       onClick={onClose}
     >
       <div
-        className="brand-card max-w-lg w-full max-h-[85vh] overflow-y-auto p-6 md:p-8"
+        className="wizard-card max-w-lg w-full max-h-[85vh] overflow-y-auto p-6 md:p-8"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="gdpr-title" className="text-xl font-bold silver-accent mb-4">
+        <h2 id="gdpr-title" className="text-xl font-bold landing-gradient-text mb-4">
           Terms & Privacy Notice
         </h2>
-        <p className="text-sm text-silver-400 mb-6">
-          Sitecore Silver Celebration · Copenhagen 2026 · AI Photo Booth
+        <p className="text-sm text-io-muted mb-6">
+          Google I/O Connect Berlin 2026 · GDG London · AI Photo Booth
         </p>
-        <div className="space-y-5 text-sm text-silver-300">
+        <div className="space-y-5 text-sm text-io-muted">
           {GDPR_SECTIONS.map((section) => (
             <div key={section.title}>
               <h3 className="font-bold text-white mb-1">{section.title}</h3>
@@ -36,7 +36,7 @@ export function GdprTermsModal({ open, onClose }: GdprTermsModalProps) {
             </div>
           ))}
         </div>
-        <button type="button" onClick={onClose} className="btn-silver w-full mt-8">
+        <button type="button" onClick={onClose} className="wizard-primary-btn w-full mt-8">
           Close
         </button>
       </div>

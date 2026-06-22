@@ -8,10 +8,13 @@ alwaysApply: false
 
 - Handlers live in `src/app/api/<name>/route.ts` (`route.ts` required).
 - Validate request bodies with Zod from `src/lib/validators.ts`.
+- Auth: `requireApiAuth()` from `src/lib/core/api-auth.ts` when `API_SECRET` is set.
+- Admin routes: `verifyAdminRequest()` — signed cookie or Bearer token, not raw secret in cookies.
 - `GOOGLE_GEMINI_API_KEY` and Firebase Admin credentials: server `process.env` only.
-- `POST /api/composit-image`: photo (base64), background id, prompt → composited base64.
+- `POST /api/composit-image`: photo (base64), background description, prompt → composited base64 + GDG logo top-right.
 - `POST /api/upload-photo`: session metadata + images → Storage + Firestore `photobooth`.
 - `GET /api/gallery`: query params for search, category, pagination.
-- Return `Response.json({ success, data?, error? })` consistently.
+- Return `Response.json({ success, data?, error? })` — no `details` field with raw errors.
 - Validate image format (strip `data:image/...;base64,` prefix) before Gemini.
 - Use `src/lib/prompt-sanitizer.ts` when accepting user-written prompts.
+- Logging: `devLog` / `devWarn` from `src/lib/safe-log.ts` — never log photo fragments or secrets.

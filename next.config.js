@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Sitecore Marketplace embeds localhost in portal.sitecorecloud.io — allow dev chunks/HMR
-  allowedDevOrigins: ['*.sitecorecloud.io', 'portal.sitecorecloud.io'],
   images: {
-    // Relative /public paths in dev — avoids http://localhost/_next/image mixed-content in Sitecore iframe
     unoptimized: process.env.NODE_ENV === 'development',
     remotePatterns: [
       {
@@ -12,7 +9,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'delivery-sitecore.sitecorecontenthub.cloud',
+        hostname: 'images.unsplash.com',
       },
     ],
   },

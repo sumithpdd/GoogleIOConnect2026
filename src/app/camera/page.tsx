@@ -1,10 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { usePhotoBoothStore } from '@/store/photo-booth';
 import { useCameraCapture } from '@/lib/hooks';
 import { useEffect } from 'react';
 import { WizardLayout } from '@/components/io-connect/WizardLayout';
+import { HeadingMotion, PageMotion } from '@/components/io-connect/PageMotion';
+import { IO_CONNECT_ASSETS } from '@/lib/io-connect-brand';
 
 export default function CameraPage() {
   const router = useRouter();
@@ -18,6 +21,7 @@ export default function CameraPage() {
     capturedPhoto,
     startCamera,
     capturePhoto,
+    clearCapturedPhoto,
     selectFromGallery,
     handleFileSelect,
     stopCamera,
@@ -44,6 +48,7 @@ export default function CameraPage() {
   };
 
   const handleRetake = () => {
+    clearCapturedPhoto();
     setCapturedPhoto(null);
     stopCamera();
     startCamera().catch(() => {
@@ -67,61 +72,76 @@ export default function CameraPage() {
 
   return (
     <WizardLayout step={2} totalSteps={5} backHref="/input" title="Camera">
-      <div className="w-full space-y-6 animate-fade-in">
-        <div className="text-center space-y-2">
-          <h2 className="wizard-title">
-            {capturedPhoto ? 'Happy with your photo?' : 'Ready to be photographed?'}
-          </h2>
-          <p className="wizard-subtitle">
-            {capturedPhoto
+      <PageMotion className="w-full space-y-6" stagger>
+        <HeadingMotion
+          title={capturedPhoto ? 'Happy with your photo?' : 'Ready to be photographed?'}
+          subtitle={
+            capturedPhoto
               ? 'Retake or continue to choose your city scene.'
-              : 'Smile for the camera — or upload from your gallery.'}
-          </p>
-        </div>
+              : 'Smile for the camera — or upload from your gallery.'
+          }
+        />
 
         <div className="wizard-card p-4 md:p-6">
-          {capturedPhoto ? (
-            <div className="space-y-4">
-              <div className="relative rounded-2xl overflow-hidden bg-black/50 aspect-[3/4] max-h-[380px] mx-auto border border-white/10">
-                <img
-                  src={capturedPhoto}
-                  alt="Captured"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full rounded-2xl bg-black aspect-[3/4] max-h-[420px] object-cover"
+          <div
+            className={`camera-preview-frame mx-auto ${
+              !capturedPhoto ? 'camera-preview-frame--live' : ''
+            }`}
+          >
+            {capturedPhoto ? (
+              <img
+                src={capturedPhoto}
+                alt="Captured"
+                className="camera-preview-media"
               />
-              <canvas ref={canvasRef} className="hidden" width={1200} height={1800} />
-              <button
-                type="button"
-                onClick={handleCapture}
-                className="wizard-primary-btn w-full"
-              >
-                📸 Capture Photo
-              </button>
-            </div>
+            ) : (
+              <>
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="camera-preview-media"
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 flex items-center justify-center px-4"
+                  aria-hidden
+                >
+                  <Image
+                    src={IO_CONNECT_ASSETS.mainLogo}
+                    alt=""
+                    width={640}
+                    height={165}
+                    className="camera-preview-logo"
+                    priority
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
+          <canvas ref={canvasRef} className="hidden" />
+
+          {!capturedPhoto && (
+            <button
+              type="button"
+              onClick={handleCapture}
+              className="wizard-primary-btn w-full mt-4 animate-pulse-soft"
+            >
+              📸 Capture Photo
+            </button>
           )}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           {!capturedPhoto ? (
-            <>
-              <button
-                type="button"
-                onClick={selectFromGallery}
-                className="wizard-secondary-btn flex-1"
-              >
-                📁 Upload Photo
-              </button>
-            </>
+            <button
+              type="button"
+              onClick={selectFromGallery}
+              className="wizard-secondary-btn flex-1"
+            >
+              📁 Upload Photo
+            </button>
           ) : (
             <>
               <button
@@ -149,7 +169,7 @@ export default function CameraPage() {
           onChange={handleFileSelect}
           className="hidden"
         />
-      </div>
+      </PageMotion>
     </WizardLayout>
   );
 }

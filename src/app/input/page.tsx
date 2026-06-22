@@ -9,6 +9,7 @@ import { userInputSchema, type UserInputFormData } from '@/lib/validators';
 import { usePhotoBoothStore } from '@/store/photo-booth';
 import { apiPostJson } from '@/lib/core/api-client';
 import { WizardLayout } from '@/components/io-connect/WizardLayout';
+import { PageMotion } from '@/components/io-connect/PageMotion';
 import { useAppConfig } from '@/components/providers/app-config-provider';
 import { GdprConsentBlock } from '@/components/common/GdprConsentBlock';
 import { FormField } from '@/components/ui/FormField';
@@ -66,12 +67,13 @@ export default function InputPage() {
 
   return (
     <WizardLayout step={1} totalSteps={5} backHref="/" title="Your Details" formWide>
-      <div className="wizard-card wizard-card--form space-y-6 animate-fade-in w-full">
+      <PageMotion className="w-full" stagger>
+      <div className="wizard-card wizard-card--form space-y-6 w-full">
           <div className="text-center space-y-2">
-            <span className="inline-flex items-center gap-1 text-google-yellow text-xl">
-              <IconSparkles size={18} />
-              <IconSparkles size={14} />
-              <IconSparkles size={18} />
+            <span className="io-sparkle-row text-google-yellow text-xl">
+              <IconSparkles size={18} className="io-sparkle-twinkle" />
+              <IconSparkles size={14} className="io-sparkle-twinkle" />
+              <IconSparkles size={18} className="io-sparkle-twinkle" />
             </span>
             <h2 className="wizard-title">{branding.eventTitle}</h2>
             <p className="wizard-subtitle">
@@ -140,6 +142,7 @@ export default function InputPage() {
             </Link>
           </p>
         </div>
+      </PageMotion>
     </WizardLayout>
   );
 }

@@ -16,7 +16,7 @@ const sizes = {
   lg: { w: 160, h: 192, className: 'h-14 md:h-16 w-auto max-w-[160px]' },
 };
 
-/** Configurable event logo — works with or without Sitecore branding. */
+/** Configurable event logo from app branding. */
 export function BoothLogo({
   href = '/',
   size = 'md',

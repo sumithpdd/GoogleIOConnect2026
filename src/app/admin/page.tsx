@@ -110,7 +110,7 @@ export default function AdminPage() {
   if (checking && !authenticated) {
     return (
       <BoothLayout>
-        <div className="flex items-center justify-center min-h-[50vh] text-silver-400">
+        <div className="flex items-center justify-center min-h-[50vh] text-io-muted">
           Checking access…
         </div>
       </BoothLayout>
@@ -121,11 +121,11 @@ export default function AdminPage() {
     return (
       <BoothLayout>
         <div className="max-w-sm mx-auto p-8 py-16">
-          <h1 className="text-2xl font-bold silver-accent text-center mb-6">
+          <h1 className="text-2xl font-bold landing-gradient-text text-center mb-6">
             Admin · Gallery moderation
           </h1>
-          <form onSubmit={handleLogin} className="brand-card p-6 space-y-4">
-            <label className="block text-sm text-silver-300">
+          <form onSubmit={handleLogin} className="wizard-card p-6 space-y-4">
+            <label className="block text-sm text-io-muted">
               Staff password
               <FormInput
                 type="password"
@@ -136,13 +136,13 @@ export default function AdminPage() {
               />
             </label>
             {loginError && <p className="text-red-400 text-sm">{loginError}</p>}
-            <button type="submit" className="btn-silver w-full">
+            <button type="submit" className="wizard-primary-btn w-full">
               Sign in
             </button>
           </form>
-          <p className="text-center text-xs text-silver-500 mt-6">
-            Set <code className="text-silver-400">ADMIN_SECRET</code> in server env.{' '}
-            <Link href="/" className="link-sitecore">
+          <p className="text-center text-xs text-io-subtle mt-6">
+            Set <code className="text-io-muted">ADMIN_SECRET</code> in server env.{' '}
+            <Link href="/" className="landing-footer-link">
               Home
             </Link>
           </p>
@@ -156,18 +156,18 @@ export default function AdminPage() {
       <div className="max-w-6xl mx-auto p-4 py-8 space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold silver-accent">
+            <h1 className="text-2xl md:text-3xl font-bold landing-gradient-text">
               Admin · Photo moderation
             </h1>
-            <p className="text-silver-400 text-sm mt-1">
+            <p className="text-io-muted text-sm mt-1">
               Hide, show, edit, or delete gallery photos (GDPR / conduct)
             </p>
           </div>
           <div className="flex gap-2">
-            <button type="button" onClick={() => loadPhotos()} className="btn-silver-outline">
+            <button type="button" onClick={() => loadPhotos()} className="wizard-secondary-btn">
               Refresh
             </button>
-            <button type="button" onClick={handleLogout} className="btn-silver-outline">
+            <button type="button" onClick={handleLogout} className="wizard-secondary-btn">
               Log out
             </button>
           </div>
@@ -180,7 +180,7 @@ export default function AdminPage() {
               type="button"
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-lg text-sm ${
-                filter === f ? 'btn-silver !py-2' : 'btn-silver-outline !py-2'
+                filter === f ? 'wizard-primary-btn !py-2' : 'wizard-secondary-btn !py-2'
               }`}
             >
               {f === 'all' ? 'All' : f === 'public' ? 'Public' : 'Hidden'}
@@ -193,9 +193,9 @@ export default function AdminPage() {
         )}
 
         {loading ? (
-          <p className="text-silver-400 text-center py-12">Loading…</p>
+          <p className="text-io-muted text-center py-12">Loading…</p>
         ) : photos.length === 0 ? (
-          <p className="text-silver-400 text-center py-12">No photos</p>
+          <p className="text-io-muted text-center py-12">No photos</p>
         ) : (
           <div className="grid gap-4">
             {photos.map((photo) => (
@@ -238,7 +238,7 @@ function AdminPhotoRow({
   const galleryConsent = photo.consentGalleryShare !== false;
 
   return (
-    <div className="brand-card p-4 flex flex-col gap-4">
+    <div className="wizard-card p-4 flex flex-col gap-4">
       <div className="flex flex-col md:flex-row gap-4">
       <div className="shrink-0 w-full md:w-40 h-32 rounded overflow-hidden bg-black">
         <img
@@ -249,7 +249,7 @@ function AdminPhotoRow({
       </div>
 
       <div className="flex-1 min-w-0 space-y-2 text-sm">
-        <p className="font-mono text-silver-400">{photo.photoCode}</p>
+        <p className="font-mono text-io-muted">{photo.photoCode}</p>
         <div className="flex flex-wrap gap-2 text-xs">
           <span
             className={`px-2 py-0.5 rounded ${
@@ -258,10 +258,10 @@ function AdminPhotoRow({
           >
             {isHidden ? 'Hidden' : 'Visible'}
           </span>
-          <span className="px-2 py-0.5 rounded bg-silver-800 text-silver-300">
+          <span className="px-2 py-0.5 rounded bg-black/30 text-io-muted">
             Gallery consent: {galleryConsent ? 'yes' : 'no'}
           </span>
-          <span className="px-2 py-0.5 rounded bg-silver-800 text-silver-300">
+          <span className="px-2 py-0.5 rounded bg-black/30 text-io-muted">
             {photo.moderationStatus ?? 'approved'}
           </span>
         </div>
@@ -274,7 +274,7 @@ function AdminPhotoRow({
           />
           <button
             type="button"
-            className="btn-silver-outline !py-1 !px-3 text-xs"
+            className="wizard-secondary-btn !py-1 !px-3 text-xs"
             onClick={() => onPatch(photo.id, { userName: name })}
           >
             Save name
@@ -289,7 +289,7 @@ function AdminPhotoRow({
         />
         <button
           type="button"
-          className="text-xs text-silver-400 underline"
+          className="text-xs text-io-muted underline"
           onClick={() => onPatch(photo.id, { moderationNote: note })}
         >
           Save note
@@ -299,7 +299,7 @@ function AdminPhotoRow({
       <div className="flex flex-col gap-2 shrink-0">
         <button
           type="button"
-          className="btn-silver-outline !py-2 text-sm"
+          className="wizard-secondary-btn !py-2 text-sm"
           onClick={() =>
             onPatch(photo.id, {
               visibility: isHidden ? 'public' : 'hidden',
@@ -310,7 +310,7 @@ function AdminPhotoRow({
         </button>
         <button
           type="button"
-          className="btn-silver-outline !py-2 text-sm"
+          className="wizard-secondary-btn !py-2 text-sm"
           onClick={() =>
             onPatch(photo.id, {
               moderationStatus:
@@ -323,7 +323,7 @@ function AdminPhotoRow({
         </button>
         <button
           type="button"
-          className="btn-silver-outline !py-2 text-sm"
+          className="wizard-secondary-btn !py-2 text-sm"
           onClick={() => setShowShare((v) => !v)}
         >
           {showShare ? 'Close share' : '📱 Share to social'}

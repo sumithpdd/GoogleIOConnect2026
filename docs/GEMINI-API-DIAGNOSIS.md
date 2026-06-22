@@ -1,170 +1,145 @@
-# Gemini API Image Generation - Setup Guide
+# Gemini API Image Generation — I/O Connect Berlin 2026
 
-## The Solution: Gemini's Nano Banana 🍌
-
-**Gemini DOES have native image generation!** Using `gemini-2.0-pro` with multimodal capabilities.
+How the booth uses **Google Gemini** for portrait compositing at **Google I/O Connect Berlin 2026** (GDG London).
 
 ## Architecture
 
 ```
-User Photo + Prompt
+User Photo + Prompt + Background
   ↓
 /api/composit-image
   ├─ Sanitize prompt (block unsafe keywords)
-  └─ Call gemini-2.0-pro (Nano Banana)
-       ├─ Analyze original photo
-       ├─ Generate transformed image
+  └─ Call Gemini image model (default: gemini-2.5-flash-image)
+       ├─ Analyze original portrait
+       ├─ Remove webcam/indoor background
+       ├─ Generate Berlin / I/O Connect scene blend
        └─ Return base64 encoded result
   ↓
-Add Sitecore Logo (Sharp)
+Add GDG London · Berlin 2026 sticker (Sharp, top-right)
   ↓
-Add Branding Banner (Sharp)
+Print portrait normalization (100×148 mm @ 300 dpi)
   ↓
-Save to Firebase Storage
+Save to Firebase Storage (io-connect-2026/)
   ↓
 Display in Gallery
 ```
 
-## Gemini Capabilities
+## Model
 
-```
-✅ gemini-2.0-pro (Nano Banana)
-   - Image ANALYSIS (understand content)
-   - Image GENERATION (create new images)
-   - Image EDITING (transform/enhance)
-   - Multimodal: text + image + video
-   - Conversational: iterative refinement
+Default: **`gemini-2.5-flash-image`** — override with `GEMINI_IMAGE_MODEL` in env.
 
-✅ gemini-2.5-flash
-   - Faster for analysis
-   - Limited generation (fallback)
-```
+Capabilities used by the booth:
+
+- Image analysis (understand portrait content)
+- Image editing / generation (scene blend, not collage)
+- Multimodal input: text prompt + portrait photo
 
 ## How It Works
 
 ### 1. User Submits Photo + Prompt
+
 ```
 Photo: selfie.jpg
-Prompt: "Transform me into a tech innovator at Sitecore"
-Background: "Celebration"
+Prompt: "Hello Berlin — Brandenburg Gate with gradient code braces"
+Background: "Brandenburg Gate"
 ```
 
 ### 2. API Route Processes
+
 ```typescript
 // Sanitize (block inappropriate content)
 const sanitizationResult = sanitizePrompt(prompt);
 
-// Call gemini-2.0-pro for generation
-const result = await model.generateContent([
+// Call Gemini with portrait + Berlin / I/O Connect guardrails
+const result = await generateImageWithGemini({
+  photoBase64,
   prompt,
-  { inlineData: { mimeType: 'image/jpeg', data: photoBase64 } }
-]);
+  backgroundDescription,
+});
 
 // Extract generated image
-const generatedImageBase64 = result.response.candidates[0].inlineData.data;
+const generatedImageBase64 = extractImageBase64FromResponse(result);
 ```
 
-### 3. Enhance with Branding
+Guardrails live in `src/lib/io-connect-brand.ts` (`IO_CONNECT_IMAGE_RULES`) and `src/lib/gemini-image.ts`.
+
+### 3. Post-Processing
+
 ```
 Generated Image
-  ↓ (Add Logo using Sharp)
-  ↓ (Add Banner using Sharp)
-Final Image with Sitecore Branding
+  ↓ (GDG London · Berlin 2026 sticker — top-right, Sharp)
+  ↓ (Print portrait normalization)
+Final composited portrait
 ```
 
 ### 4. Store & Display
-- Firebase Storage: Original + Composited photos
-- Gallery: Displays all branded images
+
+- **Firebase Storage:** `io-connect-2026/{sessionId}/` — original + composited
+- **Firestore:** `photobooth` collection — gallery metadata
+- **Gallery:** `/gallery` — public grid with moderation flags
 
 ## Testing
 
-### Run Image Generation Tests
 ```bash
 npm test -- composit-image.test.ts
 ```
 
-Tests will:
-1. ✅ Verify gemini-2.0-pro connectivity
-2. ✅ Test actual image generation
-3. ✅ Verify response format (base64 images)
-4. ✅ Test Sitecore-themed transformations
+Tests verify:
 
-### Expected Test Output
-```
-✅ API Response received
-✅ Found image data in part 0!
-✅ Image data length: 45000+ bytes
-✅ Generated image returned!
-```
+1. Gemini connectivity (when `GOOGLE_GEMINI_API_KEY` is set)
+2. Response format (base64 image in candidates)
+3. Berlin / I/O Connect prompt guardrails applied
 
-## Current Setup
-
-```
-Model: gemini-2.0-pro (Nano Banana)
-Feature: Full image generation + analysis
-Cost: Per API call (minimal for event)
-Speed: ~5-10 seconds per image
-Quality: Professional, maintains recognizability
-```
-
-## Environment Variable
+## Environment
 
 ```bash
 # .env.local
 GOOGLE_GEMINI_API_KEY=your_actual_api_key
+# Optional:
+GEMINI_IMAGE_MODEL=gemini-2.5-flash-image
+API_SECRET=long-random-string   # recommended on public Vercel deploy
 ```
 
-## Workflow Example
+## Booth workflow
 
-1. **User enters name & email**
-2. **Captures/uploads photo**
-3. **Selects background** (Heritage/Celebration/Innovation)
-4. **Writes custom prompt** or picks suggestion
-5. **System processes**:
-   - ✅ Sanitizes prompt (no harmful content)
-   - ✅ Calls gemini-2.0-pro with photo
-   - ✅ Receives generated/transformed image
-   - ✅ Adds Sitecore logo & banner
-   - ✅ Saves to Firebase
-6. **Gallery displays** all processed photos
-
-## Why gemini-2.0-pro?
-
-| Feature | gemini-2.5-flash | gemini-2.0-pro |
-|---------|------------------|----------------|
-| Image Analysis | ✅ Fast | ✅ Good |
-| Image Generation | ⚠️ Limited | ✅ Full |
-| Response Speed | ✅ Fast | ⚠️ Slower |
-| Quality | ✅ Good | ✅ Excellent |
-| Best For | Analysis | Generation |
-
-**We chose gemini-2.0-pro** because the event needs actual image transformation, not just analysis.
+1. **User enters name & email** (`/input`)
+2. **Captures/uploads portrait** (`/camera`)
+3. **Selects Berlin or I/O Connect background** (`/backgrounds`)
+4. **Picks preset or custom prompt** (`/prompts`)
+5. **System processes** (`/processing`):
+   - Sanitizes prompt
+   - Calls Gemini with portrait + scene direction
+   - Applies GDG London watermark (top-right)
+   - Uploads to Firebase
+6. **Result** — download, print, AI social post, gallery (`/result`)
 
 ## Troubleshooting
 
 ### "No image in response"
-- Verify API key is valid
-- Check request format (inlineData with base64)
-- Ensure prompt isn't filtered as unsafe
+
+- Verify `GOOGLE_GEMINI_API_KEY` is valid
+- Check request format (`inlineData` with base64 JPEG)
+- Ensure prompt is not filtered as unsafe
 - Review Google AI quota
 
-### "Image too small/large"
-- Gemini works best with 100x100 to 4000x4000
-- Will resize if needed
+### "Collage / pasted photo strip"
+
+- Guardrails require seamless background removal — check `IO_CONNECT_IMAGE_RULES`
+- Retry with a clearer preset from `src/data/prompts.ts`
 
 ### "API rate limit"
-- Event: 200 users × 5 mins processing = manageable load
-- Rate: ~40-50 images/hour max
 
-## Production Deployment
+- Event load: plan for peak concurrent users at the booth
+- Consider `API_SECRET` + edge rate limiting on Vercel
 
-✅ **Ready for June 11, 2026**:
-- ✅ Gemini-2.0-pro image generation
-- ✅ Logo placement with Sharp
-- ✅ Prompt sanitization
-- ✅ Firebase storage & gallery
-- ✅ Scaling for 200 attendees
+## Production checklist
+
+- `GOOGLE_GEMINI_API_KEY` on Vercel
+- `APP_PRESET=io-connect-2026`
+- Firebase credentials configured (same project for client + Admin SDK)
+- End-to-end test on live URL before event day
 
 ---
-**Last Updated:** June 2, 2026  
-**Status:** ✅ Production Ready
+
+**Last updated:** June 2026  
+**Event:** Google I/O Connect Berlin 2026 · GDG London

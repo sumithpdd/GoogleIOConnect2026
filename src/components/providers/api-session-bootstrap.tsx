@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { bootstrapApiSession } from '@/lib/core/api-client';
 
-/** Prefetch API session token so processing works inside Sitecore Marketplace iframes. */
+/** Prefetch API session token so processing works in embedded iframes. */
 export function ApiSessionBootstrap() {
   useEffect(() => {
     bootstrapApiSession();

@@ -1,16 +1,20 @@
 ---
-description: Sitecore Silver Photo Booth — core context and conventions
+description: Google I/O Connect Berlin 2026 photo booth — core context and conventions
 alwaysApply: true
 ---
 
-# Sitecore Silver Photo Booth
+# Google I/O Connect Photo Booth
 
-Event photo booth (Next.js 14, React 18, TypeScript). Flow: `/input` → `/camera` → `/backgrounds` → `/prompts` → `/processing` → `/result`; gallery at `/gallery`.
+Event photo booth (Next.js 14, React 18, TypeScript) for **Google I/O Connect Berlin 2026**, hosted by **GDG London**.
 
-- **State**: Zustand `src/store/photo-booth.ts` for session; TanStack Query for API calls.
-- **Backend**: All Firebase Admin + Gemini in `src/app/api/*` only.
-- **Data**: Backgrounds/prompts in `src/data/`; types in `src/types/`.
-- **Reference**: Flutter app at `C:\code\flutter\photo_booth_ai` for feature parity.
-- **Docs**: `docs/` and `AGENTS.md` for architecture, security, branding.
+**Preset:** `APP_PRESET=io-connect-2026`
+
+**Flow:** `/` → `/input` → `/camera` → `/backgrounds` → `/prompts` → `/processing` → `/result`; gallery at `/gallery`; staff at `/admin`.
+
+- **State**: Zustand `src/store/photo-booth.ts`; TanStack Query for API calls.
+- **Backend**: Firebase Admin + Gemini only in `src/app/api/*`.
+- **Branding**: `src/lib/io-connect-brand.ts`, `src/lib/core/app-config.ts`, `docs/BRANDING_GUIDE.md`.
+- **Scenes**: Berlin-first backgrounds/prompts in `src/data/` — no London skyline themes.
+- **Motion**: `src/components/io-connect/PageMotion.tsx`, animations in `globals.css`.
 - **Deploy**: Vercel; env via `.env.local` / Vercel dashboard — never commit secrets.
 - Keep changes minimal; match existing patterns; no commits unless the user asks.

@@ -34,7 +34,6 @@ export interface BoothSessionWrite {
   latestPhotoCode?: string;
   latestBackgroundId?: string;
   latestPromptId?: string;
-  sitecoreAttendeePath?: string;
 }
 
 export async function upsertBoothSession(
@@ -63,7 +62,6 @@ export async function upsertBoothSession(
   if (data.latestPhotoCode) payload.latestPhotoCode = data.latestPhotoCode;
   if (data.latestBackgroundId) payload.latestBackgroundId = data.latestBackgroundId;
   if (data.latestPromptId) payload.latestPromptId = data.latestPromptId;
-  if (data.sitecoreAttendeePath) payload.sitecoreAttendeePath = data.sitecoreAttendeePath;
 
   const snap = await ref.get();
   await ref.set(

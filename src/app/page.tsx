@@ -21,7 +21,7 @@ const STEPS = [
   {
     number: '02',
     title: 'Customize',
-    description: 'Apply our exclusive London & Berlin AI filters.',
+    description: 'Apply exclusive Berlin & I/O Connect AI filters powered by Gemini.',
     icon: '✨',
   },
   {
@@ -40,7 +40,7 @@ export default function Home() {
       <LandingDecorations />
       <FestiveLights />
 
-      <header className="landing-header relative z-20">
+      <header className="landing-header relative z-20 animate-slide-down">
         <div className="landing-header-inner">
           <IoConnectLogo />
           {features.gallery && (
@@ -59,11 +59,11 @@ export default function Home() {
               <h1 className="landing-hero-title">
                 Send a Smile
                 <br />
-                <span className="landing-gradient-text">From London & Berlin</span>
+                <span className="landing-gradient-text">From Berlin</span>
               </h1>
               <p className="landing-hero-subtitle">
-                Upload your photo, add a touch of AI magic with Gemini, and take home a
-                keepsake from our Google I/O Connect events across two iconic cities.
+                GDG London invites you to Google I/O Connect Berlin 2026 — upload your photo,
+                add a touch of AI magic with Gemini, and take home a keepsake from the event.
               </p>
             </div>
 
@@ -124,7 +124,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="landing-footer relative z-20">
+      <footer className="landing-footer relative z-20 io-footer-enter">
         <div className="landing-footer-inner">
           <GdgLondonBrand />
           <p className="landing-footer-meta">

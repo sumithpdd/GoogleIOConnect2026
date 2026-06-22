@@ -22,7 +22,7 @@ export function GdgLondonBrand({
     >
       <Image
         src={IO_CONNECT_ASSETS.gdgLondonLogo}
-        alt="GDG London Berlin 2026"
+        alt="GDG London · I/O Connect Berlin 2026"
         width={variant === 'footer' ? 160 : 120}
         height={variant === 'footer' ? 200 : 150}
         className={
@@ -38,7 +38,9 @@ export function GdgLondonBrand({
             : 'text-sm text-white/50'
         }
       >
-        Made with ❤️ by <strong className="text-white/80 font-semibold">GDG London</strong>
+        Made with ❤️ by{' '}
+        <strong className="text-white/80 font-semibold">GDG London</strong>
+        <span className="text-white/45"> · I/O Connect Berlin 2026</span>
       </span>
     </span>
   );

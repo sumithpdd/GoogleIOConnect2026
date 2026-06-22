@@ -9,6 +9,7 @@ import { fetchCompositedPhoto } from '@/lib/composit-client';
 import { isApiSessionError } from '@/lib/core/api-client';
 import { useAppConfig } from '@/components/providers/app-config-provider';
 import { WizardLayout } from '@/components/io-connect/WizardLayout';
+import { HeadingMotion, PageMotion } from '@/components/io-connect/PageMotion';
 import { SocialSharePanel } from '@/components/photo-booth/SocialSharePanel';
 
 function ResultSocialShare({
@@ -57,8 +58,6 @@ export default function ResultPage() {
   const capturedPhoto = usePhotoBoothStore((state) => state.capturedPhoto);
   const compositedPhotoUrl = usePhotoBoothStore((state) => state.compositedPhotoUrl);
   const storedPhotoCode = usePhotoBoothStore((state) => state.photoCode);
-  const sitecoreAttendeePage = usePhotoBoothStore((state) => state.sitecoreAttendeePage);
-  const sitecoreSyncError = usePhotoBoothStore((state) => state.sitecoreSyncError);
   const selectedBackground = usePhotoBoothStore((state) => state.selectedBackground);
   const selectedPrompt = usePhotoBoothStore((state) => state.selectedPrompt);
   const attendeeProfile = usePhotoBoothStore((state) => state.attendeeProfile);
@@ -137,19 +136,17 @@ export default function ResultPage() {
 
   return (
     <WizardLayout step={5} totalSteps={5} backHref="/" title="Your Photo" wide>
-      <div className="w-full space-y-6 animate-fade-in">
-          <div className="text-center">
-            <h2 className="wizard-title mb-2">Your Photo: {photoCode}</h2>
-            <p className="wizard-subtitle">
-              Share this code to find your photo in the gallery
-            </p>
-          </div>
+      <PageMotion className="w-full space-y-6" stagger>
+          <HeadingMotion
+            title={`Your Photo: ${photoCode}`}
+            subtitle="Share this code to find your photo in the gallery"
+          />
 
           <div
-            className={`grid gap-5 ${hasBoth ? 'md:grid-cols-2' : 'grid-cols-1'}`}
+            className={`grid gap-5 io-stagger-block ${hasBoth ? 'md:grid-cols-2' : 'grid-cols-1'}`}
           >
             {hasBoth && originalPhoto && (
-              <div className="wizard-card p-4 space-y-3">
+              <div className="wizard-card p-4 space-y-3 animate-scale-in">
                 <p className="text-sm font-bold text-io-subtle uppercase tracking-wide text-center">
                   Original
                 </p>
@@ -169,7 +166,7 @@ export default function ResultPage() {
               </div>
             )}
 
-            <div className="wizard-card p-4 space-y-3 relative">
+            <div className="wizard-card p-4 space-y-3 relative animate-scale-in">
               {regenerating && (
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl bg-black/80 gap-3">
                   <div className="w-12 h-12 border-4 border-google-blue border-t-transparent rounded-full animate-spin" />
@@ -185,7 +182,7 @@ export default function ResultPage() {
               <img
                 src={compositedPhoto}
                 alt="Your AI-transformed photo"
-                className="w-full max-w-xs mx-auto rounded-lg border-2 border-white/20 object-contain aspect-[100/148] bg-black/40"
+                className="io-result-photo w-full max-w-xs mx-auto rounded-lg border-2 border-white/20 object-contain aspect-[100/148] bg-black/40"
               />
               <button
                 type="button"
@@ -271,7 +268,7 @@ export default function ResultPage() {
               📸 New Photo
             </button>
           </div>
-        </div>
+      </PageMotion>
     </WizardLayout>
   );
 }

@@ -1,8 +1,11 @@
-/** Required hashtags on every booth LinkedIn post. */
-export const LINKEDIN_HASHTAGS =
-  '#Sitecore #SitecoreSilver #SitecoreCommunity #DigitalExperience #copenhagen';
+import { resolveSocialPostCopy } from '@/lib/linkedin/social-post-copy';
 
-export const LINKEDIN_MENTION = '@Sitecore';
+const copy = resolveSocialPostCopy();
+
+/** Required hashtags on every booth LinkedIn post (preset-aware). */
+export const LINKEDIN_HASHTAGS = copy.hashtags;
+
+export const LINKEDIN_MENTION = copy.mention;
 
 export const LINKEDIN_ACCESS_COOKIE = 'linkedin_access_token';
 export const LINKEDIN_PERSON_COOKIE = 'linkedin_person_id';

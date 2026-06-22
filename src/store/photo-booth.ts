@@ -4,7 +4,6 @@ import {
   Background,
   PhotoBoothSession,
   PhotoPrompt,
-  SitecoreAttendeePageResult,
 } from '@/types';
 
 interface PhotoBoothState {
@@ -47,14 +46,10 @@ interface PhotoBoothState {
   compositedPhotoUrl: string | null;
   photoId: string | null;
   photoCode: string | null;
-  sitecoreAttendeePage: SitecoreAttendeePageResult | null;
-  sitecoreSyncError: string | null;
 
   setCompositedPhoto: (url: string, photoId?: string, photoCode?: string) => void;
   /** Update preview only (regenerate AI) without changing gallery photo code. */
   setCompositedPreview: (url: string) => void;
-  setSitecoreAttendeePage: (page: SitecoreAttendeePageResult | null) => void;
-  setSitecoreSyncError: (error: string | null) => void;
   resetResult: () => void;
 
   // Overall reset
@@ -75,8 +70,6 @@ const initialState = {
   compositedPhotoUrl: null,
   photoId: null,
   photoCode: null,
-  sitecoreAttendeePage: null,
-  sitecoreSyncError: null,
 };
 
 export const usePhotoBoothStore = create<PhotoBoothState>((set) => ({
@@ -142,17 +135,11 @@ export const usePhotoBoothStore = create<PhotoBoothState>((set) => ({
       processingError: null,
     }),
 
-  setSitecoreAttendeePage: (page) => set({ sitecoreAttendeePage: page }),
-
-  setSitecoreSyncError: (error) => set({ sitecoreSyncError: error }),
-
   resetResult: () =>
     set({
       compositedPhotoUrl: null,
       photoId: null,
       photoCode: null,
-      sitecoreAttendeePage: null,
-      sitecoreSyncError: null,
       capturedPhoto: null,
       selectedBackground: null,
       selectedPrompt: null,

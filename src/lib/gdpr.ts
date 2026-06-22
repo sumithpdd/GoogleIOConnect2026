@@ -1,6 +1,5 @@
 /**
- * GDPR / privacy copy for Sitecore Silver Photo Booth (Copenhagen 2026).
- * Adapted from photo_booth_ai terms flow; event-specific wording.
+ * GDPR / privacy copy for Google I/O Connect Berlin 2026 photo booth (GDG London).
  */
 
 export const GDPR_SUMMARY =
@@ -12,8 +11,8 @@ export const GDPR_SECTIONS = [
   {
     title: 'Photo processing',
     body:
-      'We process your portrait with AI (Google Gemini) to apply your chosen background and creative prompt. ' +
-      'Processing happens on secure servers; your API key and images are not exposed to other guests.',
+      'We process your portrait with AI (Google Gemini) to apply your chosen Berlin / I/O Connect scene and creative prompt. ' +
+      'Processing happens on secure servers; your images are not exposed to other guests.',
   },
   {
     title: 'Storage & gallery',
@@ -26,15 +25,15 @@ export const GDPR_SECTIONS = [
   {
     title: 'Your rights (GDPR)',
     body:
-      'You have the right to access, rectify, or request deletion of your photos. Contact the event desk or ' +
-      'Sitecore Silver organizers. Photos that are inappropriate or non-consensual can be hidden or removed ' +
+      'You have the right to access, rectify, or request deletion of your photos. Contact the GDG London booth desk or ' +
+      'event organizers. Photos that are inappropriate or non-consensual can be hidden or removed ' +
       'by administrators at any time.',
   },
   {
     title: 'Retention',
     body:
-      'Event photos are retained for the anniversary celebration period and operational backup, then deleted ' +
-      'according to Sitecore’s event data retention policy unless you request earlier deletion.',
+      'Event photos are retained for the I/O Connect celebration period and operational backup, then deleted ' +
+      'according to the event data retention policy unless you request earlier deletion.',
   },
   {
     title: 'Code of conduct',

@@ -5,6 +5,7 @@ import { usePhotoBoothStore } from '@/store/photo-booth';
 import { prompts, CITY_CATEGORIES, getPromptsByCategory } from '@/data/prompts';
 import { sanitizePrompt } from '@/lib/prompt-sanitizer';
 import { WizardLayout } from '@/components/io-connect/WizardLayout';
+import { HeadingMotion, PageMotion } from '@/components/io-connect/PageMotion';
 import { IconArrowRight, IconSparkles } from '@/components/icons/BoothIcons';
 import { useEffect, useState } from 'react';
 
@@ -15,15 +16,15 @@ const SUGGESTION_PROMPTS = [
   },
   {
     label: 'GDG London',
-    text: 'Hello from London with Tower Bridge, Thames skyline and GDG London developer event lighting',
+    text: 'GDG London community at I/O Connect Berlin — on stage in Berlin with Hello Berlin art and Google developer event lighting',
   },
   {
     label: 'I/O Connect art',
     text: 'Google I/O Connect Berlin official art style — globe, cloud, Android, sparkle and gradient braces overlapping on black',
   },
   {
-    label: 'Two cities',
-    text: 'London and Berlin connected in one portrait with Google gradient bridge — I/O Connect 2026 community photo',
+    label: 'Berlin landmarks',
+    text: 'Berlin landmarks collage — Brandenburg Gate, TV Tower and Buddy Bears with Google gradient glow — I/O Connect Berlin 2026',
   },
 ];
 
@@ -41,10 +42,10 @@ export default function PromptsPage() {
   const selectedPrompt = usePhotoBoothStore((state) => state.selectedPrompt);
   const setSelectedPrompt = usePhotoBoothStore((state) => state.setSelectedPrompt);
 
-  const [selectedCategory, setSelectedCategory] = useState<string>('celebration');
+  const [selectedCategory, setSelectedCategory] = useState<string>('innovation');
   const [customPrompt, setCustomPrompt] = useState<string>('');
   const [promptError, setPromptError] = useState<string>('');
-  const categoryPrompts = getPromptsByCategory(selectedCategory as 'celebration');
+  const categoryPrompts = getPromptsByCategory(selectedCategory as 'innovation');
 
   const hasCustom = customPrompt.trim().length > 0;
   const canContinue = hasCustom || selectedPrompt;
@@ -91,19 +92,17 @@ export default function PromptsPage() {
 
   return (
     <WizardLayout step={4} totalSteps={5} backHref="/backgrounds" title="Choose Magic" wide>
-      <div className="w-full space-y-6 animate-fade-in">
-        <div className="text-center space-y-2">
-          <h2 className="wizard-title">Choose Your Magic ✨</h2>
-          <p className="wizard-subtitle">
-            London, Berlin, or Connect — pick a preset or describe your vision
+      <PageMotion className="w-full space-y-6" stagger>
+        <HeadingMotion
+          title="Choose Your Magic ✨"
+          subtitle="Berlin or I/O Connect magic — pick a preset or describe your vision"
+        />
+        {selectedBackground && (
+          <p className="text-sm text-io-subtle text-center animate-fade-in">
+            Scene:{' '}
+            <span className="font-medium text-io-muted">{selectedBackground.name}</span>
           </p>
-          {selectedBackground && (
-            <p className="text-sm text-io-subtle">
-              Scene:{' '}
-              <span className="font-medium text-io-muted">{selectedBackground.name}</span>
-            </p>
-          )}
-        </div>
+        )}
 
         <div className="flex flex-wrap justify-center gap-2">
           {CITY_CATEGORIES.map(({ id, label }) => (
@@ -120,14 +119,14 @@ export default function PromptsPage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 io-stagger-block">
           <div className="wizard-card wizard-card--gradient">
             <div className="wizard-card__inner space-y-3">
               <h3 className="io-card-heading text-left">Preset magic</h3>
               <p className="io-card-subheading text-left mt-0">
                 Tap a card to apply Gemini transforms
               </p>
-              <div className="flex flex-col gap-3 max-h-[420px] overflow-y-auto pr-1">
+              <div className="flex flex-col gap-3 max-h-[420px] overflow-y-auto pr-1 io-stagger-grid">
                 {categoryPrompts.map((prompt) => {
                   const isSelected = selectedPrompt?.id === prompt.id && !hasCustom;
                   return (
@@ -223,7 +222,7 @@ export default function PromptsPage() {
         </div>
 
         <div className="flex flex-col items-center gap-4">
-          <div className="io-gradient-rim io-gradient-rim--active max-w-md w-full">
+          <div className="io-gradient-rim io-gradient-rim--active max-w-md w-full animate-bounce-in">
             <div className="io-gradient-rim__inner io-gradient-rim__body">
               <span className="io-inset-panel__label">Selected magic</span>
               <p className="io-card-heading flex items-center justify-center gap-2">
@@ -242,7 +241,7 @@ export default function PromptsPage() {
             <IconArrowRight size={20} />
           </button>
         </div>
-      </div>
+      </PageMotion>
     </WizardLayout>
   );
 }

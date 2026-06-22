@@ -45,7 +45,7 @@ function issueSessionResponse(secret: string | undefined): NextResponse {
   response.cookies.set(BOOTH_SESSION_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    // lax/none: Marketplace iframe is cross-site — strict blocks the cookie on POST
+    // lax in dev; none in production when cross-origin embeds need the cookie
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     path: '/',
     maxAge: 60 * 60 * 4,

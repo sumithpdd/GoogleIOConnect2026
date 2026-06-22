@@ -1,6 +1,6 @@
-/**
- * Client-side download and print helpers for booth photos.
- */
+import { IO_CONNECT_EVENT } from '@/lib/io-connect-brand';
+
+const DEFAULT_PRINT_SUBTITLE = `${IO_CONNECT_EVENT.title} · ${IO_CONNECT_EVENT.location} ${IO_CONNECT_EVENT.date}`;
 
 export async function downloadImage(
   imageSrc: string,
@@ -58,7 +58,7 @@ export function printPhoto(imageSrc: string, options: PrintPhotoOptions = {}) {
           ${
             subtitle
               ? `<p>${escapeHtml(subtitle)}</p>`
-              : '<p>Sitecore Silver • 25 Years of Innovation • Copenhagen 2026</p>'
+              : `<p>${DEFAULT_PRINT_SUBTITLE}</p>`
           }
         </div>
       `
@@ -74,7 +74,7 @@ export function printPhoto(imageSrc: string, options: PrintPhotoOptions = {}) {
     <html>
       <head>
         <meta charset="utf-8" />
-        <title>Sitecore Silver${code ? ` - ${escapeHtml(code)}` : ''}</title>
+        <title>I/O Connect${code ? ` - ${escapeHtml(code)}` : ''}</title>
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           @page { size: ${pageWidth} ${pageHeight}; margin: 0; }
@@ -180,7 +180,7 @@ export function printImages(
     <!DOCTYPE html>
     <html>
       <head>
-        <title>Sitecore Silver${footer.code ? ` - ${escapeHtml(footer.code)}` : ''}</title>
+        <title>I/O Connect${footer.code ? ` - ${escapeHtml(footer.code)}` : ''}</title>
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { font-family: Arial, sans-serif; background: white; color: #333; }
@@ -234,7 +234,7 @@ export function printImages(
           <div class="photos">${imageBlocks}</div>
           <div class="footer">
             ${footer.code ? `<p class="code">${escapeHtml(footer.code)}</p>` : ''}
-            <p>${escapeHtml(footer.subtitle ?? 'Sitecore Silver • 25 Years of Innovation • Copenhagen 2026')}</p>
+            <p>${escapeHtml(footer.subtitle ?? DEFAULT_PRINT_SUBTITLE)}</p>
           </div>
         </div>
         <script>

@@ -9,6 +9,7 @@ import {
   getGeminiImageModel,
 } from '@/lib/gemini-image';
 import { normalizeImageForPrintPortrait, preparePortraitInputForGeneration } from '@/lib/print-portrait';
+import { devLog, devWarn, publicErrorMessage } from '@/lib/safe-log';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -48,9 +49,7 @@ async function processWithGemini(
     }
 
     const model = getGeminiImageModel();
-    console.log('🔑 [GEMINI] Calling native image generation');
-    console.log('📝 [GEMINI] Model:', model);
-    console.log('📝 [GEMINI] Prompt:', prompt.substring(0, 60) + '...');
+    devLog('[GEMINI] Calling native image generation', { model });
 
     const base64Data = await generateTransformedImage(
       imageBase64,
@@ -60,7 +59,7 @@ async function processWithGemini(
     );
 
     if (!base64Data) {
-      console.warn('⚠️ [GEMINI] No image in response — falling back to Sharp');
+      devWarn('[GEMINI] No image in response — falling back to Sharp');
       return enhanceImageWithSharp(
         imageBase64,
         prompt,
@@ -70,14 +69,10 @@ async function processWithGemini(
       );
     }
 
-    console.log(
-      '✅ [GEMINI] Successfully generated image',
-      `(output ~${Math.round(base64Data.length * 0.75 / 1024)}KB)`
-    );
+    devLog('[GEMINI] Successfully generated image');
     return base64Data;
   } catch (error) {
-    console.error('❌ [GEMINI] Error:', error);
-    console.warn('⚠️ Falling back to Sharp enhancement');
+    devWarn('[GEMINI] Error — falling back to Sharp', publicErrorMessage(error, 'generation failed'));
     return enhanceImageWithSharp(
       imageBase64,
       prompt,
@@ -99,7 +94,7 @@ async function enhanceImageWithSharp(
   eventTagline: string
 ): Promise<string> {
   try {
-    console.log('🎨 [SHARP] Starting fallback enhancement');
+    devLog('[SHARP] Starting fallback enhancement');
 
     // Convert base64 to buffer
     const imageBuffer = Buffer.from(imageBase64, 'base64');
@@ -108,7 +103,7 @@ async function enhanceImageWithSharp(
     const metadata = await sharp(imageBuffer).metadata();
     const width = metadata.width || 1200;
     const height = metadata.height || 800;
-    console.log('✅ [SHARP] Image dimensions:', width, 'x', height);
+    devLog('[SHARP] Image dimensions', { width, height });
 
     // Apply theme-based effects with stronger transformations
     let enhanced = sharp(imageBuffer);
@@ -117,7 +112,7 @@ async function enhanceImageWithSharp(
 
     // Heritage theme: Vintage/sepia effect
     if (promptLower.includes('heritage') || promptLower.includes('vintage') || promptLower.includes('history') || bgLower.includes('heritage')) {
-      console.log('🎨 [SHARP] Applying HERITAGE effect');
+      devLog('[SHARP] Applying HERITAGE effect');
       enhanced = enhanced
         .modulate({ brightness: 1.15, saturation: 0.4, hue: 20 })
         .blur(0.4)
@@ -125,21 +120,21 @@ async function enhanceImageWithSharp(
     }
     // Innovation theme: High saturation/vibrant effect
     else if (promptLower.includes('innovation') || promptLower.includes('future') || promptLower.includes('tech') || bgLower.includes('innovation')) {
-      console.log('🎨 [SHARP] Applying INNOVATION effect');
+      devLog('[SHARP] Applying INNOVATION effect');
       enhanced = enhanced
         .modulate({ brightness: 1.1, saturation: 1.5 })
         .sharpen({ sigma: 2 });
     }
     // Celebration theme: Bright and very colorful
     else if (promptLower.includes('celebrat') || promptLower.includes('joyful') || promptLower.includes('years') || bgLower.includes('celebration')) {
-      console.log('🎨 [SHARP] Applying CELEBRATION effect');
+      devLog('[SHARP] Applying CELEBRATION effect');
       enhanced = enhanced
         .modulate({ brightness: 1.2, saturation: 1.5 })
         .sharpen({ sigma: 1.5 });
     }
     // Default: Balanced enhancement
     else {
-      console.log('🎨 [SHARP] Applying DEFAULT enhancement');
+      devLog('[SHARP] Applying DEFAULT enhancement');
       enhanced = enhanced.modulate({
         brightness: 1.1,
         saturation: 1.2,
@@ -191,19 +186,18 @@ async function enhanceImageWithSharp(
       .jpeg({ quality: 95 })
       .toBuffer();
 
-    console.log('✅ [SHARP] Final image size:', result.length);
+    devLog('[SHARP] Enhancement complete');
     const base64Result = result.toString('base64');
-    console.log('✅ [SHARP] Enhancement complete');
 
     return base64Result;
   } catch (error) {
-    console.error('❌ [SHARP] Enhancement error:', error);
+    devWarn('[SHARP] Enhancement error', publicErrorMessage(error, 'sharp failed'));
     throw error;
   }
 }
 
 /**
- * Add GDG London · Berlin 2026 sticker watermark to the composited portrait.
+ * Add GDG London · Berlin 2026 sticker watermark — top-right corner.
  */
 async function addLogoToImage(
   imageBuffer: Buffer,
@@ -219,9 +213,9 @@ async function addLogoToImage(
       'public',
       logoPath.replace(/^\//, '')
     );
-    const maxLogoWidth = Math.round(width * 0.32);
-    const maxLogoHeight = Math.round(height * 0.14);
-    const padding = Math.round(width * 0.04);
+    const maxLogoWidth = Math.round(width * 0.26);
+    const maxLogoHeight = Math.round(height * 0.12);
+    const padding = Math.round(width * 0.035);
 
     const logo = await sharp(resolvedLogo)
       .resize(maxLogoWidth, maxLogoHeight, { fit: 'inside', withoutEnlargement: true })
@@ -231,8 +225,8 @@ async function addLogoToImage(
     const logoMeta = await sharp(logo).metadata();
     const logoW = logoMeta.width ?? maxLogoWidth;
     const logoH = logoMeta.height ?? maxLogoHeight;
-    const left = Math.round((width - logoW) / 2);
-    const top = height - logoH - padding;
+    const left = width - logoW - padding;
+    const top = padding;
 
     return await sharp(imageBuffer)
       .composite([
@@ -245,7 +239,7 @@ async function addLogoToImage(
       .jpeg({ quality: 95 })
       .toBuffer();
   } catch (error) {
-    console.warn('⚠️ Failed to add logo:', error);
+    devWarn('[API] Failed to add logo', publicErrorMessage(error, 'logo overlay failed'));
     return imageBuffer;
   }
 }
@@ -255,7 +249,7 @@ export async function POST(request: NextRequest) {
   if (!auth.authorized) return auth.response;
 
   try {
-    console.log('🔗 [API] /api/composit-image called');
+    devLog('[API] /api/composit-image called');
 
     const appConfig = resolveAppConfig();
     const branding = appConfig.branding;
@@ -266,27 +260,24 @@ export async function POST(request: NextRequest) {
     };
 
     const body = await request.json();
-    console.log('📥 [API] Body keys:', Object.keys(body));
-
     const { photo, backgroundDescription, prompt } = body;
 
-    console.log('✅ [API] Photo:', photo ? `${photo.substring(0, 50)}...` : 'MISSING');
-    console.log('✅ [API] Prompt:', prompt || 'MISSING');
-    console.log('✅ [API] Background:', backgroundDescription || 'NONE');
+    devLog('[API] Request received', {
+      hasPhoto: Boolean(photo),
+      hasPrompt: Boolean(prompt),
+      hasBackground: Boolean(backgroundDescription),
+    });
 
     if (!photo || !prompt) {
-      console.error('❌ [API] Missing required fields');
       return NextResponse.json(
         { success: false, error: 'Missing required fields: photo and prompt' },
         { status: 400 }
       );
     }
 
-    // Sanitize prompt
-    console.log('🛡️ [API] Sanitizing prompt...');
     const sanitizationResult = sanitizePrompt(prompt, backgroundDescription);
     if (!sanitizationResult.isValid) {
-      console.warn('❌ [API] Prompt validation failed:', sanitizationResult.reason);
+      devWarn('[API] Prompt validation failed', sanitizationResult.reason);
       return NextResponse.json(
         { success: false, error: `Prompt validation failed: ${sanitizationResult.reason}` },
         { status: 400 }
@@ -300,10 +291,9 @@ export async function POST(request: NextRequest) {
         ? photo.split(',')[1]
         : photo;
 
-    console.log('📐 [API] Preparing portrait 2:3 input for Gemini...');
     const portraitInputBase64 = await preparePortraitInputForGeneration(photoBase64);
 
-    console.log('⚙️ [API] Processing with Gemini...');
+    devLog('[API] Processing with Gemini');
     const compositedBase64 = await processWithGemini(
       portraitInputBase64,
       finalPrompt,
@@ -312,11 +302,9 @@ export async function POST(request: NextRequest) {
       ctx
     );
 
-    // Convert base64 to buffer, add logo, then normalize for SELPHY portrait print
-    console.log('🎨 [API] Adding logo overlay...');
     const imageBuffer = Buffer.from(compositedBase64, 'base64');
     const imageWithLogo = await addLogoToImage(imageBuffer, ctx.logoPath);
-    console.log('📐 [API] Normalizing for portrait print (100×148 mm @ 300 dpi)...');
+    devLog('[API] Normalizing for portrait print');
     const printReady = await normalizeImageForPrintPortrait(imageWithLogo);
     const finalBase64WithLogo = printReady.toString('base64');
 
@@ -325,7 +313,7 @@ export async function POST(request: NextRequest) {
       ? finalBase64WithLogo
       : `data:image/jpeg;base64,${finalBase64WithLogo}`;
 
-    console.log('✅ [API] Processing complete! Response size:', finalBase64.length);
+    devLog('[API] Processing complete');
 
     return NextResponse.json({
       success: true,
@@ -335,14 +323,11 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('❌ Error in composit-image:', error);
-
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    devWarn('[API] composit-image failed', publicErrorMessage(error, 'unknown error'));
     return NextResponse.json(
       {
         success: false,
-        error: `Failed to process image: ${errorMessage}`,
-        details: process.env.NODE_ENV === 'development' ? error : undefined,
+        error: `Failed to process image: ${publicErrorMessage(error, 'Processing failed')}`,
       },
       { status: 500 }
     );

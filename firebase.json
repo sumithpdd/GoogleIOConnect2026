@@ -12,7 +12,7 @@
     }
   ],
   "hosting": {
-    "site": "copenhagen-silver",
+    "site": "ioconnect2026",
     "public": "out",
     "ignore": [
       "firebase.json",

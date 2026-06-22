@@ -8,7 +8,7 @@ import { usePhotoBoothStore } from '@/store/photo-booth';
 import {
   pickFactsForSession,
   celebrationTaglines,
-} from '@/data/sitecore-facts';
+} from '@/data/io-connect-facts';
 import { BRAND, BRAND_ASSETS } from '@/lib/branding';
 import { downloadImage, printPhoto } from '@/lib/photo-actions';
 
@@ -53,45 +53,42 @@ export default function SummaryPage() {
     <BoothLayout>
       <div className="px-4 py-10 max-w-3xl mx-auto space-y-8 animate-fade-in">
         <div className="text-center space-y-4">
-          <h1 className="text-3xl md:text-4xl font-bold silver-shimmer">
-            Your Silver Keepsake
+          <h1 className="text-3xl md:text-4xl font-bold landing-gradient-text">
+            Your I/O Connect Keepsake
           </h1>
-          <p className="text-silver-300 text-lg max-w-xl mx-auto">{tagline}</p>
+          <p className="text-io-muted text-lg max-w-xl mx-auto">{tagline}</p>
           {photoCode && (
-            <p className="text-sm text-silver-500 uppercase tracking-widest">
+            <p className="text-sm text-io-subtle uppercase tracking-widest">
               Photo code · {photoCode}
             </p>
           )}
         </div>
 
-        {/* Guest of honor */}
-        <section className="brand-card p-6 md:p-8 space-y-4">
-          <h2 className="text-xl font-bold text-silver-200 border-b border-white/10 pb-3">
+        <section className="wizard-card p-6 md:p-8 space-y-4">
+          <h2 className="text-xl font-bold text-io-muted border-b border-io-border pb-3">
             Celebrating
           </h2>
           <div className="grid md:grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-silver-500 uppercase text-xs tracking-wide">Name</p>
-              <p className="text-xl font-bold text-white">{session.userName}</p>
+              <p className="text-io-subtle uppercase text-xs tracking-wide">Name</p>
+              <p className="text-xl font-bold">{session.userName}</p>
             </div>
             {session.userEmail && (
               <div>
-                <p className="text-silver-500 uppercase text-xs tracking-wide">Email</p>
-                <p className="text-silver-200">{session.userEmail}</p>
+                <p className="text-io-subtle uppercase text-xs tracking-wide">Email</p>
+                <p className="text-io-muted">{session.userEmail}</p>
               </div>
             )}
             {selectedBackground && (
               <div>
-                <p className="text-silver-500 uppercase text-xs tracking-wide">Background</p>
-                <p className="text-silver-200">{selectedBackground.name}</p>
+                <p className="text-io-subtle uppercase text-xs tracking-wide">Scene</p>
+                <p className="text-io-muted">{selectedBackground.name}</p>
               </div>
             )}
             {selectedPrompt && (
               <div>
-                <p className="text-silver-500 uppercase text-xs tracking-wide">
-                  Transformation
-                </p>
-                <p className="text-silver-200">{selectedPrompt.title}</p>
+                <p className="text-io-subtle uppercase text-xs tracking-wide">Magic</p>
+                <p className="text-io-muted">{selectedPrompt.title}</p>
               </div>
             )}
           </div>
@@ -99,43 +96,38 @@ export default function SummaryPage() {
           <div className="grid gap-4 md:grid-cols-2 pt-2">
             {capturedPhoto && compositedPhotoUrl && capturedPhoto !== compositedPhotoUrl && (
               <div>
-                <p className="text-xs text-silver-500 mb-2 uppercase tracking-wide">
-                  Original
-                </p>
+                <p className="text-xs text-io-subtle mb-2 uppercase tracking-wide">Original</p>
                 <img
                   src={capturedPhoto}
                   alt="Original"
-                  className="w-full rounded-lg border border-white/20 max-h-56 object-contain bg-black"
+                  className="w-full rounded-lg border border-io-border max-h-56 object-contain bg-black"
                 />
               </div>
             )}
             <div className={capturedPhoto && compositedPhotoUrl ? '' : 'md:col-span-2'}>
-              <p className="text-xs text-silver-500 mb-2 uppercase tracking-wide">
-                AI Enhanced
-              </p>
+              <p className="text-xs text-io-subtle mb-2 uppercase tracking-wide">AI Enhanced</p>
               <img
                 src={composited}
                 alt="Your creation"
-                className="w-full rounded-lg border-2 border-silver-400/50 max-h-56 object-contain bg-black"
+                className="w-full rounded-lg border-2 border-google-yellow/50 max-h-56 object-contain bg-black"
               />
             </div>
           </div>
         </section>
 
-        {/* 25 years timeline */}
-        <section className="brand-card p-6 md:p-8 space-y-6">
+        <section className="wizard-card p-6 md:p-8 space-y-6">
           <div className="flex items-center gap-4">
-            <div
-              className="hidden sm:block w-24 h-16 shrink-0 rounded opacity-60 bg-cover bg-center"
-              style={{ backgroundImage: `url('${BRAND_ASSETS.tivoliCopenhagen}')` }}
-              aria-hidden
+            <img
+              src={BRAND_ASSETS.helloBerlin}
+              alt=""
+              className="hidden sm:block w-24 h-auto shrink-0 rounded opacity-90"
             />
             <div>
-              <h2 className="text-xl font-bold text-silver-200">
-                25 Years of Sitecore
+              <h2 className="text-xl font-bold text-io-muted">
+                Google I/O Connect Berlin 2026
               </h2>
-              <p className="text-silver-400 text-sm mt-1">
-                Milestones from our journey — curated for your celebration card
+              <p className="text-io-subtle text-sm mt-1">
+                Highlights from the developer conference — curated for your keepsake
               </p>
             </div>
           </div>
@@ -144,67 +136,64 @@ export default function SummaryPage() {
             {facts.map((m) => (
               <li
                 key={`${m.year}-${m.title}`}
-                className="flex gap-4 border-l-2 border-accent-muted/50 pl-4 py-1"
+                className="flex gap-4 border-l-2 border-google-blue/50 pl-4 py-1"
               >
-                <span className="milestone-year text-2xl font-bold shrink-0 w-16">
+                <span className="text-2xl font-bold shrink-0 w-16 text-google-yellow">
                   {m.year}
                 </span>
                 <div>
-                  <p className="font-bold text-white">{m.title}</p>
-                  <p className="text-silver-400 text-sm mt-0.5">{m.fact}</p>
+                  <p className="font-bold">{m.title}</p>
+                  <p className="text-io-muted text-sm mt-0.5">{m.fact}</p>
                 </div>
               </li>
             ))}
           </ul>
         </section>
 
-        {/* Digital Swag — email signature strip */}
-        <section className="brand-card overflow-hidden">
+        <section className="wizard-card overflow-hidden">
           <img
-            src={BRAND_ASSETS.outlookEmailSignature}
-            alt="Sitecore Silver — 25 years"
-            className="w-full h-auto object-cover opacity-95"
+            src={BRAND_ASSETS.gdgLondonLogo}
+            alt="GDG London · Berlin 2026"
+            className="w-full h-auto object-contain p-8 bg-black/40"
           />
-          <p className="text-center text-xs text-silver-500 py-3 px-4">
-            Official Sitecore Silver digital swag · Corporate Comms
+          <p className="text-center text-xs text-io-subtle py-3 px-4">
+            GDG London · Google I/O Connect Berlin 2026
           </p>
         </section>
 
-        {/* Event CTA */}
-        <section className="brand-card p-6 text-center space-y-4">
-          <p className="text-silver-300">
-            Join us at {BRAND.eventLocation} on {BRAND.eventDate} for the official{' '}
-            {BRAND.eventTitle}.
+        <section className="wizard-card p-6 text-center space-y-4">
+          <p className="text-io-muted">
+            Join us in {BRAND.eventLocation} for {BRAND.eventSubtitle} — {BRAND.eventTagline}.
           </p>
           <a
             href={BRAND.eventUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-sitecore-red inline-block"
+            className="landing-cta-btn inline-block"
           >
-            Learn about the celebration →
+            View official event page →
           </a>
         </section>
 
         <div className="flex flex-wrap gap-3 justify-center pb-8">
           <button
             type="button"
-            className="btn-silver"
+            className="wizard-primary-btn"
             onClick={() =>
-              downloadImage(composited, `sitecore-silver-keepsake-${photoCode ?? 'photo'}.jpg`)
+              downloadImage(composited, `io-connect-keepsake-${photoCode ?? 'photo'}.jpg`)
             }
           >
             ⬇️ Download keepsake
           </button>
-          <button type="button" className="btn-silver-outline" onClick={handlePrintKeepsake}>
+          <button type="button" className="wizard-secondary-btn" onClick={handlePrintKeepsake}>
             🖨️ Print
           </button>
-          <Link href="/gallery" className="btn-silver-outline">
+          <Link href="/gallery" className="wizard-secondary-btn text-center">
             🖼️ Gallery
           </Link>
           <button
             type="button"
-            className="btn-silver-outline"
+            className="wizard-secondary-btn"
             onClick={() => {
               resetSession();
               router.push('/input');

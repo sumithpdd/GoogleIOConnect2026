@@ -16,11 +16,12 @@ const config: Config = {
           green: '#34A853',
         },
         io: {
-          bg: '#000000',
-          surface: 'rgba(255, 255, 255, 0.06)',
-          muted: 'rgba(255, 255, 255, 0.65)',
-          subtle: 'rgba(255, 255, 255, 0.45)',
-          border: 'rgba(255, 255, 255, 0.12)',
+          bg: 'var(--io-bg)',
+          surface: 'var(--io-surface)',
+          text: 'var(--io-text)',
+          muted: 'var(--io-text-muted)',
+          subtle: 'var(--io-text-subtle)',
+          border: 'var(--io-border)',
         },
       },
       fontFamily: {
@@ -31,9 +32,15 @@ const config: Config = {
         pill: '9999px',
       },
       animation: {
-        'fade-in': 'fadeIn 0.3s ease-in',
-        'slide-up': 'slideUp 0.4s ease-out',
+        'fade-in': 'fadeIn 0.45s ease-out forwards',
+        'slide-up': 'slideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+        'slide-down': 'slideDown 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+        'scale-in': 'scaleIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+        'bounce-in': 'bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
         float: 'photoFloat 6s ease-in-out infinite',
+        shimmer: 'shimmer 2.5s ease-in-out infinite',
+        'pulse-soft': 'pulseSoft 2.5s ease-in-out infinite',
+        wiggle: 'wiggle 0.5s ease-in-out',
       },
       keyframes: {
         fadeIn: {
@@ -41,8 +48,34 @@ const config: Config = {
           '100%': { opacity: '1' },
         },
         slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '0%': { opacity: '0', transform: 'translateY(24px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideDown: {
+          '0%': { opacity: '0', transform: 'translateY(-16px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        scaleIn: {
+          '0%': { opacity: '0', transform: 'scale(0.92)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        bounceIn: {
+          '0%': { opacity: '0', transform: 'scale(0.85)' },
+          '60%': { opacity: '1', transform: 'scale(1.03)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '200% center' },
+          '100%': { backgroundPosition: '-200% center' },
+        },
+        pulseSoft: {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.85', transform: 'scale(1.02)' },
+        },
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(0deg)' },
+          '25%': { transform: 'rotate(-4deg)' },
+          '75%': { transform: 'rotate(4deg)' },
         },
       },
     },

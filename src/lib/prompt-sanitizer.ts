@@ -2,18 +2,7 @@
  * Prompt sanitization before Gemini image generation.
  */
 
-import {
-  DISALLOWED_YEAR_PATTERN,
-  LOGO_MANIPULATION_PATTERNS,
-  OFF_THEME_LOCATION_PATTERNS,
-  SITECORE_EVENT_YEAR,
-  SITECORE_IMAGE_BRAND_RULES,
-} from '@/lib/sitecore-brand';
 import { IO_CONNECT_IMAGE_RULES } from '@/lib/io-connect-brand';
-
-function isIoConnectPreset(): boolean {
-  return process.env.APP_PRESET === 'io-connect-2026';
-}
 
 interface SanitizationResult {
   isValid: boolean;
@@ -33,6 +22,21 @@ const BLOCKED_KEYWORDS = [
   'drug', 'cocaine', 'heroin', 'meth', 'marijuana', 'weed', 'smoking',
   'drunk', 'alcohol',
   'disturbing', 'horror', 'scary', 'creepy', 'inappropriate', 'offensive',
+];
+
+const LOGO_MANIPULATION_PATTERNS = [
+  /fake\s+logo/i,
+  /different\s+logo/i,
+  /replace\s+(the\s+)?logo/i,
+  /change\s+(the\s+)?logo/i,
+  /alter\s+(the\s+)?logo/i,
+  /wrong\s+logo/i,
+  /competitor\s+logo/i,
+  /draw\s+(a\s+)?(new\s+)?logo/i,
+  /remove\s+(the\s+)?logo/i,
+  /redesign\s+(the\s+)?logo/i,
+  /add\s+(a\s+)?(fake|custom|new)\s+logo/i,
+  /create\s+(a\s+)?(fake|custom|new)\s+logo/i,
 ];
 
 /** Block logo-change requests, not guardrails like "do not change the logo". */
@@ -97,30 +101,11 @@ export function sanitizePrompt(
     }
   }
 
-  if (!isIoConnectPreset() && containsLogoManipulationIntent(prompt)) {
+  if (containsLogoManipulationIntent(prompt)) {
     return {
       isValid: false,
-      reason: 'Prompt cannot modify or replace the official Sitecore logo',
+      reason: 'Prompt cannot modify or replace brand logos',
     };
-  }
-
-  if (!isIoConnectPreset()) {
-    for (const pattern of OFF_THEME_LOCATION_PATTERNS) {
-      if (pattern.test(prompt)) {
-        return {
-          isValid: false,
-          reason: 'Keep themes in Copenhagen, Denmark for the Silver Celebration',
-        };
-      }
-    }
-
-    const disallowedYears = [...prompt.matchAll(DISALLOWED_YEAR_PATTERN)].map((m) => m[0]);
-    if (disallowedYears.length > 0) {
-      return {
-        isValid: false,
-        reason: `Use only ${SITECORE_EVENT_YEAR} for calendar years in prompts (found: ${disallowedYears.join(', ')})`,
-      };
-    }
   }
 
   let sanitizedPrompt = prompt
@@ -140,8 +125,7 @@ export function sanitizePrompt(
 
 /** Full prompt sent to Gemini (user text + mandatory brand rules). */
 export function buildGeminiUserPrompt(sanitizedUserPrompt: string): string {
-  const rules = isIoConnectPreset() ? IO_CONNECT_IMAGE_RULES : SITECORE_IMAGE_BRAND_RULES;
-  return `${sanitizedUserPrompt.trim()}\n\n${rules}`;
+  return `${sanitizedUserPrompt.trim()}\n\n${IO_CONNECT_IMAGE_RULES}`;
 }
 
 export function isPromptSafe(prompt: string): boolean {
@@ -150,8 +134,8 @@ export function isPromptSafe(prompt: string): boolean {
 
 export function getSafeDefaultPrompt(backgroundDescription?: string): string {
   return buildGeminiUserPrompt(
-    `Sitecore Silver 25-year anniversary portrait in Copenhagen, Denmark (${SITECORE_EVENT_YEAR}) — celebration at Tivoli${
+    `Google I/O Connect Berlin 2026 portrait — GDG London community at the developer conference in Berlin${
       backgroundDescription ? `, ${backgroundDescription}` : ''
-    }. Elegant Nordic silver event lighting. Preserve the Sitecore logo exactly as in the source photo. No calendar years other than ${SITECORE_EVENT_YEAR}. Maintain a natural, recognizable likeness.`
+    }. Black background aesthetic with luminous Google gradient accents. Maintain a natural, recognizable likeness.`
   );
 }

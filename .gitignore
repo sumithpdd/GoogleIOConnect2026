@@ -30,7 +30,6 @@ dist/
 
 # Firebase & service account keys (NEVER COMMIT)
 *-firebase-adminsdk-*.json
-ioconnect2026-firebase-adminsdk-*.json
 **/firebase-adminsdk*.json
 serviceAccountKey.json
 firebase-key.json

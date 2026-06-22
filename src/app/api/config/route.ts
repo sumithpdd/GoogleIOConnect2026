@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { resolveAppConfig } from '@/lib/core/app-config';
 import { isLinkedInConfigured } from '@/lib/linkedin/auth';
-import { getSitecoreBrandRules } from '@/lib/sitecore/brand-rules';
+import { resolveSocialPostCopy } from '@/lib/linkedin/social-post-copy';
 
 /**
  * GET /api/config
@@ -11,15 +11,9 @@ export async function GET() {
   try {
     const config = resolveAppConfig();
 
-    if (config.brandRules.enabled) {
-      const rules = getSitecoreBrandRules();
-      config.brandRules = { ...config.brandRules, ...rules };
-    }
-
     return NextResponse.json({
       success: true,
       data: {
-        mode: config.mode,
         branding: config.branding,
         features: {
           ...config.features,
@@ -30,8 +24,10 @@ export async function GET() {
         },
         backgrounds: config.backgrounds,
         prompts: config.prompts,
-        // Do not expose full brand rules to client — server-only for Gemini
         brandRulesEnabled: config.brandRules.enabled,
+        socialShare: {
+          hashtagHint: resolveSocialPostCopy().hashtagHint,
+        },
       },
     });
   } catch (error) {

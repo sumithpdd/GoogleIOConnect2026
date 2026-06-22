@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { PhotoPreviewModal, PhotoPreviewData } from '@/components/photo-booth/PhotoPreviewModal';
+import { PageMotion, StaggerGrid } from '@/components/io-connect/PageMotion';
 import { WizardLayout } from '@/components/io-connect/WizardLayout';
 import { backgrounds } from '@/data/backgrounds';
 import { GDPR_FOOTER } from '@/lib/gdpr';
@@ -20,7 +21,6 @@ interface GalleryPhoto {
 
 const GALLERY_FILTERS = [
   { id: 'all', label: 'All' },
-  { id: 'celebration', label: 'London' },
   { id: 'innovation', label: 'Berlin' },
   { id: 'heritage', label: 'I/O Connect' },
 ] as const;
@@ -106,10 +106,10 @@ export default function GalleryPage() {
       wide
       hideProgress
     >
-      <div className="w-full space-y-8 animate-fade-in">
-        <div className="text-center space-y-2">
-          <h2 className="wizard-title">Community Gallery</h2>
-          <p className="wizard-subtitle">
+      <PageMotion className="w-full space-y-8" stagger>
+        <div className="text-center space-y-2 io-heading-block">
+          <h2 className="wizard-title io-heading-block__title">Community Gallery</h2>
+          <p className="wizard-subtitle io-heading-block__subtitle">
             Tap a photo to view full size, download, or print
           </p>
         </div>
@@ -164,7 +164,7 @@ export default function GalleryPage() {
         )}
 
         {!loading && filteredPhotos.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <StaggerGrid className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredPhotos.map((photo) => {
               const sceneName =
                 backgrounds.find((b) => b.id === photo.backgroundId)?.name ??
@@ -195,7 +195,7 @@ export default function GalleryPage() {
                 </button>
               );
             })}
-          </div>
+          </StaggerGrid>
         ) : (
           !loading &&
           !error && (
@@ -220,7 +220,7 @@ export default function GalleryPage() {
             </Link>
           </p>
         </div>
-      </div>
+      </PageMotion>
 
       <PhotoPreviewModal photo={previewPhoto} onClose={() => setPreviewPhoto(null)} />
     </WizardLayout>

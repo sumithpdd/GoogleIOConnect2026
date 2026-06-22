@@ -1,6 +1,6 @@
 # API Security
 
-All sensitive operations run through **Next.js API routes**. Client components never call Gemini, Firebase Admin, or Sitecore Authoring APIs directly.
+All sensitive operations run through **Next.js API routes**. Client components never call Gemini or Firebase Admin directly.
 
 ---
 
@@ -12,7 +12,6 @@ All sensitive operations run through **Next.js API routes**. Client components n
 |----------|---------|
 | `GOOGLE_GEMINI_API_KEY` | `/api/composit-image` |
 | `FIREBASE_PRIVATE_KEY` / `FIREBASE_SERVICE_ACCOUNT_KEY` | `/api/upload-photo`, `/api/gallery`, `/api/admin/*` |
-| `SITECORE_CLIENT_ID` / `SITECORE_CLIENT_SECRET` | Sitecore Authoring GraphQL (optional) |
 | `ADMIN_SECRET` | `/api/admin/login` |
 | `API_SECRET` | Session signing for mutating routes |
 
@@ -33,7 +32,6 @@ Firebase web config only — used if client SDK is enabled. The current booth fl
 | `/api/gallery` | GET | Public |
 | `/api/admin/login` | POST | Password → httpOnly cookie |
 | `/api/admin/photos` | GET/PATCH/DELETE | Admin cookie |
-| `/api/sitecore/status` | GET | Public (boolean flags only) |
 
 ---
 
@@ -58,27 +56,21 @@ When `API_SECRET` is **not** set (event kiosk / local dev), mutating routes are 
 
 | Variable | Purpose |
 |----------|---------|
-| `ADMIN_SECRET` | Staff password; also stored in httpOnly cookie after login |
+| `ADMIN_SECRET` | Staff password; login issues an HMAC-signed httpOnly cookie (`io_admin_session`), not the raw secret |
 | `NEXT_PUBLIC_ENABLE_ADMIN=true` | Shows Admin footer link on booth pages |
 
-Login: `POST /api/admin/login` with `{ "password": "<ADMIN_SECRET>" }`. Session cookie lasts 8 hours.
+Login: `POST /api/admin/login` with `{ "password": "<ADMIN_SECRET>" }`. Response sets signed session cookie (8 hours). Bearer header accepts raw secret or signed token for scripts.
 
 ---
 
-## Marketplace iframe trust model
+## Standalone deploy (Vercel / kiosk)
 
-When embedded in Sitecore Marketplace:
+The booth runs as a **standalone** Next.js app — deployed to Vercel for the event or served locally on a kiosk browser.
 
-- The app loads only from the registered deployment URL.
-- Same-origin `fetch` to `/api/*` is trusted.
-- SDK context (`application.context`) is provided by the parent window via `postMessage`.
-- Sitecore OAuth credentials stay on the server.
-
-For additional hardening beyond this baseline:
-
-- Set `API_SECRET` on all production deployments.
-- Add rate limiting at the Vercel edge or API gateway.
-- Restrict Firebase Storage write rules to authenticated service account only.
+- Set `API_SECRET` on all public Vercel deployments.
+- Kiosk mode: omit `API_SECRET` only on a trusted local network if needed.
+- Add rate limiting at the Vercel edge or API gateway for high-traffic events.
+- Restrict Firebase Storage write rules to the service account path under `io-connect-2026/`.
 
 ---
 

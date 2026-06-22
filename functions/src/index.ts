@@ -98,7 +98,7 @@ export const processPhotoWithGemini = functions
 
       console.log("✅ Image processed by Gemini");
 
-      // Add Sitecore branding banner
+      // Add I/O Connect branding banner
       const imageBuffer = Buffer.from(base64Data, "base64");
       const withBanner = await addBranding(imageBuffer, customPrompt);
 
@@ -117,7 +117,7 @@ export const processPhotoWithGemini = functions
   });
 
 /**
- * Add Sitecore branding banner to image
+ * Add event branding banner to image (legacy Cloud Function path).
  */
 async function addBranding(imageBuffer: Buffer, prompt: string): Promise<Buffer> {
   try {
@@ -145,9 +145,9 @@ async function addBranding(imageBuffer: Buffer, prompt: string): Promise<Buffer>
                 </linearGradient>
               </defs>
               <rect width="${width}" height="140" fill="url(#bgGrad)"/>
-              <text x="30" y="60" font-family="Arial,sans-serif" font-size="36" font-weight="bold" fill="white">SITECORE SILVER</text>
-              <text x="30" y="90" font-family="Arial,sans-serif" font-size="14" fill="#C0C0C0">${promptText}</text>
-              <text x="30" y="120" font-family="Arial,sans-serif" font-size="12" fill="#A0A0A0">25 Years of Innovation • Copenhagen 2026</text>
+              <text x="30" y="60" font-family="Arial,sans-serif" font-size="36" font-weight="bold" fill="white">I/O CONNECT</text>
+              <text x="30" y="90" font-family="Arial,sans-serif" font-size="14" fill="#FBBC04">${promptText}</text>
+              <text x="30" y="120" font-family="Arial,sans-serif" font-size="12" fill="#A0A0A0">Google I/O Connect Berlin 2026 · GDG London</text>
             </svg>
           `),
           top: height - 140,

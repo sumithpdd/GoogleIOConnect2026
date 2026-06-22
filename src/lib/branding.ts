@@ -1,42 +1,30 @@
 /**
- * Legacy branding exports — used by Sitecore-specific components.
+ * Event branding exports — Google I/O Connect Berlin 2026.
  * Prefer useAppConfig() in client components and resolveAppConfig() on the server.
- * Set APP_PRESET=sitecore-silver in .env.local for the Copenhagen event defaults.
  */
 
-import { SITECORE_OFFICIAL } from '@/lib/sitecore-brand';
+import { IO_CONNECT_ASSETS, IO_CONNECT_EVENT } from '@/lib/io-connect-brand';
 
 export const BRAND = {
-  eventTitle: 'Sitecore Silver Celebration',
-  eventSubtitle: '25 Years of Innovation',
-  eventTagline: 'Copenhagen · Tivoli · June 11, 2026',
-  eventLocation: 'Tivoli, Copenhagen',
-  eventDate: 'June 11, 2026',
-  eventUrl: SITECORE_OFFICIAL.eventPageUrl,
+  eventTitle: IO_CONNECT_EVENT.title,
+  eventSubtitle: IO_CONNECT_EVENT.subtitle,
+  eventTagline: IO_CONNECT_EVENT.tagline,
+  eventLocation: IO_CONNECT_EVENT.location,
+  eventDate: IO_CONNECT_EVENT.date,
+  eventUrl: IO_CONNECT_EVENT.url,
 } as const;
 
-/** Brand assets — prefer local copies; Content Hub URLs for reference / download */
+/** Brand assets for I/O Connect Berlin 2026 booth */
 export const BRAND_ASSETS = {
-  /** Official Silver logo — sole header / watermark asset */
-  logo: SITECORE_OFFICIAL.logoLocal,
-  logoRemote: SITECORE_OFFICIAL.logoContentHub,
-
-  /** Official page backdrop (curtain texture) */
-  pageBackdrop: SITECORE_OFFICIAL.backdropLocal,
-  pageBackdropRemote: SITECORE_OFFICIAL.backdropContentHub,
-
-  curtainTexture: SITECORE_OFFICIAL.backdropLocal,
-  tivoliCopenhagen: '/branding/tivoli-copenhagen.jpg',
-
-  desktopBackdrop: '/branding/desktop-backdrop.jpg',
-  desktopBackdropV2: '/branding/desktop-backdrop-v2.jpg',
-  desktopBackdropV3: '/branding/desktop-backdrop-v3.jpg',
-
-  linkedinCoverV1: '/branding/linkedin-cover-v1.jpg',
-  linkedinCoverV2: '/branding/linkedin-cover-v2.jpg',
-  outlookEmailSignature: '/branding/outlook-email-signature.jpg',
-  profileBadge: '/branding/profile-badge-400.jpg',
-  logoLegacy: '/logo.jpg',
+  mainLogo: IO_CONNECT_ASSETS.mainLogo,
+  heroLogo: IO_CONNECT_ASSETS.heroLogo,
+  helloBerlin: IO_CONNECT_ASSETS.helloBerlin,
+  gdgLondonLogo: IO_CONNECT_ASSETS.gdgLondonLogo,
+  photoWatermarkLogo: IO_CONNECT_ASSETS.photoWatermarkLogo,
+  pageBackdrop: IO_CONNECT_ASSETS.pageBackdrop,
+  berlinBanner: IO_CONNECT_ASSETS.berlinBanner,
+  ioMark: IO_CONNECT_ASSETS.ioMark,
+  samplePhotos: IO_CONNECT_ASSETS.samplePhotos,
 } as const;
 
 export type BrandAssetKey = keyof typeof BRAND_ASSETS;

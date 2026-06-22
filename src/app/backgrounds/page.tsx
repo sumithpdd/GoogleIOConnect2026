@@ -4,11 +4,11 @@ import { useRouter } from 'next/navigation';
 import { usePhotoBoothStore } from '@/store/photo-booth';
 import { BACKGROUND_FILTERS, filterBackgrounds } from '@/data/backgrounds';
 import { useEffect, useMemo, useState } from 'react';
+import { HeadingMotion, PageMotion, StaggerGrid } from '@/components/io-connect/PageMotion';
 import { WizardLayout } from '@/components/io-connect/WizardLayout';
 import type { Background } from '@/types';
 
 const CITY_BADGE_CLASS: Record<string, string> = {
-  London: 'scene-card__city--london',
   Berlin: 'scene-card__city--berlin',
   'I/O Connect': 'scene-card__city--connect',
 };
@@ -50,17 +50,15 @@ export default function BackgroundsPage() {
 
   return (
     <WizardLayout step={3} totalSteps={5} backHref="/camera" title="Choose Background" wide>
-      <div className="backgrounds-page w-full space-y-8 animate-fade-in">
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <p className="backgrounds-page__eyebrow">Step 3 · Pick your scene</p>
-          <h2 className="wizard-title">London, Berlin & I/O Connect</h2>
-          <p className="wizard-subtitle">
-            Berlin landmarks, Buddy Bears & Kreuzberg street art — or pure I/O Connect
-            studio art for your Gemini portrait
-          </p>
-        </div>
+      <PageMotion className="backgrounds-page w-full space-y-8" stagger>
+        <HeadingMotion
+          className="space-y-3 max-w-2xl mx-auto"
+          eyebrow={<p className="backgrounds-page__eyebrow">Step 3 · Pick your scene</p>}
+          title="Berlin & I/O Connect"
+          subtitle="Berlin landmarks, Buddy Bears, Kreuzberg street art — or pure I/O Connect Berlin studio art for your Gemini portrait"
+        />
 
-        <div className="flex flex-wrap justify-center gap-2.5">
+        <div className="flex flex-wrap justify-center gap-2.5 io-stagger-block">
           {BACKGROUND_FILTERS.map(({ id, label }) => (
             <button
               key={id}
@@ -75,7 +73,7 @@ export default function BackgroundsPage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {visibleBackgrounds.map((scene) => {
             const isSelected = pending?.id === scene.id;
             const cityClass = scene.city ? CITY_BADGE_CLASS[scene.city] : '';
@@ -128,10 +126,10 @@ export default function BackgroundsPage() {
               </button>
             );
           })}
-        </div>
+        </StaggerGrid>
 
         {pending && (
-          <div className="io-gradient-rim io-gradient-rim--active max-w-lg mx-auto">
+          <div className="io-gradient-rim io-gradient-rim--active max-w-lg mx-auto animate-scale-in">
             <div className="io-gradient-rim__inner io-gradient-rim__body">
               <p className="io-inset-panel__label">Your pick</p>
               <p className="io-card-heading">{pending.name}</p>
@@ -152,7 +150,7 @@ export default function BackgroundsPage() {
             Continue to Magic ✨
           </button>
         </div>
-      </div>
+      </PageMotion>
     </WizardLayout>
   );
 }

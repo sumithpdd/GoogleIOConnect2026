@@ -1,5 +1,5 @@
 /**
- * Background scenes — Google I/O Connect London & Berlin 2026
+ * Background scenes — Google I/O Connect Berlin 2026 (GDG London community)
  */
 
 import { Background } from '@/types';
@@ -8,55 +8,7 @@ import { IO_CONNECT_ASSETS } from '@/lib/io-connect-brand';
 const P = IO_CONNECT_ASSETS.backgroundPreviews;
 
 export const backgrounds: Background[] = [
-  // ─── London ───────────────────────────────────────────────────────────────
-  {
-    id: 'london-tower-bridge',
-    name: 'Tower Bridge Sunrise',
-    description:
-      'Golden sunrise over the Thames with Tower Bridge, shimmering water reflections and soft morning mist — classic London skyline portrait backdrop',
-    imageUrl: P.londonTowerBridge,
-    category: 'celebration',
-    previewClass: 'bg-preview-london-warm',
-    city: 'London',
-    emoji: '🌉',
-    featured: true,
-  },
-  {
-    id: 'london-westminster',
-    name: 'Westminster & Big Ben',
-    description:
-      'Palace of Westminster and Big Ben at blue hour, Gothic architecture lit against a deep indigo London sky with gentle river glow',
-    imageUrl: P.londonWestminster,
-    category: 'celebration',
-    previewClass: 'bg-preview-london-blue',
-    city: 'London',
-    emoji: '🕰️',
-    featured: true,
-  },
-  {
-    id: 'london-skyline',
-    name: 'City Skyline',
-    description:
-      'Panoramic London cityscape — The Shard, Walkie Talkie and Thames bridges under dramatic clouds, modern GDG London energy',
-    imageUrl: P.londonSkyline,
-    category: 'celebration',
-    previewClass: 'bg-preview-london-skyline',
-    city: 'London',
-    emoji: '🏙️',
-  },
-  {
-    id: 'london-lights',
-    name: 'Piccadilly Nights',
-    description:
-      'Vibrant London night street — neon signs, red double-decker bus blur and wet pavement reflections, festive developer meetup atmosphere',
-    imageUrl: P.londonNight,
-    category: 'celebration',
-    previewClass: 'bg-preview-london-neon',
-    city: 'London',
-    emoji: '🚌',
-  },
-
-  // ─── Berlin ───────────────────────────────────────────────────────────────
+  // ─── Berlin landmarks & culture ───────────────────────────────────────────
   {
     id: 'berlin-brandenburg',
     name: 'Brandenburg Gate',
@@ -80,6 +32,17 @@ export const backgrounds: Background[] = [
     city: 'Berlin',
     emoji: '📡',
     featured: true,
+  },
+  {
+    id: 'berlin-tower-close',
+    name: 'TV Tower Close-Up',
+    description:
+      'The Fernsehturm sphere glowing against a deep Berlin night sky — iconic Mitte silhouette and European tech capital atmosphere',
+    imageUrl: P.berlinTower,
+    category: 'innovation',
+    previewClass: 'bg-preview-berlin-neon',
+    city: 'Berlin',
+    emoji: '🗼',
   },
   {
     id: 'berlin-reichstag',
@@ -139,6 +102,17 @@ export const backgrounds: Background[] = [
     featured: true,
   },
   {
+    id: 'berlin-night-skyline',
+    name: 'Berlin Night Skyline',
+    description:
+      'Panoramic Berlin after dark — city lights along the Spree, Fernsehturm glow and the energy of I/O Connect Berlin 2026',
+    imageUrl: P.berlinNight,
+    category: 'innovation',
+    previewClass: 'bg-preview-berlin-neon',
+    city: 'Berlin',
+    emoji: '🌃',
+  },
+  {
     id: 'berlin-hello-art',
     name: 'Hello Berlin Art',
     description:
@@ -148,9 +122,10 @@ export const backgrounds: Background[] = [
     previewClass: 'bg-preview-connect-official',
     city: 'Berlin',
     emoji: '👋',
+    featured: true,
   },
 
-  // ─── Google I/O Connect 2026 ──────────────────────────────────────────────
+  // ─── Google I/O Connect Berlin 2026 ───────────────────────────────────────
   {
     id: 'connect-braces',
     name: 'I/O Connect Berlin',
@@ -164,22 +139,22 @@ export const backgrounds: Background[] = [
     featured: true,
   },
   {
-    id: 'connect-two-cities',
-    name: 'London ↔ Berlin Connect',
+    id: 'connect-berlin-landmarks',
+    name: 'Berlin Landmarks Collage',
     description:
-      'Split portrait bridging both host cities — Thames-side London merging into Berlin landmarks with a luminous Google gradient connection',
-    imageUrl: IO_CONNECT_ASSETS.berlinBanner,
+      'Brandenburg Gate, Fernsehturm and Buddy Bears woven into one celebratory Berlin portrait — GDG London at I/O Connect Berlin 2026',
+    imageUrl: P.berlinNight,
     category: 'heritage',
     previewClass: 'bg-preview-connect-bridge',
     city: 'I/O Connect',
-    emoji: '🌍',
+    emoji: '🏙️',
     featured: true,
   },
   {
     id: 'connect-gdg-sticker',
     name: 'GDG London · Berlin 2026',
     description:
-      'Official GDG London sticker art — London and Berlin skyline in one badge (Tower Bridge, Big Ben, Brandenburg Gate, TV Tower, Berliner Dom) on a soft sunrise sky',
+      'Official GDG London community sticker — celebrating I/O Connect Berlin 2026 with Berlin landmarks on the badge',
     imageUrl: IO_CONNECT_ASSETS.gdgLondonLogo,
     category: 'heritage',
     previewClass: 'bg-preview-connect-sticker',
@@ -202,7 +177,7 @@ export const backgrounds: Background[] = [
     id: 'connect-gemini',
     name: 'Gemini Sparkle',
     description:
-      'Deep black studio with floating Gemini sparkle stars, multicolor gradient orbs and subtle AI photo-booth glow — I/O Connect 2026',
+      'Deep black studio with floating Gemini sparkle stars, multicolor gradient orbs and subtle AI photo-booth glow — I/O Connect Berlin 2026',
     imageUrl: IO_CONNECT_ASSETS.samplePhotos[0],
     category: 'heritage',
     previewClass: 'bg-preview-connect-gemini',
@@ -213,7 +188,6 @@ export const backgrounds: Background[] = [
 
 export const BACKGROUND_FILTERS = [
   { id: 'all', label: 'All' },
-  { id: 'celebration', label: 'London' },
   { id: 'innovation', label: 'Berlin' },
   { id: 'heritage', label: 'I/O Connect' },
 ] as const;

@@ -1,5 +1,5 @@
 ---
-description: Secrets, env vars, and git safety for this repo
+description: Secrets, env vars, logging, and git safety for this repo
 alwaysApply: true
 ---
 
@@ -7,15 +7,25 @@ alwaysApply: true
 
 **Never commit**: `.env.local`, `*firebase-adminsdk*.json`, `serviceAccountKey*.json`, real API keys, private keys.
 
-**Server-only env**: `GOOGLE_GEMINI_API_KEY`, `FIREBASE_PRIVATE_KEY`, `FIREBASE_CLIENT_EMAIL`.
+**Never log or return in API responses**: base64 photo payloads, env values, stack traces, raw `Error` objects, full user prompts with PII.
+
+**Server-only env**: `GOOGLE_GEMINI_API_KEY`, `FIREBASE_PRIVATE_KEY`, `FIREBASE_CLIENT_EMAIL`, `ADMIN_SECRET`, `API_SECRET`.
 
 **Public env** (`NEXT_PUBLIC_*`): Firebase web config only — still use env vars, not literals in source.
+
+**Admin auth**: `POST /api/admin/login` sets an **HMAC-signed session cookie** (`io_admin_session`) — never store raw `ADMIN_SECRET` in cookies.
+
+**Dev-only logging**: use `devLog` / `devWarn` from `src/lib/safe-log.ts` in API routes. User-facing errors: `publicErrorMessage()`.
 
 ```typescript
 // ✅
 const key = process.env.GOOGLE_GEMINI_API_KEY;
+devLog('[API] composit-image called', { hasPhoto: true });
 // ❌
 const key = "AIzaSy...";
+console.log(photo.substring(0, 50));
 ```
+
+**Cursor**: `.cursorignore` blocks local secret files from AI context. Do not read `.env.local` or `*firebase-adminsdk*.json` into chat.
 
 Before push: run `/safety-check`. Do not `git add -f` ignored env or service account files. See `docs/SECURITY.md`.

@@ -2,15 +2,14 @@
 
 This app stores generated photos in **Firebase Storage** and metadata in **Cloud Firestore**. Server-side API routes use the **Firebase Admin SDK**; the browser only needs the public web app config when client-side Firebase features are enabled.
 
-**Project:** [`ioconnect2026`](https://console.firebase.google.com/project/ioconnect2026)  
-**Web app nickname:** `GoogleIOConnect2026`
+Create a dedicated Firebase project for your event booth (e.g. `io-connect-2026-prod`). Do not commit real keys or project IDs to git — use `.env.local` locally and Vercel env vars in production.
 
 ---
 
 ## 1. Create or open the Firebase project
 
 1. Go to [Firebase Console](https://console.firebase.google.com).
-2. Open project **`ioconnect2026`** (or create it with that ID).
+2. Create a new project or open your existing booth project.
 3. Enable **Firestore** and **Storage** if prompted (Production mode is fine for an event booth).
 
 ---
@@ -18,13 +17,13 @@ This app stores generated photos in **Firebase Storage** and metadata in **Cloud
 ## 2. Register the web app
 
 1. In Project overview, click **Add app** → **Web** (`</>`).
-2. On **Add Firebase to your web app**, set the app nickname to **`GoogleIOConnect2026`**.
+2. Set an app nickname (e.g. `IO Connect Photo Booth`).
 3. Leave **Firebase Hosting** unchecked unless you plan to deploy static hosting from this repo (Vercel is the usual deploy target).
-4. Click **Register app**, then continue to **Add Firebase SDK** and copy the `firebaseConfig` values.
+4. Click **Register app**, then continue to **Add Firebase SDK** and copy the `firebaseConfig` values from the console.
 
-![Register web app with nickname GoogleIOConnect2026](./images/firebase-web-app-register.png)
+![Register web app](./images/firebase-web-app-register.png)
 
-Map those values into `.env.local`:
+Map those values into `.env.local` (copy from `.env.example`):
 
 | Firebase config field | Environment variable |
 |----------------------|----------------------|
@@ -36,42 +35,42 @@ Map those values into `.env.local`:
 | `appId` | `NEXT_PUBLIC_FIREBASE_APP_ID` |
 | `measurementId` (optional) | `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` |
 
-Example (replace with your console values):
+Example shape only — paste **your** values from the Firebase Console:
 
 ```env
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSy...
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=ioconnect2026.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=ioconnect2026
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=ioconnect2026.firebasestorage.app
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=667745049577
-NEXT_PUBLIC_FIREBASE_APP_ID=1:667745049577:web:e4972c5a5fd6ad04678978
-NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-T6NNHMY2JX
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project-id.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 ```
 
 ---
 
 ## 3. Create a service account (server upload & gallery)
 
-Gallery, upload, and admin routes run on the server and need Admin credentials **from the same project** (`ioconnect2026`).
+Gallery, upload, and admin routes run on the server and need Admin credentials **from the same Firebase project** as the client config above.
 
 1. Firebase Console → **Project settings** → **Service accounts**.
-2. Click **Generate new private key** (JSON download).
+2. Click **Generate new private key** (JSON download). Store the file outside git (see `.cursorignore`).
 3. Either paste the JSON as one line:
 
    ```env
-   FIREBASE_SERVICE_ACCOUNT_KEY={"type":"service_account","project_id":"ioconnect2026",...}
+   FIREBASE_SERVICE_ACCOUNT_KEY=
    ```
 
    Or set separate vars (common for local dev):
 
    ```env
-   FIREBASE_PROJECT_ID=ioconnect2026
-   FIREBASE_STORAGE_BUCKET=ioconnect2026.firebasestorage.app
-   FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@ioconnect2026.iam.gserviceaccount.com
-   FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+   FIREBASE_PROJECT_ID=your-project-id
+   FIREBASE_STORAGE_BUCKET=your-project-id.firebasestorage.app
+   FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project-id.iam.gserviceaccount.com
+   FIREBASE_PRIVATE_KEY=
    ```
 
-**Important:** `FIREBASE_CLIENT_EMAIL` must end with `@ioconnect2026.iam.gserviceaccount.com`. A key from another project (e.g. `copenhagesilver`) will fail uploads with permission errors.
+**Important:** `FIREBASE_CLIENT_EMAIL` must be from the **same** project as `NEXT_PUBLIC_FIREBASE_PROJECT_ID`. A service account key from another Firebase project will fail uploads with permission errors.
 
 ---
 
@@ -106,26 +105,24 @@ Copy from `.env.example`, then set at minimum:
 ```env
 APP_PRESET=io-connect-2026
 
-# Client Firebase config (step 2)
-NEXT_PUBLIC_FIREBASE_API_KEY=...
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=...
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=ioconnect2026
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=...
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
-NEXT_PUBLIC_FIREBASE_APP_ID=...
-NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=...
+# Client Firebase config (step 2) — from Firebase Console
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
 
-# Admin SDK (step 3) — must match ioconnect2026
-FIREBASE_PROJECT_ID=ioconnect2026
-FIREBASE_STORAGE_BUCKET=ioconnect2026.firebasestorage.app
-FIREBASE_CLIENT_EMAIL=firebase-adminsdk-...@ioconnect2026.iam.gserviceaccount.com
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+# Admin SDK (step 3) — same project as client config
+FIREBASE_PROJECT_ID=
+FIREBASE_STORAGE_BUCKET=
+FIREBASE_CLIENT_EMAIL=
+FIREBASE_PRIVATE_KEY=
 
-GOOGLE_GEMINI_API_KEY=...
-ADMIN_SECRET=choose-a-strong-password-for-event-staff
+GOOGLE_GEMINI_API_KEY=
+# ADMIN_SECRET=
 ```
-
-Sitecore variables (`SITECORE_*`, attendee sync) are **not** required for the I/O Connect preset.
 
 ---
 
@@ -139,7 +136,7 @@ npm run dev
 2. Open `/gallery` — your photo should appear.
 3. Open `/admin`, sign in with `ADMIN_SECRET`, and confirm moderation works.
 
-If gallery is empty or upload fails, check the terminal for Firebase errors and confirm all vars reference **`ioconnect2026`**, not a copied CopenhagenSilver project.
+If gallery is empty or upload fails, check the terminal for Firebase errors and confirm client and server env vars reference the **same** Firebase project.
 
 ---
 
@@ -150,7 +147,7 @@ Add the same variables in Vercel → **Settings → Environment Variables**. See
 For production, also set:
 
 ```env
-API_SECRET=long-random-string
+API_SECRET=
 NEXT_PUBLIC_APP_URL=https://your-deploy-domain.vercel.app
 ```
 

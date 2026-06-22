@@ -2,17 +2,17 @@
 
 import { useAppConfig } from '@/components/providers/app-config-provider';
 
-/** Configurable page backdrop texture. */
+/** Configurable page backdrop texture for secondary pages (admin, summary, privacy). */
 export function BoothBackdrop() {
   const { branding } = useAppConfig();
 
   return (
-    <div className="celebration-backdrop" aria-hidden>
+    <div className="booth-backdrop" aria-hidden>
       <div
-        className="celebration-backdrop__curtain"
+        className="booth-backdrop__texture"
         style={{ backgroundImage: `url('${branding.backdropPath}')` }}
       />
-      <div className="celebration-backdrop__vignette" />
+      <div className="booth-backdrop__vignette" />
     </div>
   );
 }

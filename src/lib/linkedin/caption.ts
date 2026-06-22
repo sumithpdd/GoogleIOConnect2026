@@ -1,10 +1,8 @@
 import { GoogleGenAI } from '@google/genai';
-import { LINKEDIN_HASHTAGS, LINKEDIN_MENTION } from '@/lib/linkedin/constants';
-
-const CAPTION_SYSTEM = `You write a short LinkedIn post (2-4 sentences, max 600 characters) for someone sharing their AI-enhanced photo from the Sitecore Silver 25-year anniversary celebration in Copenhagen.
-Tone: professional, enthusiastic, authentic first-person. Mention the event, innovation, community, or digital experience — not salesy.
-Do NOT include hashtags or @mentions — those are added automatically.
-Do not use quotation marks wrapping the whole post. Return only the post body text.`;
+import {
+  fallbackSocialCaption,
+  resolveSocialPostCopy,
+} from '@/lib/linkedin/social-post-copy';
 
 export interface LinkedInCaptionContext {
   userName: string;
@@ -17,13 +15,9 @@ export interface LinkedInCaptionContext {
   photoCode?: string;
 }
 
-function fallbackCaption(context: LinkedInCaptionContext): string {
-  const first = context.userName.split(' ')[0] || 'I';
-  return `${first} joined the Sitecore Silver Celebration in Copenhagen — 25 years of innovation, one unforgettable AI photo booth moment. Grateful to be part of this community as we shape the future of digital experience together.`;
-}
-
-/** Append required hashtags and @Sitecore mention. */
+/** Append required hashtags and mention for the active preset. */
 export function formatLinkedInPost(body: string): string {
+  const { hashtags, mention } = resolveSocialPostCopy();
   const cleaned = body
     .trim()
     .replace(/#\w+/g, '')
@@ -31,7 +25,7 @@ export function formatLinkedInPost(body: string): string {
     .replace(/\s+/g, ' ')
     .trim();
 
-  return `${cleaned}\n\n${LINKEDIN_HASHTAGS}\n\n${LINKEDIN_MENTION}`;
+  return `${cleaned}\n\n${hashtags}\n\n${mention}`;
 }
 
 export async function generateLinkedInCaption(
@@ -40,7 +34,7 @@ export async function generateLinkedInCaption(
   const apiKey = process.env.GOOGLE_GEMINI_API_KEY?.trim();
   const body = apiKey
     ? await generateWithGemini(apiKey, context)
-    : fallbackCaption(context);
+    : fallbackSocialCaption(context.userName);
 
   return formatLinkedInPost(body);
 }
@@ -49,6 +43,7 @@ async function generateWithGemini(
   apiKey: string,
   context: LinkedInCaptionContext
 ): Promise<string> {
+  const { captionSystem, eventPrompt } = resolveSocialPostCopy();
   const model = process.env.GEMINI_QUOTE_MODEL?.trim() || 'gemini-2.5-flash';
   const bits = [
     `Name: ${context.userName}`,
@@ -56,16 +51,16 @@ async function generateWithGemini(
     context.companyDescription && `About company: ${context.companyDescription}`,
     context.role && `Role: ${context.role}`,
     context.headline && `LinkedIn headline: ${context.headline}`,
-    context.promptTitle && `AI transformation: ${context.promptTitle}`,
-    context.backgroundName && `Background: ${context.backgroundName}`,
+    context.promptTitle && `AI photo theme: ${context.promptTitle}`,
+    context.backgroundName && `Scene background: ${context.backgroundName}`,
     context.photoCode && `Photo code: ${context.photoCode}`,
   ]
     .filter(Boolean)
     .join('\n');
 
-  const prompt = `Event: Sitecore Silver — 25 Years of Innovation, Copenhagen (Tivoli).
+  const prompt = `${eventPrompt}
 
-Attendee sharing their AI-enhanced celebration photo on LinkedIn:
+Attendee sharing their AI-enhanced event photo on LinkedIn:
 ${bits}
 
 Write the LinkedIn post body (first person).`;
@@ -75,7 +70,7 @@ Write the LinkedIn post body (first person).`;
     const response = await ai.models.generateContent({
       model,
       contents: [{ text: prompt }],
-      config: { systemInstruction: CAPTION_SYSTEM },
+      config: { systemInstruction: captionSystem },
     });
 
     const text =
@@ -92,5 +87,5 @@ Write the LinkedIn post body (first person).`;
     console.warn('[linkedin-caption] Gemini failed, using fallback:', error);
   }
 
-  return fallbackCaption(context);
+  return fallbackSocialCaption(context.userName);
 }

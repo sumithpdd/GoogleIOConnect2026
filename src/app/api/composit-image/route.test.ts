@@ -4,7 +4,7 @@ import { sanitizePrompt } from '@/lib/prompt-sanitizer';
 jest.mock('@/lib/prompt-sanitizer', () => ({
   sanitizePrompt: jest.fn(() => ({
     isValid: true,
-    sanitizedPrompt: 'Sitecore Silver celebration',
+    sanitizedPrompt: 'Google I/O Connect Berlin celebration',
   })),
 }));
 
@@ -59,8 +59,8 @@ describe('/api/composit-image route', () => {
     const request = {
       json: jest.fn().mockResolvedValue({
         photo: 'data:image/jpeg;base64,dGVzdA==',
-        prompt: 'Celebrate Sitecore heritage',
-        backgroundDescription: 'Silver festival',
+        prompt: 'Celebrate I/O Connect in Berlin',
+        backgroundDescription: 'Brandenburg Gate evening',
       }),
     } as any;
 
@@ -68,7 +68,7 @@ describe('/api/composit-image route', () => {
     const body = await response.json();
 
     expect(request.json).toHaveBeenCalled();
-    expect(sanitizePrompt).toHaveBeenCalledWith('Celebrate Sitecore heritage', 'Silver festival');
+    expect(sanitizePrompt).toHaveBeenCalledWith('Celebrate I/O Connect in Berlin', 'Brandenburg Gate evening');
     expect(body.success).toBe(true);
     expect(body.data.compositedPhoto).toContain('data:image/jpeg;base64,');
   });
@@ -76,8 +76,8 @@ describe('/api/composit-image route', () => {
   it('returns 400 when the photo field is missing', async () => {
     const request = {
       json: jest.fn().mockResolvedValue({
-        prompt: 'Celebrate Sitecore heritage',
-        backgroundDescription: 'Silver festival',
+        prompt: 'Celebrate I/O Connect in Berlin',
+        backgroundDescription: 'Brandenburg Gate evening',
       }),
     } as any;
 
@@ -92,7 +92,7 @@ describe('/api/composit-image route', () => {
     const request = {
       json: jest.fn().mockResolvedValue({
         photo: 'data:image/jpeg;base64,dGVzdA==',
-        backgroundDescription: 'Silver festival',
+        backgroundDescription: 'Berlin night skyline',
       }),
     } as any;
 

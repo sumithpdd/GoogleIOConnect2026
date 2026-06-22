@@ -48,12 +48,12 @@ export function WizardLayout({
             </Link>
           </div>
           <div>
-            <p className="text-sm font-medium text-white/60 mb-3">
+            <p className="text-sm font-medium text-io-muted mb-3">
               {hideProgress ? title : `Step ${step} of ${totalSteps}`}
             </p>
             {!hideProgress && (
               <>
-                <div className="flex items-center justify-between text-xs font-medium text-white/45 mb-2">
+                <div className="flex items-center justify-between text-xs font-medium text-io-subtle mb-2">
                   <span>{title ?? `Step ${step}`}</span>
                   <span>{progress}%</span>
                 </div>
@@ -70,7 +70,7 @@ export function WizardLayout({
         <div className={`${innerClass} w-full flex flex-col items-center`}>{children}</div>
       </main>
 
-      <footer className="wizard-footer relative z-20 shrink-0">
+      <footer className="wizard-footer relative z-20 shrink-0 io-footer-enter">
         <div className={`${innerClass} flex justify-center`}>
           <GdgLondonBrand />
         </div>

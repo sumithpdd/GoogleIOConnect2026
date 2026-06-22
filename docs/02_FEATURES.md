@@ -1,475 +1,163 @@
-# Features Guide - Sitecore Silver Photo Booth
-
-This guide explains what each feature does and how it works.
-
-## Overview
-
-The app consists of these main features:
-
-1. **User Input** - Collect user information
-2. **Camera** - Capture or upload a photo
-3. **Background Selection** - Choose a themed background
-4. **Prompt Selection** - Choose an AI transformation
-5. **AI Processing** - Gemini combines photo with background and applies prompt
-6. **Result Display** - Show final photo with actions
-7. **Gallery** - Browse all photos created
-
-## Feature 1: Home Page
-
-**File:** `src/app/page.tsx`
-
-**What it does:**
-- Landing page when user opens the app
-- Shows Sitecore Silver branding (silver theme)
-- Two main actions: "Create Photo" and "View Gallery"
-
-**User Journey:**
-```
-Opens app → Home page → User clicks "Create Photo"
-                      ↓
-                   Go to Input Screen
-```
-
-**Screenshot:**
-```
-┌─────────────────────────────────────┐
-│     Sitecore Silver                 │
-│     25 Years of Innovation          │
-│                                     │
-│  ┌──────────────┐  ┌──────────────┐│
-│  │     📸       │  │     🖼️       ││
-│  │ Create Photo │  │ View Gallery ││
-│  └──────────────┘  └──────────────┘│
-│                                     │
-│  📍 Tivoli, Copenhagen              │
-│  📅 June 11, 2026                   │
-└─────────────────────────────────────┘
-```
-
-## Feature 2: User Input Screen
-
-**File:** `src/app/(photo-booth)/input/page.tsx`
-
-**What it does:**
-- Collects user's name (required)
-- Collects user's email (optional)
-- Validates input using Zod
-- Creates a unique session ID
-- Saves to Zustand store
-
-**Form Fields:**
-```
-┌─────────────────────────────┐
-│ What's your name?           │
-│ ┌───────────────────────┐   │
-│ │ John Doe              │   │
-│ └───────────────────────┘   │
-│                             │
-│ Email (optional)            │
-│ ┌───────────────────────┐   │
-│ │ john@example.com      │   │
-│ └───────────────────────┘   │
-│                             │
-│ ┌───────────────────────┐   │
-│ │  Continue             │   │
-│ └───────────────────────┘   │
-└─────────────────────────────┘
-```
-
-**Data Saved:**
-```typescript
-{
-  sessionId: "session_1234567890_abc123",
-  userName: "John Doe",
-  userEmail: "john@example.com",
-  createdAt: Date
-}
-```
-
-## Feature 3: Camera Capture
-
-**File:** `src/components/photo-booth/CameraCapture.tsx`
-
-**What it does:**
-- Accesses device camera
-- Shows live camera preview
-- Captures photo from camera
-- OR allows uploading from device gallery
-
-**User Can:**
-- [ ] Take a photo with camera
-- [ ] Flip camera (front/back on mobile)
-- [ ] Upload from device gallery
-- [ ] Retake if not happy
-
-**Screen Layout:**
-```
-┌─────────────────────────────┐
-│ Ready to be photographed?   │
-│                             │
-│  ┌─────────────────────┐    │
-│  │  [Camera Preview]   │    │
-│  │                     │    │
-│  │  Tap to Capture     │    │
-│  └─────────────────────┘    │
-│                             │
-│  [📁 Upload] [🔄 Flip]      │
-└─────────────────────────────┘
-```
-
-**How it works:**
-1. Component requests camera permission
-2. Shows live video stream
-3. User taps to capture
-4. Converts to image (base64)
-5. Saves to Zustand: `usePhotoBoothStore.capturedPhoto`
-
-## Feature 4: Background Selection
-
-**File:** `src/components/photo-booth/BackgroundSelector.tsx`
-
-**What it does:**
-- Shows 3 background images
-- Allows user to select one
-- Each background represents a theme:
-  - **Heritage** - Sitecore 25-year history
-  - **Celebration** - Celebrating milestone
-  - **Innovation** - Future and AI
-
-**Available Backgrounds:**
-```typescript
-[
-  {
-    id: "heritage",
-    name: "Sitecore Heritage",
-    description: "25 years of innovation from Denmark",
-    category: "heritage",
-    imageUrl: "..."
-  },
-  {
-    id: "celebration",
-    name: "Celebrating Together",
-    description: "Community and milestone",
-    category: "celebration",
-    imageUrl: "..."
-  },
-  {
-    id: "innovation",
-    name: "Future Ready",
-    description: "AI and digital innovation",
-    category: "innovation",
-    imageUrl: "..."
-  }
-]
-```
-
-**Screen:**
-```
-┌─────────────────────────────────────┐
-│ Choose Your Background              │
-│                                     │
-│ ┌─────────────┐ ┌─────────────┐   │
-│ │  Heritage   │ │ Celebration │   │
-│ │    [IMG]    │ │    [IMG]    │   │
-│ └─────────────┘ └─────────────┘   │
-│                                     │
-│ ┌─────────────┐                    │
-│ │ Innovation  │                    │
-│ │   [IMG]     │                    │
-│ └─────────────┘                    │
-│                                     │
-│        [Continue]                   │
-└─────────────────────────────────────┘
-```
-
-**Data Saved:**
-```typescript
-usePhotoBoothStore.setSelectedBackground({
-  id: "heritage",
-  name: "Sitecore Heritage",
-  ...
-})
-```
-
-## Feature 5: Prompt Selection
-
-**File:** `src/components/photo-booth/PromptSelector.tsx`
-
-**What it does:**
-- Shows 12+ AI prompts
-- Grouped by category
-- User selects a prompt
-- Prompt will be sent to Gemini AI
-
-**Available Prompts:**
-
-### Heritage Category
-- "Celebrating 25 Years of Sitecore"
-- "From Denmark to the World"
-- "Founders Meet the Future"
-
-### Celebration Category
-- "Celebrating with Customers"
-- "Milestone Moment"
-- "25 Years Strong Together"
-
-### Innovation Category
-- "Building the Future with AI"
-- "Digital Transformation Pioneer"
-- "Next Generation Sitecore"
-
-### Fun Category
-- "Tech Superhero"
-- "Developer's Dream"
-
-**Screen:**
-```
-┌──────────────────────────────────┐
-│ Choose Your Transformation       │
-│                                  │
-│ Filter: [All] [Heritage] [...] │
-│                                  │
-│ ┌─────────┐ ┌─────────┐ ┌─────┐│
-│ │ 25 Years│ │ From DK │ │ ...││
-│ │         │ │ to World│ │    ││
-│ └─────────┘ └─────────┘ └─────┘│
-│                                  │
-│ ┌─────────┐ ┌─────────┐        │
-│ │ Founders│ │ Celebrate         │
-│ │  Meet   │ │ Together│        │
-│ └─────────┘ └─────────┘        │
-│                                  │
-│       [Continue]                 │
-└──────────────────────────────────┘
-```
-
-**Custom Prompt Option:**
-Users can also write their own prompt:
-```
-Custom: [Text input field]
-"Show me as a Sitecore pioneer"
-```
-
-## Feature 6: Processing/Loading
-
-**File:** `src/components/photo-booth/ProcessingLoader.tsx`
-
-**What it does:**
-- Shows loading animation while Gemini AI processes
-- Displays current step (uploading, compositing, saving)
-- Error handling if something fails
-
-**What Happens:**
-```
-1. User clicks "Create Photo"
-2. Photo + Background + Prompt sent to /api/composit-image
-3. Processing screen shows loading animation
-4. Gemini AI processes (5-30 seconds)
-5. Photo returned to client
-6. Result screen shown
-```
-
-**Screen:**
-```
-┌─────────────────────────────┐
-│  Creating Your Photo...     │
-│                             │
-│     ⏳ Loading Animation    │
-│                             │
-│  Current Step:              │
-│  Uploading... 50%           │
-│  ▓▓▓▓▓░░░░░░░░░░░░ 50%     │
-│                             │
-│  Don't close this window    │
-└─────────────────────────────┘
-```
-
-## Feature 7: Result Display
-
-**File:** `src/app/(photo-booth)/result/page.tsx`
-
-**What it does:**
-- Shows the final AI-processed photo
-- Displays photo code (unique ID)
-- Provides action buttons
-
-**Actions Available:**
-- **Save to Gallery** - Uploads to Firebase for sharing
-- **Download** - Save to device
-- **Print** - Generate PDF
-- **Share** - Copy link for social media
-- **Create Another** - Start over
-
-**Screen:**
-```
-┌────────────────────────────┐
-│ Your Photo: SILVER2024001  │
-│                            │
-│  ┌──────────────────────┐  │
-│  │  [Composited Photo]  │  │
-│  │   (with background   │  │
-│  │   and AI effect)     │  │
-│  └──────────────────────┘  │
-│                            │
-│ ┌────┐ ┌────┐ ┌────┐     │
-│ │Save│ │Down│ │Prnt│     │
-│ └────┘ └────┘ └────┘     │
-│ ┌────┐ ┌────┐            │
-│ │Shre│ │New │            │
-│ └────┘ └────┘            │
-└────────────────────────────┘
-```
-
-**Data Stored in Firebase:**
-```typescript
-{
-  id: "photo_abc123",
-  sessionId: "session_1234567890_abc123",
-  userName: "John Doe",
-  originalPhotoUrl: "https://storage.../original.jpg",
-  compositedPhotoUrl: "https://storage.../composited.jpg",
-  backgroundId: "heritage",
-  promptId: "25-years",
-  photoCode: "SILVER2024001",
-  createdAt: Date
-}
-```
-
-## Feature 8: Community Gallery
-
-**File:** `src/app/(photo-booth)/gallery/page.tsx`
-
-**What it does:**
-- Shows all photos created by users
-- Search by photo code or username
-- Filter by category
-- Pagination for browsing
-
-**Features:**
-- [ ] Browse all photos in grid
-- [ ] Search by Photo Code (e.g., "SILVER2024001")
-- [ ] Search by Username
-- [ ] Filter by Background Category
-- [ ] Pagination (20 photos per page)
-- [ ] Responsive on mobile
-
-**Screen:**
-```
-┌────────────────────────────────┐
-│ Community Gallery              │
-│                                │
-│ [Search...] [Filter ▼]        │
-│                                │
-│ ┌────┐ ┌────┐ ┌────┐ ┌────┐  │
-│ │Img1│ │Img2│ │Img3│ │Img4│  │
-│ │John│ │Jane│ │Mike│ │Lisa│  │
-│ └────┘ └────┘ └────┘ └────┘  │
-│ ┌────┐ ┌────┐ ┌────┐ ┌────┐  │
-│ │Img5│ │Img6│ │Img7│ │Img8│  │
-│ │Tom │ │Amy │ │...│ │... │  │
-│ └────┘ └────┘ └────┘ └────┘  │
-│                                │
-│ [< Previous] [1 2 3] [Next >] │
-└────────────────────────────────┘
-```
-
-**API Endpoint:**
-```
-GET /api/gallery?search=john&category=heritage&page=1&limit=20
-```
-
-## Feature 9: Admin (staff moderation)
-
-**File:** `src/app/admin/page.tsx`
-
-**URL:** `/admin` (local: `http://localhost:3000/admin`; production: `https://your-deploy-url/admin`)
-
-**What it does:**
-- Password gate for event staff (`ADMIN_SECRET`)
-- Lists photos from Firestore (`photobooth` collection)
-- Filter by visibility (all / public / hidden)
-- Hide, show, or delete photos from the community gallery
-
-**Configuration:**
-```env
-NEXT_PUBLIC_ENABLE_ADMIN=true
-ADMIN_SECRET=choose-a-strong-password-for-event-staff
-```
-
-Without `ADMIN_SECRET`, the login API returns 503 and the page cannot authenticate.
-
-**Footer link:** When `NEXT_PUBLIC_ENABLE_ADMIN=true`, booth pages show an **Admin** link in the footer.
-
-**API:**
-- `POST /api/admin/login` — body `{ "password": "<ADMIN_SECRET>" }`
-- `GET /api/admin/photos` — list (requires admin cookie)
-- `PATCH /api/admin/photos/[id]` — update visibility / moderation
-- `DELETE /api/admin/photos/[id]` — remove photo and Storage files
-
-## API Endpoints Reference
-
-### 1. Composit Image (AI Processing)
-```
-POST /api/composit-image
-
-Request Body:
-{
-  photo: "data:image/jpeg;base64,/9j/4AAQSkZJRg...",
-  background: "heritage",
-  prompt: "Celebrating 25 years..."
-}
-
-Response:
-{
-  success: true,
-  data: {
-    compositedPhoto: "data:image/jpeg;base64,...",
-    photoId: "photo_abc123"
-  }
-}
-```
-
-### 2. Upload Photo
-```
-POST /api/upload-photo
-
-Request Body (FormData):
-{
-  sessionId: "session_...",
-  userName: "John Doe",
-  originalPhoto: "data:image/jpeg;base64,...",
-  backgroundId: "heritage",
-  promptId: "25-years"
-}
-
-Response:
-{
-  success: true,
-  data: {
-    photoId: "photo_abc123",
-    photoCode: "SILVER2024001",
-    compositedPhotoUrl: "https://storage.../composited.jpg"
-  }
-}
-```
-
-### 3. Get Gallery
-```
-GET /api/gallery?search=john&category=heritage&page=1&limit=20
-
-Response:
-{
-  success: true,
-  data: {
-    photos: [...],
-    total: 45,
-    hasMore: true
-  }
-}
-```
+# Features Guide — Google I/O Connect Photo Booth
+
+Overview of the booth flow, AI pipeline, gallery, admin, and social sharing for **Google I/O Connect Berlin 2026** (GDG London community).
+
+## Booth flow (7 steps)
+
+| # | Route | Purpose |
+|---|-------|---------|
+| 1 | `/` | Landing — animated hero, start CTA, gallery link |
+| 2 | `/input` | Name, email, GDPR consent → session created |
+| 3 | `/camera` | Webcam or file upload; portrait 3:4 capture |
+| 4 | `/backgrounds` | Pick Berlin landmark or I/O Connect scene |
+| 5 | `/prompts` | Pick Gemini preset or write custom prompt |
+| 6 | `/processing` | AI compositing + Firebase upload |
+| 7 | `/result` | Download, print, share, regenerate |
+
+Optional: `/summary` keepsake page (enabled in `io-connect-2026` preset).
 
 ---
 
-**Next Steps:**
-- [Development Guide](./03_DEVELOPMENT.md) — How to modify features
-- [Troubleshooting](./04_TROUBLESHOOTING.md) — Fix issues
+## 1. Landing page
+
+**File:** `src/app/page.tsx`
+
+- Black I/O Connect theme with Google gradient accents
+- Animated decorations: floating orbs, `{ }` braces, festive string lights
+- Hero: **“Send a Smile From Berlin”** — GDG London at I/O Connect Berlin 2026
+- Staggered step cards and pulsing CTA
+- Footer: GDG London attribution + link to [RSVP page](https://rsvp.withgoogle.com/events/ioconnect-berlin-2026)
+
+---
+
+## 2. User input
+
+**File:** `src/app/input/page.tsx`
+
+- Collects **full name** and **email** (validated with Zod)
+- GDPR terms + optional gallery sharing consent
+- Creates booth session in Zustand + `POST /api/session`
+- Twinkling sparkle icons and staggered form entrance
+
+---
+
+## 3. Camera
+
+**File:** `src/app/camera/page.tsx` · **Hook:** `src/lib/hooks.ts`
+
+- Live webcam preview with **I/O Connect Berlin banner** centered on feed
+- Pulsing capture ring while camera is active
+- Portrait capture: center-crop to **3:4**, full-frame (no tiny corner thumbnail)
+- Upload from gallery as alternative
+- Retake clears hook + store state and restarts camera
+
+---
+
+## 4. Background selection
+
+**File:** `src/app/backgrounds/page.tsx` · **Data:** `src/data/backgrounds.ts`
+
+**Filters:** All · **Berlin** · **I/O Connect**
+
+Berlin scenes include Brandenburg Gate, TV Tower, Reichstag, East Side Gallery, Oberbaum Bridge, United Buddy Bears, Hello Berlin art, and more.
+
+I/O Connect scenes include gradient braces studio, Berlin landmarks collage, GDG sticker art, Gemini sparkle studio.
+
+Cards use gradient-rim design with staggered grid animation and hover lift.
+
+---
+
+## 5. Magic / prompts
+
+**File:** `src/app/prompts/page.tsx` · **Data:** `src/data/prompts.ts`
+
+**Categories:**
+
+| Filter | Content |
+|--------|---------|
+| **Berlin** | Hello Berlin, Buddy Bears, East Side Gallery, GDG London at I/O Connect stage, etc. |
+| **I/O Connect** | Official event art, Gemini sparkle, community motifs |
+| **Share** | Berlin postcard, LinkedIn-ready headshot |
+
+- Preset cards or **custom prompt** (sanitized server-side)
+- Quick suggestion chips for common Berlin prompts
+- All prompts instruct Gemini to **remove the webcam background** and blend the person into the scene
+
+---
+
+## 6. AI processing
+
+**Files:** `src/app/processing/page.tsx` · `src/app/api/composit-image/route.ts` · `src/lib/gemini-image.ts`
+
+**Pipeline:**
+
+1. Portrait input normalized (`preparePortraitInputForGeneration`)
+2. **Gemini native image generation** with Berlin / I/O Connect prompt + guardrails
+3. **GDG London · Berlin 2026 sticker** composited **top-right** (Sharp)
+4. Print portrait normalization (100×148 mm @ 300 dpi)
+5. Upload original + composited to Firebase (`POST /api/upload-photo`)
+
+**Fallback:** If Gemini fails, Sharp applies theme-based enhancement (dev/events without API key).
+
+**Loader:** Animated Gemini orbs on processing screen.
+
+**Env:** `GOOGLE_GEMINI_API_KEY`, optional `GEMINI_IMAGE_MODEL`, `API_SECRET` for secured API.
+
+---
+
+## 7. Result & sharing
+
+**File:** `src/app/result/page.tsx`
+
+- Side-by-side **Original** and **AI Enhanced** when both exist
+- Photo code (prefix **`IO26`**) for gallery lookup
+- Download, print, **Regenerate AI Photo**
+- **Social share panel** (`SocialSharePanel`):
+  - AI-generated LinkedIn post about **I/O Connect Berlin 2026** + GDG London
+  - Hashtags: `#GoogleIOConnect #IOConnect2026 #GoogleDevelopers #GDGLondon #BuildWithGemini #Berlin`
+  - Optional LinkedIn OAuth post with image
+
+**Caption generation:** `src/lib/linkedin/social-post-copy.ts` + `src/lib/linkedin/caption.ts`
+
+---
+
+## Gallery
+
+**File:** `src/app/gallery/page.tsx` · **API:** `GET /api/gallery`
+
+- Public grid of shared photos (respects moderation flags)
+- Search by name or photo code
+- Filter: All · Berlin · I/O Connect
+- Tap to open preview modal (animated entrance)
+- Staggered card grid animation
+
+---
+
+## Admin moderation
+
+**File:** `src/app/admin/page.tsx` · **API:** `/api/admin/*`
+
+- Protected by **`ADMIN_SECRET`**
+- Hide/show/delete photos from public gallery
+- View composited images and metadata
+
+---
+
+## Configuration preset
+
+**`APP_PRESET=io-connect-2026`** (default) enables:
+
+- Berlin-first branding and copy
+- Gallery, admin, summary, social share
+- Storage prefix `io-connect-2026/`
+- Photo code prefix `IO26`
+- Watermark: `public/branding/gdg-london-berlin-2026.png`
+
+---
+
+## Related docs
+
+- [Architecture](./01_ARCHITECTURE.md) — folders, API routes, state
+- [Branding & motion](./BRANDING_GUIDE.md) — colors, assets, animations
+- [Firebase setup](./FIREBASE_SETUP.md) — Firebase project & env vars
+- [API security](./06_API_SECURITY.md) — `API_SECRET`, admin auth

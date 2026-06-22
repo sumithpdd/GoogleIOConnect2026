@@ -24,7 +24,7 @@ export function FestiveLights() {
         <path
           d="M0,40 Q150,10 300,40 T600,40 T900,40 T1200,40"
           fill="none"
-          stroke="rgba(255,255,255,0.15)"
+          stroke="var(--io-festive-string)"
           strokeWidth="2"
         />
         {Array.from({ length: 24 }).map((_, i) => {

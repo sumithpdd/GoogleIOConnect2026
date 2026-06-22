@@ -1,0 +1,12 @@
+﻿# Local secrets — never index or send to the AI
+.env.local
+.env.*
+!/.env.example
+*-firebase-adminsdk-*.json
+**/firebase-adminsdk*.json
+serviceAccountKey.json
+firebase-key.json
+credentials.json
+secrets.json
+**/*.pem
+**/*.key

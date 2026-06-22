@@ -1,46 +1,14 @@
 /**
- * AI prompts — Google I/O Connect Berlin 2026 · London & Berlin
- * Themed to match https://rsvp.withgoogle.com/events/ioconnect-berlin-2026
+ * AI prompts — Google I/O Connect Berlin 2026 · GDG London community
+ * @see https://rsvp.withgoogle.com/events/ioconnect-berlin-2026/
  */
 
 import { PhotoPrompt } from '@/types';
 
 const GUARDRAILS =
-  ' Google I/O Connect Berlin 2026 photo booth. Black background aesthetic with luminous Google gradient accents (blue #4285F4, red #EA4335, yellow #FBBC04, green #34A853). Semi-transparent globe, cloud, Android and code-brace motifs like the official event art. Photorealistic portrait. Do not draw logos or stickers in the scene — the GDG London Berlin 2026 watermark is added after generation.';
+  ' Google I/O Connect Berlin 2026 photo booth in Berlin, presented by GDG London. Black background aesthetic with luminous Google gradient accents (blue #4285F4, red #EA4335, yellow #FBBC04, green #34A853). Semi-transparent globe, cloud, Android and code-brace motifs like the official event art. Photorealistic portrait set in Berlin — not London landmarks. Remove the person\'s original room/webcam background and blend them naturally into the scene — no collage, no pasted photo strip. Do not draw logos or stickers in the scene — the GDG London Berlin 2026 watermark is added after generation.';
 
 export const prompts: PhotoPrompt[] = [
-  // London — GDG London / Thames-side
-  {
-    id: 'london-hello',
-    title: 'Hello from London',
-    description: 'Thames skyline · Tower Bridge · GDG London energy',
-    fullPrompt:
-      'Place the person on the South Bank with Tower Bridge, Big Ben and the London Eye behind them at blue hour. Warm street lights, developer community meetup vibe, subtle Google four-color gradient glow in the sky like I/O Connect art.' +
-      GUARDRAILS,
-    category: 'celebration',
-    emoji: '🇬🇧',
-  },
-  {
-    id: 'london-gdg-stage',
-    title: 'GDG London Stage',
-    description: 'On stage at a Google developer event in London',
-    fullPrompt:
-      'Show the person presenting on a GDG London DevFest stage with audience silhouettes, professional conference lighting, and a cinematic London skyline visible through floor-to-ceiling windows. Google I/O Connect gradient accents on stage edges.' +
-      GUARDRAILS,
-    category: 'celebration',
-    emoji: '🎤',
-  },
-  {
-    id: 'london-eye-view',
-    title: 'London Eye Perspective',
-    description: 'Panoramic view from the Thames and the London Eye',
-    fullPrompt:
-      'Portrait with the London Eye and Westminster in soft focus behind the person. Golden sunset, red bus blur in the distance, celebratory I/O Connect developer event atmosphere with floating gradient sparkle shapes.' +
-      GUARDRAILS,
-    category: 'celebration',
-    emoji: '🎡',
-  },
-
   // Berlin — I/O Connect Berlin RSVP theme
   {
     id: 'berlin-hello',
@@ -93,6 +61,26 @@ export const prompts: PhotoPrompt[] = [
     emoji: '🧸',
   },
   {
+    id: 'berlin-east-side',
+    title: 'East Side Gallery',
+    description: 'Berlin Wall murals · Kreuzberg · street art',
+    fullPrompt:
+      'Portrait at the East Side Gallery on the Spree — bold Berlin Wall murals in soft focus behind the person, Kreuzberg creative energy, Google gradient light accents and I/O Connect Berlin developer community vibe.' +
+      GUARDRAILS,
+    category: 'innovation',
+    emoji: '🎨',
+  },
+  {
+    id: 'berlin-gdg-stage',
+    title: 'GDG London at I/O Connect',
+    description: 'On stage in Berlin · GDG London community',
+    fullPrompt:
+      'Show the person on the I/O Connect Berlin main stage — GDG London community in the audience, professional conference lighting, Berlin venue with Hello Berlin art on the screens and Google I/O Connect gradient accents on stage edges.' +
+      GUARDRAILS,
+    category: 'innovation',
+    emoji: '🎤',
+  },
+  {
     id: 'berlin-connect-wrap',
     title: "That's a Wrap — Berlin",
     description: 'Conference finale · dev community · Gemini',
@@ -103,23 +91,23 @@ export const prompts: PhotoPrompt[] = [
     emoji: '🎉',
   },
 
-  // London ↔ Berlin Connect
+  // I/O Connect Berlin — event art & Gemini
   {
-    id: 'connect-two-cities',
-    title: 'London ↔ Berlin Connect',
-    description: 'Two cities, one developer journey',
+    id: 'connect-berlin-landmarks',
+    title: 'Berlin Landmarks Portrait',
+    description: 'Gate, TV Tower & bears in one scene',
     fullPrompt:
-      'Split composition: London landmarks (Tower Bridge, red bus) on the left merging into Berlin landmarks (Brandenburg Gate, TV Tower) on the right. Person centered on the divide with a luminous Google gradient bridge connecting both cities — I/O Connect community portrait.' +
+      'Celebratory Berlin portrait for I/O Connect 2026: Brandenburg Gate, Fernsehturm and United Buddy Bears arranged around the person with overlapping Google gradient braces and globe motifs on black — GDG London community at the Berlin event.' +
       GUARDRAILS,
     category: 'heritage',
-    emoji: '🌉',
+    emoji: '🏙️',
   },
   {
     id: 'connect-gemini',
     title: 'Gemini at I/O Connect',
     description: 'Gemini AI sparkle on a conference portrait',
     fullPrompt:
-      'Polished conference portrait with Gemini AI magic: floating four-pointed stars, soft yellow glow halo, blue and green gradient orbs orbiting the person. Black background matching I/O Connect Berlin RSVP page, premium shareable social photo.' +
+      'Polished conference portrait with Gemini AI magic: floating four-pointed stars, soft yellow glow halo, blue and green gradient orbs orbiting the person. Black background matching I/O Connect Berlin RSVP page, premium shareable social photo from Berlin 2026.' +
       GUARDRAILS,
     category: 'heritage',
     emoji: '🤖',
@@ -129,7 +117,7 @@ export const prompts: PhotoPrompt[] = [
     title: 'Global Dev Community',
     description: 'Globe · cloud · Android — the Connect motif set',
     fullPrompt:
-      'Show the person surrounded by the iconic I/O Connect icon set: wireframe globe, Android mascot silhouette, cloud shape and sparkle star — all with overlapping Google color gradients on black. Welcoming, inclusive developer community portrait for London and Berlin attendees.' +
+      'Show the person surrounded by the iconic I/O Connect icon set: wireframe globe, Android mascot silhouette, cloud shape and sparkle star — all with overlapping Google color gradients on black. Welcoming, inclusive developer community portrait at I/O Connect Berlin 2026 with GDG London.' +
       GUARDRAILS,
     category: 'heritage',
     emoji: '🌍',
@@ -138,10 +126,10 @@ export const prompts: PhotoPrompt[] = [
   // Shareable fun
   {
     id: 'fun-postcard',
-    title: 'London & Berlin Postcard',
-    description: 'Shareable keepsake from both cities',
+    title: 'Berlin Postcard',
+    description: 'Shareable keepsake from I/O Connect Berlin',
     fullPrompt:
-      'Cheerful postcard-style portrait combining London and Berlin icons in a collage frame around the person. Bright, friendly, Instagram-ready with Google gradient border accents and I/O Connect 2026 celebratory mood.' +
+      'Cheerful postcard-style portrait with Berlin icons — Brandenburg Gate, TV Tower, Buddy Bears — framing the person. Bright, friendly, Instagram-ready with Google gradient border accents and I/O Connect Berlin 2026 celebratory mood.' +
       GUARDRAILS,
     category: 'fun',
     emoji: '📮',
@@ -151,7 +139,7 @@ export const prompts: PhotoPrompt[] = [
     title: 'LinkedIn Ready',
     description: 'Professional headshot for your network',
     fullPrompt:
-      'Clean professional headshot with soft bokeh and a hint of London or Berlin skyline. Flattering conference lighting, subtle Google blue accent rim light, perfect for LinkedIn after Google I/O Connect Berlin 2026.' +
+      'Clean professional headshot with soft bokeh and a hint of Berlin skyline — Fernsehturm or Brandenburg Gate in the distance. Flattering I/O Connect conference lighting, subtle Google blue accent rim light, perfect for LinkedIn after Google I/O Connect Berlin 2026.' +
       GUARDRAILS,
     category: 'fun',
     emoji: '💼',
@@ -183,7 +171,6 @@ export function getPromptsBySearch(query: string): PhotoPrompt[] {
 }
 
 export const CITY_CATEGORIES = [
-  { id: 'celebration', label: 'London' },
   { id: 'innovation', label: 'Berlin' },
   { id: 'heritage', label: 'I/O Connect' },
   { id: 'fun', label: 'Share' },

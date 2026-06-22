@@ -6,10 +6,6 @@ import {
   buildAttendeeProfileDoc,
   upsertBoothSession,
 } from '@/lib/firebase-user';
-import {
-  createOrUpdateAttendeePage,
-  isAttendeePageSyncConfigured,
-} from '@/lib/sitecore/attendee-profile';
 import type { AttendeeProfile } from '@/types';
 
 export const dynamic = 'force-dynamic';
@@ -138,36 +134,6 @@ export async function POST(request: NextRequest) {
 
     await db.collection('photobooth').doc(photoId).set(photoDoc);
 
-    let sitecoreAttendeePage = null;
-    let sitecoreSyncError: string | null = null;
-    const syncToSitecore =
-      parseBool(formData.get('syncToSitecore')) ||
-      resolveAppConfig().features.sitecoreAttendeePages;
-
-    if (syncToSitecore && isAttendeePageSyncConfigured()) {
-      try {
-        sitecoreAttendeePage = await createOrUpdateAttendeePage({
-          profile,
-          photoCode,
-          originalPhotoUrl,
-          enhancedPhotoUrl: compositedPhotoUrl,
-        });
-        console.log(
-          '✅ [SITECORE] Attendee page',
-          sitecoreAttendeePage.created ? 'created' : 'updated',
-          sitecoreAttendeePage.path
-        );
-      } catch (sitecoreError) {
-        sitecoreSyncError =
-          sitecoreError instanceof Error ? sitecoreError.message : String(sitecoreError);
-        console.error('⚠️ [SITECORE] Attendee page sync failed:', sitecoreError);
-        // Photo upload still succeeds — Sitecore sync is best-effort
-      }
-    } else if (syncToSitecore && !isAttendeePageSyncConfigured()) {
-      sitecoreSyncError =
-        'Sitecore attendee sync not configured (SITECORE_CLIENT_ID, SITECORE_CLIENT_SECRET, XMC_HOST).';
-    }
-
     try {
       await upsertBoothSession(db, {
         sessionId,
@@ -181,7 +147,6 @@ export async function POST(request: NextRequest) {
         latestPhotoCode: photoCode,
         latestBackgroundId: backgroundId,
         latestPromptId: promptId,
-        sitecoreAttendeePath: sitecoreAttendeePage?.path,
       });
     } catch (sessionError) {
       console.error('⚠️ [FIREBASE] Session profile save failed:', sessionError);
@@ -197,8 +162,6 @@ export async function POST(request: NextRequest) {
         visibility,
         consentGalleryShare,
         photo: docToPhoto(photoId, photoDoc),
-        sitecoreAttendeePage,
-        sitecoreSyncError,
       },
     });
   } catch (error) {

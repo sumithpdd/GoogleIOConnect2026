@@ -24,13 +24,13 @@ export function IoConnectLogo({ href = '/', size = 'md' }: IoConnectLogoProps) {
       alt="Google I/O Connect Berlin"
       width={dim.width}
       height={dim.height}
-      className={`${dim.className} object-contain object-left`}
+      className={`${dim.className} object-contain object-left io-logo-float`}
       priority
     />
   );
 
   return (
-    <Link href={href} className="inline-flex hover:opacity-90 transition-opacity shrink-0">
+    <Link href={href} className="inline-flex hover:opacity-90 transition-all hover:scale-[1.02] shrink-0">
       {content}
     </Link>
   );

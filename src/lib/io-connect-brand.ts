@@ -55,18 +55,19 @@ export const IO_CONNECT_ASSETS = {
 
 export const IO_CONNECT_EVENT = {
   title: 'Google I/O Connect Photo Booth',
-  subtitle: 'London & Berlin',
-  tagline: 'London · Berlin · 2026',
-  location: 'Google I/O Connect',
+  subtitle: 'Berlin 2026',
+  tagline: 'Berlin · GDG London · 2026',
+  location: 'Berlin',
   date: '2026',
   url: 'https://rsvp.withgoogle.com/events/ioconnect-berlin-2026',
   copyrightHolder: 'GDG London',
 } as const;
 
 export const IO_CONNECT_IMAGE_RULES =
-  'Google I/O Connect 2026 photo booth — London and Berlin developer community. ' +
+  'Google I/O Connect Berlin 2026 photo booth — GDG London community at the Berlin event. ' +
   'Black background aesthetic with luminous Google gradient accents (blue, red, yellow, green). ' +
   'Semi-transparent globe, cloud, Android and code-brace motifs like the official Berlin event art. ' +
   'Berlin scenes may include the city\'s famous bear mascot or colorful United Buddy Bear statues as playful community symbols. ' +
+  'Remove the subject\'s original indoor/webcam background completely and integrate the person into the scene — never paste the unedited photo on top. ' +
   'Do not draw logos, stickers, or text overlays in the scene — the official GDG London Berlin 2026 sticker watermark is added after generation. ' +
   'Photorealistic, celebratory event portrait.';

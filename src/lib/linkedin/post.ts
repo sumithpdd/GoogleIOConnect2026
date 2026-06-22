@@ -3,6 +3,8 @@
  * @see https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/share-on-linkedin
  */
 
+import { resolveSocialPostCopy } from '@/lib/linkedin/social-post-copy';
+
 export async function uploadLinkedInImage(
   accessToken: string,
   personId: string,
@@ -85,6 +87,8 @@ export async function publishLinkedInImagePost(
 ): Promise<{ id: string }> {
   const author = `urn:li:person:${personId}`;
 
+  const { linkedInMediaDescription, linkedInMediaTitle } = resolveSocialPostCopy();
+
   const res = await fetch('https://api.linkedin.com/v2/ugcPosts', {
     method: 'POST',
     headers: {
@@ -102,9 +106,9 @@ export async function publishLinkedInImagePost(
           media: [
             {
               status: 'READY',
-              description: { text: 'Sitecore Silver Celebration — Copenhagen 2026' },
+              description: { text: linkedInMediaDescription },
               media: assetUrn,
-              title: { text: 'Sitecore Silver Photo Booth' },
+              title: { text: linkedInMediaTitle },
             },
           ],
         },

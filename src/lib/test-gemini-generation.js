@@ -34,7 +34,7 @@ async function testGeminiImageGeneration() {
   const ai = new GoogleGenAI({ apiKey });
 
   const prompt =
-    'Transform this person for a Sitecore 25-year celebration photo booth. ' +
+    'Transform this person for the Google I/O Connect Berlin 2026 photo booth. ' +
     'Keep them recognizable, professional, and celebratory.';
 
   console.log('⏳ Calling generateContent...');

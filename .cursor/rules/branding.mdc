@@ -1,16 +1,17 @@
 ---
-description: Sitecore Silver visual design (Tailwind, dark theme)
+description: Google I/O Connect Berlin 2026 visual design (Tailwind, dark theme)
 globs: "**/*.{tsx,css}"
 alwaysApply: false
 ---
 
 # Branding
 
-Event: Sitecore Silver, Tivoli Copenhagen, June 11 2026.
+Event: **Google I/O Connect Berlin 2026** · Community: **GDG London** · Hero: “Send a Smile From Berlin”.
 
-- **Colors**: silver `#b8b8b8` (400), dark `#1a1a1a`, gold `#d4af37` accents.
-- **Theme**: dark-first; white/silver text on dark backgrounds.
-- **Buttons**: `bg-gradient-to-br from-silver-500 to-silver-600`, hover scale/shadow.
-- **Typography**: system stack; H1 large with silver gradient `bg-clip-text`.
-- **Kiosk**: large touch targets, `md:`/`lg:` responsive grids.
-- Full spec: `docs/BRANDING_GUIDE.md`, `tailwind.config.ts`, `src/app/globals.css`.
+- **Colors**: Google four-color palette — blue `#4285F4`, red `#EA4335`, yellow `#FBBC04`, green `#34A853`; black `#000000` shell.
+- **Tokens**: `google-*` in `tailwind.config.ts`, CSS vars `--google-*` in `globals.css`.
+- **Theme**: dark-first; glass cards `rgba(255,255,255,0.06)`.
+- **Logo watermark**: GDG London sticker **top-right** on composited images (`addLogoToImage`).
+- **Motion**: respect `prefers-reduced-motion`; use `PageMotion`, `StaggerGrid`, `HeadingMotion`.
+- **Kiosk**: large touch targets, portrait 4K, `md:`/`lg:` responsive grids.
+- Full spec: `docs/BRANDING_GUIDE.md`, `public/branding/README.md`.

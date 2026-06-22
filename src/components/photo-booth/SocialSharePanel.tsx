@@ -49,16 +49,29 @@ export function SocialSharePanel({
   const [nativeSharing, setNativeSharing] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hashtagHint, setHashtagHint] = useState(
+    'Includes event hashtags and @mention appended automatically'
+  );
 
   const hasImage = Boolean(compositedPhoto?.trim() || imageUrl?.trim());
 
   const loadStatus = useCallback(async () => {
-    const res = await fetch('/api/linkedin/status', { cache: 'no-store' });
-    const json = (await res.json()) as {
+    const [linkedInRes, configRes] = await Promise.all([
+      fetch('/api/linkedin/status', { cache: 'no-store' }),
+      fetch('/api/config', { cache: 'no-store' }),
+    ]);
+    const linkedInJson = (await linkedInRes.json()) as {
       data?: { configured?: boolean; connected?: boolean };
     };
-    setLinkedInConfigured(Boolean(json.data?.configured));
-    setConnected(Boolean(json.data?.connected));
+    setLinkedInConfigured(Boolean(linkedInJson.data?.configured));
+    setConnected(Boolean(linkedInJson.data?.connected));
+
+    const configJson = (await configRes.json()) as {
+      data?: { socialShare?: { hashtagHint?: string } };
+    };
+    if (configJson.data?.socialShare?.hashtagHint) {
+      setHashtagHint(configJson.data.socialShare.hashtagHint);
+    }
   }, []);
 
   const loadCaption = useCallback(async () => {
@@ -151,7 +164,7 @@ export function SocialSharePanel({
       const blob = await res.blob();
       const type = blob.type || 'image/jpeg';
       const code = photoCode ?? 'photo';
-      return new File([blob], `sitecore-silver-${code}.jpg`, { type });
+      return new File([blob], `io-connect-${code}.jpg`, { type });
     } catch {
       return null;
     }
@@ -170,7 +183,7 @@ export function SocialSharePanel({
       const shareData: ShareData = {
         text:
           caption.trim() ||
-          `My Sitecore Silver celebration photo — ${photoCode ?? userName}`,
+          `My Google I/O Connect Berlin 2026 photo — ${photoCode ?? userName}`,
       };
       if (file) {
         shareData.files = [file];
@@ -235,41 +248,38 @@ export function SocialSharePanel({
 
   return (
     <div
-      className={`brand-card space-y-4 text-sm border border-silver-500/30 ${
+      className={`wizard-card space-y-4 text-sm border border-io-border ${
         compact ? 'p-4' : 'p-6'
       }`}
     >
       <div>
-        <p className="text-silver-200 font-semibold uppercase tracking-wide flex items-center gap-2">
+        <p className="text-io-muted font-semibold uppercase tracking-wide flex items-center gap-2">
           📱 Share to social
         </p>
-        <p className="text-silver-500 text-xs mt-1">
+        <p className="text-io-subtle text-xs mt-1">
           AI-generated post text from your profile — edit, copy, or share with your photo
         </p>
       </div>
 
       <div className="space-y-2">
-        <label className="text-xs text-silver-400 font-semibold uppercase tracking-wide">
+        <label className="text-xs text-io-muted font-semibold uppercase tracking-wide">
           AI post text
         </label>
         <textarea
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
           rows={compact ? 6 : 9}
-          className="w-full rounded-lg bg-black/40 border border-silver-500/40 text-silver-100 text-sm p-3 resize-y min-h-[140px]"
+          className="w-full rounded-lg io-textarea-inset text-sm p-3 resize-y min-h-[140px]"
           placeholder={loadingCaption ? 'Generating post with AI…' : 'Post text'}
           disabled={loadingCaption || posting}
         />
-        <p className="text-silver-600 text-xs">
-          Includes #Sitecore #SitecoreSilver #SitecoreCommunity #DigitalExperience #copenhagen
-          and @Sitecore
-        </p>
+        <p className="text-io-subtle text-xs">{hashtagHint}</p>
         <div className="flex flex-col sm:flex-row gap-2">
           <button
             type="button"
             onClick={() => void loadCaption()}
             disabled={loadingCaption || posting}
-            className="btn-silver-outline flex-1 py-2 disabled:opacity-50"
+            className="wizard-secondary-btn flex-1 py-2 disabled:opacity-50"
           >
             {loadingCaption ? 'Generating…' : '✨ Regenerate with AI'}
           </button>
@@ -277,7 +287,7 @@ export function SocialSharePanel({
             type="button"
             onClick={() => void handleCopyText()}
             disabled={loadingCaption || posting || !caption.trim()}
-            className="btn-silver-outline flex-1 py-2 disabled:opacity-50"
+            className="wizard-secondary-btn flex-1 py-2 disabled:opacity-50"
           >
             Copy text
           </button>
@@ -289,14 +299,14 @@ export function SocialSharePanel({
           type="button"
           onClick={() => void handleNativeShare()}
           disabled={nativeSharing || posting || loadingCaption}
-          className="btn-silver-outline w-full py-3 disabled:opacity-50"
+          className="wizard-secondary-btn w-full py-3 disabled:opacity-50"
         >
           {nativeSharing ? 'Opening share…' : 'Share photo + text via device apps'}
         </button>
       )}
 
       {linkedInConfigured && (
-        <div className="space-y-3 pt-2 border-t border-silver-500/20">
+        <div className="space-y-3 pt-2 border-t border-io-border">
           <div className="flex items-start justify-between gap-3">
             <p className="text-[#0A66C2] font-semibold text-xs uppercase tracking-wide flex items-center gap-2">
               <span aria-hidden>in</span> Post to LinkedIn
@@ -305,7 +315,7 @@ export function SocialSharePanel({
               <button
                 type="button"
                 onClick={() => void handleDisconnect()}
-                className="text-xs text-silver-500 hover:text-silver-300 shrink-0"
+                className="text-xs text-io-subtle hover:text-io-muted shrink-0"
               >
                 Disconnect
               </button>
@@ -316,7 +326,7 @@ export function SocialSharePanel({
             <button
               type="button"
               onClick={handleConnect}
-              className="btn-silver-outline w-full py-2"
+              className="wizard-secondary-btn w-full py-2"
             >
               Connect LinkedIn to post
             </button>
@@ -325,7 +335,7 @@ export function SocialSharePanel({
               type="button"
               onClick={() => void handlePost()}
               disabled={loadingCaption || posting || !caption.trim()}
-              className="btn-silver w-full py-2 disabled:opacity-50 bg-[#0A66C2] hover:bg-[#004182] border-[#0A66C2]"
+              className="wizard-primary-btn w-full py-2 disabled:opacity-50 bg-[#0A66C2] hover:bg-[#004182] border-[#0A66C2]"
             >
               {posting ? 'Posting…' : 'Post to LinkedIn'}
             </button>
