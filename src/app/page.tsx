@@ -10,6 +10,10 @@ import {
 import { IO_CONNECT_ASSETS } from '@/lib/io-connect-brand';
 import { GdgLondonBrand } from '@/components/io-connect/GdgLondonBrand';
 import { useAppConfig } from '@/components/providers/app-config-provider';
+import {
+  SOCIAL_SHARE_HASHTAGS,
+  WORKSHOP_TRACKS,
+} from '@/data/io-connect-workshops';
 
 const STEPS = [
   {
@@ -27,7 +31,8 @@ const STEPS = [
   {
     number: '03',
     title: 'Share',
-    description: 'Download, print, or share your I/O Connect keepsake.',
+    description:
+      'Get an AI-written social post and share your creation with #GoogleIOConnect & #BuildWithGemini.',
     icon: '📬',
   },
 ];
@@ -101,6 +106,47 @@ export default function Home() {
                 />
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="landing-beyond-section max-w-4xl mx-auto px-4 w-full animate-slide-up">
+          <div className="landing-beyond-card">
+            <p className="landing-eyebrow">Go beyond the basics</p>
+            <h2 className="landing-beyond-title">Automatic AI social posts</h2>
+            <p className="landing-beyond-lead">
+              Complete a workshop across AI, Android, Chrome, or Cloud — or a session at the View
+              Lounge — then create your photo. Gemini writes a ready-to-post caption so you can
+              share what you built with the community online.
+            </p>
+
+            <ul className="landing-beyond-tracks">
+              {WORKSHOP_TRACKS.map((track) => (
+                <li key={track.id} className="landing-beyond-track">
+                  <span className="landing-beyond-track__label">{track.label}</span>
+                  <span className="landing-beyond-track__desc">{track.description}</span>
+                </li>
+              ))}
+            </ul>
+
+            <p className="landing-beyond-share-prompt">
+              Share on your social networks what you created — with a key takeaway, a new feature,
+              or a light-bulb moment from the process.
+            </p>
+
+            <div className="landing-hashtag-row" aria-label="Event hashtags for social posts">
+              {SOCIAL_SHARE_HASHTAGS.map((tag) => (
+                <span
+                  key={tag}
+                  className={
+                    tag === '#GoogleIOConnect' || tag === '#BuildWithGemini'
+                      ? 'landing-hashtag landing-hashtag--primary'
+                      : 'landing-hashtag'
+                  }
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
         </section>
 

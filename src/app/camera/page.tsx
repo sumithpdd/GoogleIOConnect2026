@@ -43,7 +43,7 @@ export default function CameraPage() {
   const handleContinue = () => {
     if (capturedPhoto) {
       setCapturedPhoto(capturedPhoto);
-      router.push('/backgrounds');
+      router.push('/scenes');
     }
   };
 
@@ -71,7 +71,7 @@ export default function CameraPage() {
   if (!session) return null;
 
   return (
-    <WizardLayout step={2} totalSteps={5} backHref="/input" title="Camera">
+    <WizardLayout step={2} totalSteps={4} backHref="/input" title="Camera">
       <PageMotion className="w-full space-y-6" stagger>
         <HeadingMotion
           title={capturedPhoto ? 'Happy with your photo?' : 'Ready to be photographed?'}

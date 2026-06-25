@@ -12,6 +12,8 @@ export interface LinkedInCaptionContext {
   companyDescription?: string;
   role?: string;
   headline?: string;
+  workshopTrackLabel?: string;
+  sessionTakeaway?: string;
 }
 
 /** Remove any photo-code lines the model may still emit. */
@@ -43,7 +45,7 @@ export async function generateLinkedInCaption(
   const apiKey = process.env.GOOGLE_GEMINI_API_KEY?.trim();
   const body = apiKey
     ? await generateWithGemini(apiKey, context)
-    : fallbackSocialCaption(context.userName);
+    : fallbackSocialCaption(context);
 
   return formatLinkedInPost(body);
 }
@@ -60,6 +62,10 @@ async function generateWithGemini(
     context.companyDescription && `About company: ${context.companyDescription}`,
     context.role && `Role: ${context.role}`,
     context.headline && `LinkedIn headline: ${context.headline}`,
+    context.workshopTrackLabel &&
+      `Workshop or session attended: ${context.workshopTrackLabel}`,
+    context.sessionTakeaway &&
+      `Key takeaway / new feature / light-bulb moment: ${context.sessionTakeaway}`,
     context.promptTitle && `AI photo theme: ${context.promptTitle}`,
     context.backgroundName && `Scene background: ${context.backgroundName}`,
   ]
@@ -95,5 +101,5 @@ Write the LinkedIn post body (first person).`;
     console.warn('[linkedin-caption] Gemini failed, using fallback:', error);
   }
 
-  return fallbackSocialCaption(context.userName);
+  return fallbackSocialCaption(context);
 }

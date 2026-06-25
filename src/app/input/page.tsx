@@ -15,6 +15,7 @@ import { GdprConsentBlock } from '@/components/common/GdprConsentBlock';
 import { FormField } from '@/components/ui/FormField';
 import { IconMail, IconSparkles, IconUser } from '@/components/icons/BoothIcons';
 import { GDPR_FOOTER } from '@/lib/gdpr';
+import { WORKSHOP_TRACKS } from '@/data/io-connect-workshops';
 
 export default function InputPage() {
   const router = useRouter();
@@ -43,7 +44,10 @@ export default function InputPage() {
     }
     setConsentError(null);
     setConsent(termsAccepted, galleryShare);
-    initializeSession(data.userName, data.userEmail);
+    initializeSession(data.userName, data.userEmail, {
+      workshopTrack: data.workshopTrack,
+      sessionTakeaway: data.sessionTakeaway,
+    });
 
     const session = usePhotoBoothStore.getState().session;
     const profile = usePhotoBoothStore.getState().attendeeProfile;
@@ -66,7 +70,7 @@ export default function InputPage() {
   };
 
   return (
-    <WizardLayout step={1} totalSteps={5} backHref="/" title="Your Details" formWide>
+    <WizardLayout step={1} totalSteps={4} backHref="/" title="Your Details" formWide>
       <PageMotion className="w-full" stagger>
       <div className="wizard-card wizard-card--form space-y-6 w-full">
           <div className="text-center space-y-2">
@@ -77,7 +81,7 @@ export default function InputPage() {
             </span>
             <h2 className="wizard-title">{branding.eventTitle}</h2>
             <p className="wizard-subtitle">
-              Create your AI-transformed I/O Connect photo and share it!
+              Create your AI photo, then share it with an auto-generated social post.
             </p>
           </div>
 
@@ -108,8 +112,55 @@ export default function InputPage() {
               className="wizard-input"
             />
 
+            <fieldset className="space-y-3">
+              <legend className="text-sm font-semibold text-io-muted">
+                Which session or workshop did you attend? *
+              </legend>
+              <p className="text-xs text-io-subtle -mt-1">
+                Go beyond the basics — we use this to personalize your AI social post.
+              </p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {WORKSHOP_TRACKS.map((track) => (
+                  <label key={track.id} className="workshop-track-option">
+                    <input
+                      type="radio"
+                      value={track.id}
+                      {...register('workshopTrack')}
+                      className="workshop-track-option__input"
+                    />
+                    <span className="workshop-track-option__body">
+                      <span className="workshop-track-option__label">{track.label}</span>
+                      <span className="workshop-track-option__desc">{track.description}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+              {errors.workshopTrack && (
+                <p className="form-field__error">{errors.workshopTrack.message}</p>
+              )}
+            </fieldset>
+
+            <div className="form-field space-y-2">
+              <label htmlFor="sessionTakeaway" className="form-label">
+                Key takeaway, new feature, or light-bulb moment
+                <span className="text-io-subtle font-normal"> (optional)</span>
+              </label>
+              <textarea
+                id="sessionTakeaway"
+                {...register('sessionTakeaway')}
+                rows={3}
+                maxLength={280}
+                placeholder="What will you share online from your session?"
+                className="wizard-input w-full resize-y min-h-[88px]"
+              />
+              {errors.sessionTakeaway && (
+                <p className="form-field__error">{errors.sessionTakeaway.message}</p>
+              )}
+            </div>
+
             <div className="wizard-promo-banner">
-              Create your magical photo and share it on social media! 📱
+              Go beyond the basics — Gemini writes your post with #GoogleIOConnect and
+              #BuildWithGemini. Share what you created! 📱
             </div>
 
             <GdprConsentBlock

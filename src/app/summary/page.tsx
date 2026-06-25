@@ -13,10 +13,12 @@ import {
 } from '@/data/io-connect-facts';
 import { BRAND, BRAND_ASSETS } from '@/lib/branding';
 import { downloadImage, printPhoto } from '@/lib/photo-actions';
+import { getWorkshopTrackLabel } from '@/data/io-connect-workshops';
 
 function SummarySocialShare({
   compositedPhoto,
   userName,
+  userEmail,
   photoCode,
   promptTitle,
   backgroundName,
@@ -24,9 +26,12 @@ function SummarySocialShare({
   companyDescription,
   role,
   headline,
+  workshopTrackLabel,
+  sessionTakeaway,
 }: {
   compositedPhoto: string;
   userName: string;
+  userEmail?: string;
   photoCode?: string;
   promptTitle?: string;
   backgroundName?: string;
@@ -34,12 +39,15 @@ function SummarySocialShare({
   companyDescription?: string;
   role?: string;
   headline?: string;
+  workshopTrackLabel?: string;
+  sessionTakeaway?: string;
 }) {
   return (
     <Suspense fallback={null}>
       <SocialSharePanel
         compositedPhoto={compositedPhoto}
         userName={userName}
+        userEmail={userEmail}
         photoCode={photoCode}
         promptTitle={promptTitle}
         backgroundName={backgroundName}
@@ -47,6 +55,8 @@ function SummarySocialShare({
         companyDescription={companyDescription}
         role={role}
         headline={headline}
+        workshopTrackLabel={workshopTrackLabel}
+        sessionTakeaway={sessionTakeaway}
         returnPath="/summary"
       />
     </Suspense>
@@ -162,6 +172,7 @@ export default function SummaryPage() {
           <SummarySocialShare
             compositedPhoto={composited}
             userName={session.userName}
+            userEmail={session.userEmail}
             photoCode={photoCode ?? undefined}
             promptTitle={selectedPrompt?.title}
             backgroundName={selectedBackground?.name}
@@ -169,6 +180,8 @@ export default function SummaryPage() {
             companyDescription={attendeeProfile?.companyDescription}
             role={attendeeProfile?.role}
             headline={attendeeProfile?.headline}
+            workshopTrackLabel={getWorkshopTrackLabel(attendeeProfile?.workshopTrack)}
+            sessionTakeaway={attendeeProfile?.sessionTakeaway}
           />
         )}
 

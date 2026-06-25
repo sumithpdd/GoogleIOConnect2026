@@ -84,6 +84,8 @@ export const usePhotoBoothStore = create<PhotoBoothState>((set) => ({
       role: clean(profile?.role),
       linkedInUrl: clean(profile?.linkedInUrl),
       headline: clean(profile?.headline),
+      workshopTrack: clean(profile?.workshopTrack),
+      sessionTakeaway: clean(profile?.sessionTakeaway),
     };
     set({
       session: {

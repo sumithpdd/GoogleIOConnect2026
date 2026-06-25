@@ -45,6 +45,8 @@ export async function POST(request: NextRequest) {
       companyDescription?: string;
       role?: string;
       headline?: string;
+      workshopTrackLabel?: string;
+      sessionTakeaway?: string;
       photoCode?: string;
       caption?: string;
     };
@@ -73,6 +75,8 @@ export async function POST(request: NextRequest) {
         companyDescription: body.companyDescription,
         role: body.role,
         headline: body.headline,
+        workshopTrackLabel: body.workshopTrackLabel,
+        sessionTakeaway: body.sessionTakeaway,
       }));
 
     const imageBuffer = await resolveImageBuffer(body.image, body.imageUrl);

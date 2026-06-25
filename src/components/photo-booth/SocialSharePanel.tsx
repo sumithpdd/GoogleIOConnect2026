@@ -1,8 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { apiFetch } from '@/lib/core/api-client';
+import {
+  findSocialPostForPhoto,
+  listSocialPosts,
+  previewSocialPostCaption,
+  saveSocialPost,
+  type StoredSocialPost,
+} from '@/lib/social-posts-storage';
 
 interface SocialSharePanelProps {
   /** Base64 data URL or blob URL from the booth session. */
@@ -10,6 +17,8 @@ interface SocialSharePanelProps {
   /** Public image URL (admin gallery — Firebase Storage). */
   imageUrl?: string;
   userName: string;
+  /** Used to list and cache AI posts without login. */
+  userEmail?: string;
   photoCode?: string;
   promptTitle?: string;
   backgroundName?: string;
@@ -17,6 +26,8 @@ interface SocialSharePanelProps {
   companyDescription?: string;
   role?: string;
   headline?: string;
+  workshopTrackLabel?: string;
+  sessionTakeaway?: string;
   /** OAuth return path after LinkedIn connect (default `/result`). */
   returnPath?: string;
   compact?: boolean;
@@ -26,10 +37,24 @@ function canNativeShare(): boolean {
   return typeof navigator !== 'undefined' && typeof navigator.share === 'function';
 }
 
+function formatPostDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return '';
+  }
+}
+
 export function SocialSharePanel({
   compositedPhoto,
   imageUrl,
   userName,
+  userEmail,
   photoCode,
   promptTitle,
   backgroundName,
@@ -37,13 +62,20 @@ export function SocialSharePanel({
   companyDescription,
   role,
   headline,
+  workshopTrackLabel,
+  sessionTakeaway: initialTakeaway,
   returnPath = '/result',
   compact = false,
 }: SocialSharePanelProps) {
   const searchParams = useSearchParams();
   const [linkedInConfigured, setLinkedInConfigured] = useState(false);
   const [connected, setConnected] = useState(false);
+  const [sessionTakeaway, setSessionTakeaway] = useState(initialTakeaway ?? '');
+  const sessionTakeawayRef = useRef(sessionTakeaway);
+  sessionTakeawayRef.current = sessionTakeaway;
   const [caption, setCaption] = useState('');
+  const [savedPosts, setSavedPosts] = useState<StoredSocialPost[]>([]);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [loadingCaption, setLoadingCaption] = useState(false);
   const [posting, setPosting] = useState(false);
   const [nativeSharing, setNativeSharing] = useState(false);
@@ -52,8 +84,20 @@ export function SocialSharePanel({
   const [hashtagHint, setHashtagHint] = useState(
     'Includes event hashtags and @mention appended automatically'
   );
+  const initKeyRef = useRef<string | null>(null);
 
   const hasImage = Boolean(compositedPhoto?.trim() || imageUrl?.trim());
+  const emailKey = userEmail?.trim() ?? '';
+
+  const refreshSavedPosts = useCallback(() => {
+    if (!emailKey) {
+      setSavedPosts([]);
+      return [];
+    }
+    const posts = listSocialPosts(emailKey);
+    setSavedPosts(posts);
+    return posts;
+  }, [emailKey]);
 
   const loadStatus = useCallback(async () => {
     const [linkedInRes, configRes] = await Promise.all([
@@ -74,10 +118,12 @@ export function SocialSharePanel({
     }
   }, []);
 
-  const loadCaption = useCallback(async () => {
-    setLoadingCaption(true);
-    setError(null);
-    try {
+  useEffect(() => {
+    setSessionTakeaway(initialTakeaway ?? '');
+  }, [initialTakeaway]);
+
+  const requestAiCaption = useCallback(
+    async (takeawayOverride?: string) => {
       const res = await apiFetch('/api/social/caption', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -89,6 +135,9 @@ export function SocialSharePanel({
           companyDescription,
           role,
           headline,
+          workshopTrackLabel,
+          sessionTakeaway:
+            (takeawayOverride ?? sessionTakeawayRef.current).trim() || undefined,
         }),
       });
       const json = (await res.json()) as {
@@ -99,29 +148,120 @@ export function SocialSharePanel({
       if (!res.ok || !json.success) {
         throw new Error(json.error || 'Failed to generate post text');
       }
-      setCaption(json.data?.caption ?? '');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Post text generation failed');
-    } finally {
-      setLoadingCaption(false);
+      return json.data?.caption ?? '';
+    },
+    [
+      userName,
+      promptTitle,
+      backgroundName,
+      company,
+      companyDescription,
+      role,
+      headline,
+      workshopTrackLabel,
+    ]
+  );
+
+  const generateAndSave = useCallback(
+    async (takeawayOverride?: string) => {
+      setLoadingCaption(true);
+      setError(null);
+      try {
+        const generated = await requestAiCaption(takeawayOverride);
+        setCaption(generated);
+
+        if (emailKey && generated.trim()) {
+          const saved = saveSocialPost(emailKey, {
+            caption: generated,
+            photoCode: photoCode?.trim() || undefined,
+            userName,
+            promptTitle,
+            backgroundName,
+            workshopTrackLabel,
+            sessionTakeaway:
+              (takeawayOverride ?? sessionTakeawayRef.current).trim() || undefined,
+          });
+          setSelectedPostId(saved.id);
+          refreshSavedPosts();
+        } else {
+          setSelectedPostId(null);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Post text generation failed');
+      } finally {
+        setLoadingCaption(false);
+      }
+    },
+    [
+      emailKey,
+      photoCode,
+      userName,
+      promptTitle,
+      backgroundName,
+      workshopTrackLabel,
+      requestAiCaption,
+      refreshSavedPosts,
+    ]
+  );
+
+  const selectSavedPost = useCallback((post: StoredSocialPost) => {
+    setCaption(post.caption);
+    setSelectedPostId(post.id);
+    if (post.sessionTakeaway) {
+      setSessionTakeaway(post.sessionTakeaway);
     }
-  }, [
-    userName,
-    promptTitle,
-    backgroundName,
-    company,
-    companyDescription,
-    role,
-    headline,
-  ]);
+    setMessage('Loaded saved post — edit or share when ready.');
+    setError(null);
+  }, []);
 
   useEffect(() => {
     void loadStatus();
   }, [loadStatus]);
 
   useEffect(() => {
-    void loadCaption();
-  }, [loadCaption]);
+    const initKey = `${emailKey}:${photoCode ?? ''}:${userName}`;
+    if (initKeyRef.current === initKey) return;
+    initKeyRef.current = initKey;
+
+    if (emailKey) {
+      const posts = refreshSavedPosts();
+      const cached = findSocialPostForPhoto(emailKey, photoCode);
+      if (cached) {
+        setCaption(cached.caption);
+        setSelectedPostId(cached.id);
+        return;
+      }
+      if (posts.length === 0 || photoCode) {
+        void generateAndSave(initialTakeaway);
+        return;
+      }
+      setCaption(posts[0].caption);
+      setSelectedPostId(posts[0].id);
+      return;
+    }
+
+    void (async () => {
+      setLoadingCaption(true);
+      setError(null);
+      try {
+        const generated = await requestAiCaption(initialTakeaway);
+        setCaption(generated);
+        setSelectedPostId(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Post text generation failed');
+      } finally {
+        setLoadingCaption(false);
+      }
+    })();
+  }, [
+    emailKey,
+    photoCode,
+    userName,
+    initialTakeaway,
+    refreshSavedPosts,
+    generateAndSave,
+    requestAiCaption,
+  ]);
 
   useEffect(() => {
     const linkedinParam = searchParams.get('linkedin');
@@ -214,6 +354,8 @@ export function SocialSharePanel({
           companyDescription,
           role,
           headline,
+          workshopTrackLabel,
+          sessionTakeaway: sessionTakeaway.trim() || undefined,
           caption: caption.trim() || undefined,
         }),
       });
@@ -254,8 +396,73 @@ export function SocialSharePanel({
           📱 Share to social
         </p>
         <p className="text-io-subtle text-xs mt-1">
-          AI-generated post text from your profile — edit, copy, or share with your photo
+          Gemini writes your post from your session, takeaway, and AI photo — edit, copy, or share
+          online with{' '}
+          <span className="text-google-blue font-medium">#GoogleIOConnect</span> and{' '}
+          <span className="text-google-blue font-medium">#BuildWithGemini</span>
         </p>
+        {emailKey && (
+          <p className="text-io-subtle text-xs mt-1">
+            Saved posts for your email — pick one below or regenerate a new version.
+          </p>
+        )}
+        {workshopTrackLabel && (
+          <p className="text-io-muted text-xs mt-2">
+            Session: <span className="font-semibold">{workshopTrackLabel}</span>
+          </p>
+        )}
+      </div>
+
+      {emailKey && savedPosts.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-xs text-io-muted font-semibold uppercase tracking-wide">
+            Your saved AI posts ({savedPosts.length})
+          </p>
+          <ul className="social-posts-list max-h-44 overflow-y-auto space-y-1.5 pr-1">
+            {savedPosts.map((post) => {
+              const active = post.id === selectedPostId;
+              return (
+                <li key={post.id}>
+                  <button
+                    type="button"
+                    onClick={() => selectSavedPost(post)}
+                    className={`social-posts-list__item w-full text-left ${
+                      active ? 'social-posts-list__item--active' : ''
+                    }`}
+                  >
+                    <span className="social-posts-list__meta">
+                      {formatPostDate(post.createdAt)}
+                      {post.photoCode ? ` · ${post.photoCode}` : ''}
+                      {post.workshopTrackLabel ? ` · ${post.workshopTrackLabel}` : ''}
+                    </span>
+                    <span className="social-posts-list__preview">
+                      {previewSocialPostCaption(post.caption)}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <label
+          htmlFor="session-takeaway"
+          className="text-xs text-io-muted font-semibold uppercase tracking-wide"
+        >
+          Key takeaway, new feature, or light-bulb moment
+        </label>
+        <textarea
+          id="session-takeaway"
+          value={sessionTakeaway}
+          onChange={(e) => setSessionTakeaway(e.target.value)}
+          rows={3}
+          maxLength={280}
+          className="w-full rounded-lg io-textarea-inset text-sm p-3 resize-y"
+          placeholder="e.g. A Gemini API trick I will use on Monday, or what clicked in the workshop"
+          disabled={loadingCaption || posting}
+        />
       </div>
 
       <div className="space-y-2">
@@ -264,7 +471,10 @@ export function SocialSharePanel({
         </label>
         <textarea
           value={caption}
-          onChange={(e) => setCaption(e.target.value)}
+          onChange={(e) => {
+            setCaption(e.target.value);
+            setSelectedPostId(null);
+          }}
           rows={compact ? 6 : 9}
           className="w-full rounded-lg io-textarea-inset text-sm p-3 resize-y min-h-[140px]"
           placeholder={loadingCaption ? 'Generating post with AI…' : 'Post text'}
@@ -274,7 +484,7 @@ export function SocialSharePanel({
         <div className="flex flex-col sm:flex-row gap-2">
           <button
             type="button"
-            onClick={() => void loadCaption()}
+            onClick={() => void generateAndSave(sessionTakeaway)}
             disabled={loadingCaption || posting}
             className="wizard-secondary-btn flex-1 py-2 disabled:opacity-50"
           >

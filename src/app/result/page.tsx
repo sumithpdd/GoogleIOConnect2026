@@ -11,33 +11,41 @@ import { useAppConfig } from '@/components/providers/app-config-provider';
 import { WizardLayout } from '@/components/io-connect/WizardLayout';
 import { HeadingMotion, PageMotion } from '@/components/io-connect/PageMotion';
 import { SocialSharePanel } from '@/components/photo-booth/SocialSharePanel';
+import { getWorkshopTrackLabel } from '@/data/io-connect-workshops';
 
 function ResultSocialShare({
   compositedPhoto,
   userName,
   photoCode,
+  userEmail,
   promptTitle,
   backgroundName,
   company,
   companyDescription,
   role,
   headline,
+  workshopTrackLabel,
+  sessionTakeaway,
 }: {
   compositedPhoto: string;
   userName: string;
   photoCode: string;
+  userEmail?: string;
   promptTitle: string;
   backgroundName: string;
   company?: string;
   companyDescription?: string;
   role?: string;
   headline?: string;
+  workshopTrackLabel?: string;
+  sessionTakeaway?: string;
 }) {
   return (
     <Suspense fallback={null}>
       <SocialSharePanel
         compositedPhoto={compositedPhoto}
         userName={userName}
+        userEmail={userEmail}
         photoCode={photoCode}
         promptTitle={promptTitle}
         backgroundName={backgroundName}
@@ -45,6 +53,8 @@ function ResultSocialShare({
         companyDescription={companyDescription}
         role={role}
         headline={headline}
+        workshopTrackLabel={workshopTrackLabel}
+        sessionTakeaway={sessionTakeaway}
         returnPath="/result"
       />
     </Suspense>
@@ -135,7 +145,7 @@ export default function ResultPage() {
     return null;
 
   return (
-    <WizardLayout step={5} totalSteps={5} backHref="/" title="Your Photo" wide>
+    <WizardLayout step={4} totalSteps={4} backHref="/" title="Your Photo" wide>
       <PageMotion className="w-full space-y-6" stagger>
           <HeadingMotion
             title={`Your Photo: ${photoCode}`}
@@ -210,6 +220,7 @@ export default function ResultPage() {
           <ResultSocialShare
             compositedPhoto={compositedPhoto}
             userName={session.userName}
+            userEmail={session.userEmail}
             photoCode={photoCode}
             promptTitle={selectedPrompt.title}
             backgroundName={selectedBackground.name}
@@ -217,6 +228,8 @@ export default function ResultPage() {
             companyDescription={attendeeProfile?.companyDescription}
             role={attendeeProfile?.role}
             headline={attendeeProfile?.headline}
+            workshopTrackLabel={getWorkshopTrackLabel(attendeeProfile?.workshopTrack)}
+            sessionTakeaway={attendeeProfile?.sessionTakeaway}
           />
 
           <div className="grid grid-cols-2 gap-4 wizard-card p-5 text-sm">

@@ -19,6 +19,8 @@ export async function POST(request: NextRequest) {
       role?: string;
       headline?: string;
       photoCode?: string;
+      workshopTrackLabel?: string;
+      sessionTakeaway?: string;
     };
 
     if (!body.userName?.trim()) {
@@ -36,6 +38,8 @@ export async function POST(request: NextRequest) {
       companyDescription: body.companyDescription,
       role: body.role,
       headline: body.headline,
+      workshopTrackLabel: body.workshopTrackLabel,
+      sessionTakeaway: body.sessionTakeaway,
     });
 
     return NextResponse.json({

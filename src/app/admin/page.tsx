@@ -4,6 +4,7 @@ import { Suspense, useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { BoothLayout } from '@/components/common/BoothLayout';
 import { SocialSharePanel } from '@/components/photo-booth/SocialSharePanel';
+import { getWorkshopTrackLabel } from '@/data/io-connect-workshops';
 import { FormInput } from '@/components/ui/FormInput';
 import { bootstrapApiSession } from '@/lib/core/api-client';
 import type { PhotoBoothPhoto, PhotoVisibility, ModerationStatus } from '@/types';
@@ -343,11 +344,14 @@ function AdminPhotoRow({
           <SocialSharePanel
             imageUrl={photo.compositedPhotoUrl}
             userName={photo.userName}
+            userEmail={photo.userEmail}
             photoCode={photo.photoCode}
             company={photo.attendeeProfile?.company}
             companyDescription={photo.attendeeProfile?.companyDescription}
             role={photo.attendeeProfile?.role}
             headline={photo.attendeeProfile?.headline}
+            workshopTrackLabel={getWorkshopTrackLabel(photo.attendeeProfile?.workshopTrack)}
+            sessionTakeaway={photo.attendeeProfile?.sessionTakeaway}
             returnPath="/admin"
             compact
           />

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { WORKSHOP_TRACKS } from '@/data/io-connect-workshops';
 
 const optionalUrl = z.union([
   z.literal(''),
@@ -7,6 +8,11 @@ const optionalUrl = z.union([
 
 const optionalText = (max: number) =>
   z.union([z.literal(''), z.string().trim().max(max)]);
+
+const workshopTrackIds = WORKSHOP_TRACKS.map((t) => t.id) as [
+  (typeof WORKSHOP_TRACKS)[number]['id'],
+  ...(typeof WORKSHOP_TRACKS)[number]['id'][],
+];
 
 // User Input Validation
 export const userInputSchema = z.object({
@@ -19,6 +25,10 @@ export const userInputSchema = z.object({
     z.literal(''),
     z.string().trim().email('Invalid email address'),
   ]),
+  workshopTrack: z.enum(workshopTrackIds, {
+    errorMap: () => ({ message: 'Please select the session or workshop you attended' }),
+  }),
+  sessionTakeaway: optionalText(280).optional(),
   company: optionalText(120).optional(),
   companyDescription: optionalText(500).optional(),
   role: optionalText(120).optional(),
@@ -35,6 +45,8 @@ export const attendeeProfileSchema = z.object({
   role: z.string().trim().max(120).optional(),
   linkedInUrl: z.string().trim().url().optional().or(z.literal('')),
   headline: z.string().trim().max(200).optional(),
+  workshopTrack: z.enum(workshopTrackIds).optional(),
+  sessionTakeaway: z.string().trim().max(280).optional(),
 });
 
 export type AttendeeProfileInput = z.infer<typeof attendeeProfileSchema>;

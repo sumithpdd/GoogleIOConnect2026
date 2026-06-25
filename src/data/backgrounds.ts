@@ -1,5 +1,6 @@
 /**
- * Background scenes — Google I/O Connect Berlin 2026 (GDG London community)
+ * Background scenes — curated for booth flow (see booth-scenes.ts).
+ * Extra entries may remain for gallery photos uploaded with older scene IDs.
  */
 
 import { Background } from '@/types';
@@ -8,7 +9,6 @@ import { IO_CONNECT_ASSETS } from '@/lib/io-connect-brand';
 const P = IO_CONNECT_ASSETS.backgroundPreviews;
 
 export const backgrounds: Background[] = [
-  // ─── Berlin landmarks & culture ───────────────────────────────────────────
   {
     id: 'berlin-brandenburg',
     name: 'Brandenburg Gate',
@@ -25,7 +25,7 @@ export const backgrounds: Background[] = [
     id: 'berlin-tvtower',
     name: 'Fernsehturm & Alexanderplatz',
     description:
-      'Berlin TV Tower rising over Alexanderplatz — socialist-era plaza, red city lights and the unmistakable Fernsehturm sphere at night',
+      'Berlin TV Tower rising over Alexanderplatz — red city lights and the unmistakable Fernsehturm sphere at night',
     imageUrl: P.berlinAlexanderplatz,
     category: 'innovation',
     previewClass: 'bg-preview-berlin-neon',
@@ -34,54 +34,10 @@ export const backgrounds: Background[] = [
     featured: true,
   },
   {
-    id: 'berlin-tower-close',
-    name: 'TV Tower Close-Up',
-    description:
-      'The Fernsehturm sphere glowing against a deep Berlin night sky — iconic Mitte silhouette and European tech capital atmosphere',
-    imageUrl: P.berlinTower,
-    category: 'innovation',
-    previewClass: 'bg-preview-berlin-neon',
-    city: 'Berlin',
-    emoji: '🗼',
-  },
-  {
-    id: 'berlin-reichstag',
-    name: 'Reichstag Dome',
-    description:
-      'The Reichstag glass dome glowing at twilight — Paul-Löbe-Allee, German Bundestag flags and historic Berlin government quarter',
-    imageUrl: P.berlinReichstag,
-    category: 'innovation',
-    previewClass: 'bg-preview-berlin-dome',
-    city: 'Berlin',
-    emoji: '🏛️',
-  },
-  {
-    id: 'berlin-east-side',
-    name: 'East Side Gallery',
-    description:
-      'Murals on the remaining Berlin Wall at East Side Gallery — Kreuzberg riverside, bold street art colours and Spree riverbank atmosphere',
-    imageUrl: P.berlinEastSide,
-    category: 'innovation',
-    previewClass: 'bg-preview-berlin-wall',
-    city: 'Berlin',
-    emoji: '🎨',
-  },
-  {
-    id: 'berlin-oberbaum',
-    name: 'Oberbaum Bridge',
-    description:
-      'The red-brick Oberbaum Bridge linking Friedrichshain and Kreuzberg — U-Bahn tracks, Spree reflections and iconic Berlin crossover skyline',
-    imageUrl: P.berlinOberbaum,
-    category: 'innovation',
-    previewClass: 'bg-preview-berlin-river',
-    city: 'Berlin',
-    emoji: '🌉',
-  },
-  {
     id: 'berlin-buddy-bears',
     name: 'United Buddy Bears',
     description:
-      'Colourful United Buddy Bear statues arm-in-arm on a Berlin boulevard — the city\'s famous bear art trail and friendly Hauptstadt welcome',
+      'Colourful United Buddy Bear statues arm-in-arm on a Berlin boulevard — friendly Hauptstadt welcome',
     imageUrl: P.berlinBuddyBears,
     category: 'innovation',
     previewClass: 'bg-preview-berlin-bears',
@@ -90,33 +46,21 @@ export const backgrounds: Background[] = [
     featured: true,
   },
   {
-    id: 'berlin-city-bear',
-    name: 'Berliner Bär',
+    id: 'berlin-east-side',
+    name: 'East Side Gallery',
     description:
-      'Berlin\'s coat-of-arms bear mascot beside the Brandenburg Gate — Berliner Bär pride, Pariser Platz cobbles and golden evening light on the Siegessäule axis',
-    imageUrl: P.berlinGate,
+      'Murals on the Berlin Wall at East Side Gallery — Kreuzberg riverside and bold street art colours',
+    imageUrl: P.berlinEastSide,
     category: 'innovation',
-    previewClass: 'bg-preview-berlin-bear-gate',
+    previewClass: 'bg-preview-berlin-wall',
     city: 'Berlin',
-    emoji: '🧸',
-    featured: true,
-  },
-  {
-    id: 'berlin-night-skyline',
-    name: 'Berlin Night Skyline',
-    description:
-      'Panoramic Berlin after dark — city lights along the Spree, Fernsehturm glow and the energy of I/O Connect Berlin 2026',
-    imageUrl: P.berlinNight,
-    category: 'innovation',
-    previewClass: 'bg-preview-berlin-neon',
-    city: 'Berlin',
-    emoji: '🌃',
+    emoji: '🎨',
   },
   {
     id: 'berlin-hello-art',
     name: 'Hello Berlin Art',
     description:
-      'Official Hello Berlin visual style on pure black — gradient globe, Android, cloud and sparkle motifs from the Berlin developer conference art direction',
+      'Official Hello Berlin visual style — gradient globe, Android, cloud and sparkle motifs on black',
     imageUrl: IO_CONNECT_ASSETS.helloBerlin,
     category: 'innovation',
     previewClass: 'bg-preview-connect-official',
@@ -124,13 +68,22 @@ export const backgrounds: Background[] = [
     emoji: '👋',
     featured: true,
   },
-
-  // ─── Google I/O Connect Berlin 2026 ───────────────────────────────────────
+  {
+    id: 'berlin-night-skyline',
+    name: 'Berlin Night Skyline',
+    description:
+      'Panoramic Berlin after dark — city lights along the Spree and Fernsehturm glow',
+    imageUrl: P.berlinNight,
+    category: 'innovation',
+    previewClass: 'bg-preview-berlin-neon',
+    city: 'Berlin',
+    emoji: '🌃',
+  },
   {
     id: 'connect-braces',
     name: 'I/O Connect Berlin',
     description:
-      'Google I/O Connect Berlin banner aesthetic — luminous gradient code braces, Android head and wireframe globe on pure black studio',
+      'Google I/O Connect Berlin banner — luminous gradient code braces, Android and wireframe globe on black',
     imageUrl: IO_CONNECT_ASSETS.berlinBanner,
     category: 'heritage',
     previewClass: 'bg-preview-connect-braces',
@@ -139,50 +92,27 @@ export const backgrounds: Background[] = [
     featured: true,
   },
   {
-    id: 'connect-berlin-landmarks',
-    name: 'Berlin Landmarks Collage',
+    id: 'connect-gemini',
+    name: 'Gemini Sparkle',
     description:
-      'Brandenburg Gate, Fernsehturm and Buddy Bears woven into one celebratory Berlin portrait — GDG London at I/O Connect Berlin 2026',
-    imageUrl: P.berlinNight,
+      'Black studio with floating Gemini sparkle stars and multicolor gradient orbs',
+    imageUrl: IO_CONNECT_ASSETS.samplePhotos[0],
     category: 'heritage',
-    previewClass: 'bg-preview-connect-bridge',
+    previewClass: 'bg-preview-connect-gemini',
     city: 'I/O Connect',
-    emoji: '🏙️',
-    featured: true,
-  },
-  {
-    id: 'connect-gdg-sticker',
-    name: 'GDG London · Berlin 2026',
-    description:
-      'Official GDG London community sticker — celebrating I/O Connect Berlin 2026 with Berlin landmarks on the badge',
-    imageUrl: IO_CONNECT_ASSETS.gdgLondonLogo,
-    category: 'heritage',
-    previewClass: 'bg-preview-connect-sticker',
-    city: 'I/O Connect',
-    emoji: '🏷️',
+    emoji: '✨',
     featured: true,
   },
   {
     id: 'connect-gradient',
     name: 'Gradient Studio',
     description:
-      'Minimal black portrait studio with sweeping Google blue-red-yellow-green gradient light bars and soft developer-event rim lighting',
+      'Minimal black portrait studio with sweeping Google gradient light bars',
     imageUrl: IO_CONNECT_ASSETS.mainLogo,
     category: 'heritage',
     previewClass: 'bg-preview-connect-gradient',
     city: 'I/O Connect',
     emoji: '🎨',
-  },
-  {
-    id: 'connect-gemini',
-    name: 'Gemini Sparkle',
-    description:
-      'Deep black studio with floating Gemini sparkle stars, multicolor gradient orbs and subtle AI photo-booth glow — I/O Connect Berlin 2026',
-    imageUrl: IO_CONNECT_ASSETS.samplePhotos[0],
-    category: 'heritage',
-    previewClass: 'bg-preview-connect-gemini',
-    city: 'I/O Connect',
-    emoji: '✨',
   },
 ];
 
@@ -207,5 +137,5 @@ export function filterBackgrounds(category: string): Background[] {
   return backgrounds.filter((bg) => bg.category === category);
 }
 
-/** @deprecated use filterBackgrounds — kept for compatibility */
+/** @deprecated use filterBackgrounds */
 export const featuredScenes = backgrounds.filter((b) => b.featured);

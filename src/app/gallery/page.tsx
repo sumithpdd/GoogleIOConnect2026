@@ -14,6 +14,7 @@ interface GalleryPhoto {
   id: string;
   photoCode: string;
   userName: string;
+  userEmail?: string;
   backgroundId: string;
   promptId: string;
   originalPhotoUrl: string;
@@ -93,6 +94,7 @@ export default function GalleryPage() {
     setPreviewPhoto({
       photoCode: photo.photoCode,
       userName: photo.userName,
+      userEmail: photo.userEmail,
       compositedPhotoUrl: photo.compositedPhotoUrl,
       originalPhotoUrl: photo.originalPhotoUrl,
       backgroundId: photo.backgroundId,

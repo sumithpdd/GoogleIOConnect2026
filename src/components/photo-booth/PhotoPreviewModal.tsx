@@ -5,12 +5,14 @@ import { downloadImage, printPhoto } from '@/lib/photo-actions';
 import { backgrounds } from '@/data/backgrounds';
 import { getPromptById } from '@/data/prompts';
 import { SocialSharePanel } from '@/components/photo-booth/SocialSharePanel';
+import { getWorkshopTrackLabel } from '@/data/io-connect-workshops';
 import { useAppConfig } from '@/components/providers/app-config-provider';
 import type { AttendeeProfile } from '@/types';
 
 export interface PhotoPreviewData {
   photoCode: string;
   userName: string;
+  userEmail?: string;
   compositedPhotoUrl: string;
   originalPhotoUrl?: string;
   backgroundId?: string;
@@ -164,6 +166,7 @@ export function PhotoPreviewModal({ photo, onClose }: PhotoPreviewModalProps) {
               <SocialSharePanel
                 imageUrl={photo.compositedPhotoUrl}
                 userName={photo.userName}
+                userEmail={photo.userEmail}
                 photoCode={photo.photoCode}
                 promptTitle={promptTitle}
                 backgroundName={sceneName}
@@ -171,6 +174,8 @@ export function PhotoPreviewModal({ photo, onClose }: PhotoPreviewModalProps) {
                 companyDescription={photo.attendeeProfile?.companyDescription}
                 role={photo.attendeeProfile?.role}
                 headline={photo.attendeeProfile?.headline}
+                workshopTrackLabel={getWorkshopTrackLabel(photo.attendeeProfile?.workshopTrack)}
+                sessionTakeaway={photo.attendeeProfile?.sessionTakeaway}
                 returnPath="/gallery"
                 compact
               />

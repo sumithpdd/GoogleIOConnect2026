@@ -17,6 +17,10 @@ export interface AttendeeProfile {
   role?: string;
   linkedInUrl?: string;
   headline?: string;
+  /** Workshop or View Lounge session attended (for AI social post). */
+  workshopTrack?: string;
+  /** Key takeaway, new feature, or light-bulb moment (for AI social post). */
+  sessionTakeaway?: string;
 }
 
 // Photo Models

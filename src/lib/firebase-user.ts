@@ -18,6 +18,10 @@ export function buildAttendeeProfileDoc(
   if (profile.role?.trim()) doc.role = profile.role.trim();
   if (profile.linkedInUrl?.trim()) doc.linkedInUrl = profile.linkedInUrl.trim();
   if (profile.headline?.trim()) doc.headline = profile.headline.trim();
+  if (profile.workshopTrack?.trim()) doc.workshopTrack = profile.workshopTrack.trim();
+  if (profile.sessionTakeaway?.trim()) {
+    doc.sessionTakeaway = profile.sessionTakeaway.trim();
+  }
 
   return doc;
 }
@@ -94,6 +98,8 @@ export function parseAttendeeProfileFromDoc(
     'role',
     'linkedInUrl',
     'headline',
+    'workshopTrack',
+    'sessionTakeaway',
   ] as const;
 
   for (const key of optional) {

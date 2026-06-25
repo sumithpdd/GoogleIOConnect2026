@@ -84,7 +84,7 @@ export default function ProcessingPage() {
       const errorMsg = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMsg);
       if (!isApiSessionError(errorMsg)) {
-        setTimeout(() => router.push('/prompts'), 3000);
+        setTimeout(() => router.push('/scenes'), 3000);
       }
     } finally {
       setRetrying(false);
@@ -120,7 +120,7 @@ export default function ProcessingPage() {
   }
 
   return (
-    <WizardLayout step={5} totalSteps={5} backHref="/prompts" title="AI Generation">
+    <WizardLayout step={4} totalSteps={4} backHref="/scenes" title="AI Generation">
       <PageMotion className="w-full text-center space-y-8">
         {error ? (
           <div className="wizard-card space-y-4 animate-bounce-in">
@@ -136,8 +136,8 @@ export default function ProcessingPage() {
               >
                 {retrying ? 'Retrying…' : 'Retry'}
               </button>
-              <Link href="/prompts" className="wizard-secondary-btn">
-                Back to magic
+              <Link href="/scenes" className="wizard-secondary-btn">
+                Back to scenes
               </Link>
             </div>
           </div>
