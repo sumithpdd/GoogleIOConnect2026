@@ -10,6 +10,8 @@ import {
   saveSocialPost,
   type StoredSocialPost,
 } from '@/lib/social-posts-storage';
+import { ensureSocialPostFormatted } from '@/lib/linkedin/social-post-format';
+import { SocialPostTagsBlock } from '@/components/photo-booth/SocialPostTagsBlock';
 
 interface SocialSharePanelProps {
   /** Base64 data URL or blob URL from the booth session. */
@@ -167,7 +169,7 @@ export function SocialSharePanel({
       setLoadingCaption(true);
       setError(null);
       try {
-        const generated = await requestAiCaption(takeawayOverride);
+        const generated = ensureSocialPostFormatted(await requestAiCaption(takeawayOverride));
         setCaption(generated);
 
         if (emailKey && generated.trim()) {
@@ -244,7 +246,9 @@ export function SocialSharePanel({
       setLoadingCaption(true);
       setError(null);
       try {
-        const generated = await requestAiCaption(initialTakeaway);
+        const generated = ensureSocialPostFormatted(
+          await requestAiCaption(initialTakeaway)
+        );
         setCaption(generated);
         setSelectedPostId(null);
       } catch (err) {
@@ -285,8 +289,10 @@ export function SocialSharePanel({
 
   const handleCopyText = async () => {
     if (!caption.trim()) return;
+    const text = ensureSocialPostFormatted(caption);
+    setCaption(text);
     try {
-      await navigator.clipboard.writeText(caption);
+      await navigator.clipboard.writeText(text);
       setMessage('Post text copied to clipboard.');
     } catch {
       setError('Could not copy — select the text and copy manually.');
@@ -318,10 +324,12 @@ export function SocialSharePanel({
     setMessage(null);
     try {
       const file = await resolveShareFile();
+      const text = ensureSocialPostFormatted(
+        caption.trim() || `My Google I/O Connect Berlin 2026 photo — ${userName}`
+      );
+      setCaption(text);
       const shareData: ShareData = {
-        text:
-          caption.trim() ||
-          `My Google I/O Connect Berlin 2026 photo — ${userName}`,
+        text,
       };
       if (file) {
         shareData.files = [file];
@@ -481,6 +489,7 @@ export function SocialSharePanel({
           disabled={loadingCaption || posting}
         />
         <p className="text-io-subtle text-xs">{hashtagHint}</p>
+        <SocialPostTagsBlock compact={compact} />
         <div className="flex flex-col sm:flex-row gap-2">
           <button
             type="button"

@@ -1066,6 +1066,41 @@ body {
   color: #f87171;
 }
 
+.social-post-tags-block {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.65rem;
+  border: 1px solid var(--io-border);
+  background: var(--io-surface);
+}
+
+.social-post-tags-block--compact {
+  margin-top: 0.5rem;
+  padding: 0.55rem 0.7rem;
+}
+
+.social-post-tags-block__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--io-subtle);
+  margin-bottom: 0.5rem;
+}
+
+.social-post-tags-block__hashtags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.social-post-tags-block__mention {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--google-blue, #4285f4);
+}
+
 .workshop-track-option {
   display: flex;
   align-items: flex-start;

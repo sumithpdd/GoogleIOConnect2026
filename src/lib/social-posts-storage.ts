@@ -3,6 +3,8 @@
  * Avoids repeat Gemini calls when the user revisits or picks a saved caption.
  */
 
+import { ensureSocialPostFormatted } from '@/lib/linkedin/social-post-format';
+
 const STORAGE_KEY = 'io_connect_social_posts_v1';
 const MAX_POSTS_PER_EMAIL = 40;
 
@@ -56,7 +58,10 @@ export function listSocialPosts(email: string): StoredSocialPost[] {
   const key = normalizeSocialPostsEmail(email);
   if (!key) return [];
   const store = readStore();
-  return sortNewestFirst(store[key] ?? []);
+  return sortNewestFirst(store[key] ?? []).map((post) => ({
+    ...post,
+    caption: ensureSocialPostFormatted(post.caption),
+  }));
 }
 
 export function findSocialPostForPhoto(
@@ -81,7 +86,7 @@ export function saveSocialPost(
     email: key,
     createdAt: new Date().toISOString(),
     ...post,
-    caption: post.caption.trim(),
+    caption: ensureSocialPostFormatted(post.caption.trim()),
   };
 
   const next = sortNewestFirst([entry, ...existing]).slice(0, MAX_POSTS_PER_EMAIL);

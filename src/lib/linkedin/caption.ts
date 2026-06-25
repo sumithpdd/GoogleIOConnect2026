@@ -3,6 +3,7 @@ import {
   fallbackSocialCaption,
   resolveSocialPostCopy,
 } from '@/lib/linkedin/social-post-copy';
+import { formatSocialPost } from '@/lib/linkedin/social-post-format';
 
 export interface LinkedInCaptionContext {
   userName: string;
@@ -16,27 +17,9 @@ export interface LinkedInCaptionContext {
   sessionTakeaway?: string;
 }
 
-/** Remove any photo-code lines the model may still emit. */
-function stripPhotoCodeFromBody(body: string): string {
-  return body
-    .trim()
-    .replace(/photo\s*code\s*:\s*[^\n.]+[.\s]*/gi, '')
-    .replace(/\bIO\d{2}[A-Z0-9]+\b/gi, '')
-    .replace(/\s{2,}/g, ' ')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-}
-
 /** Append required hashtags and mention for the active preset. */
 export function formatLinkedInPost(body: string): string {
-  const { hashtags, mention } = resolveSocialPostCopy();
-  const cleaned = stripPhotoCodeFromBody(body)
-    .replace(/#\w+/g, '')
-    .replace(/@\w+/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  return `${cleaned}\n\n${hashtags}\n\n${mention}`;
+  return formatSocialPost(body);
 }
 
 export async function generateLinkedInCaption(

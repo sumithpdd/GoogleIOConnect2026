@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireApiAuth } from '@/lib/core/api-auth';
 import { generateLinkedInCaption } from '@/lib/linkedin/caption';
+import { ensureSocialPostFormatted } from '@/lib/linkedin/social-post-format';
 import { getLinkedInSession, isLinkedInConfigured } from '@/lib/linkedin/auth';
 import {
   publishLinkedInImagePost,
@@ -65,19 +66,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const caption =
+    const caption = ensureSocialPostFormatted(
       body.caption?.trim() ||
-      (await generateLinkedInCaption({
-        userName: body.userName.trim(),
-        promptTitle: body.promptTitle,
-        backgroundName: body.backgroundName,
-        company: body.company,
-        companyDescription: body.companyDescription,
-        role: body.role,
-        headline: body.headline,
-        workshopTrackLabel: body.workshopTrackLabel,
-        sessionTakeaway: body.sessionTakeaway,
-      }));
+        (await generateLinkedInCaption({
+          userName: body.userName.trim(),
+          promptTitle: body.promptTitle,
+          backgroundName: body.backgroundName,
+          company: body.company,
+          companyDescription: body.companyDescription,
+          role: body.role,
+          headline: body.headline,
+          workshopTrackLabel: body.workshopTrackLabel,
+          sessionTakeaway: body.sessionTakeaway,
+        }))
+    );
 
     const imageBuffer = await resolveImageBuffer(body.image, body.imageUrl);
 

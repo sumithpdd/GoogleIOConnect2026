@@ -10,10 +10,11 @@ import {
 } from '@/lib/social-posts-storage';
 import {
   getWorkshopTrackLabel,
-  SOCIAL_SHARE_HASHTAGS,
   WORKSHOP_TRACKS,
   type WorkshopTrackId,
 } from '@/data/io-connect-workshops';
+import { ensureSocialPostFormatted } from '@/lib/linkedin/social-post-format';
+import { SocialPostTagsBlock } from '@/components/photo-booth/SocialPostTagsBlock';
 
 const LAST_EMAIL_KEY = 'io_connect_last_email_v1';
 
@@ -124,7 +125,7 @@ export function LandingBeyondSocial() {
         throw new Error(json.error || 'Failed to generate post');
       }
 
-      const generated = json.data?.caption ?? '';
+      const generated = ensureSocialPostFormatted(json.data?.caption ?? '');
       setCaption(generated);
 
       const saved = saveSocialPost(emailKey, {
@@ -146,8 +147,10 @@ export function LandingBeyondSocial() {
 
   const handleCopy = async () => {
     if (!caption.trim()) return;
+    const text = ensureSocialPostFormatted(caption);
+    setCaption(text);
     try {
-      await navigator.clipboard.writeText(caption);
+      await navigator.clipboard.writeText(text);
       setMessage('Copied to clipboard — paste on your favourite social network.');
     } catch {
       setError('Could not copy — select the text and copy manually.');
@@ -172,20 +175,7 @@ export function LandingBeyondSocial() {
           light-bulb moment from the process.
         </p>
 
-        <div className="landing-hashtag-row" aria-label="Event hashtags for social posts">
-          {SOCIAL_SHARE_HASHTAGS.map((tag) => (
-            <span
-              key={tag}
-              className={
-                tag === '#GoogleIOConnect' || tag === '#BuildWithGemini'
-                  ? 'landing-hashtag landing-hashtag--primary'
-                  : 'landing-hashtag'
-              }
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+        <SocialPostTagsBlock />
 
         <div className="landing-beyond-form">
           <h3 className="landing-beyond-form__title">Generate your social post</h3>
