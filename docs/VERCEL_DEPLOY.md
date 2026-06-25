@@ -114,7 +114,7 @@ vercel --prod
 ## 4. Verify deployment
 
 1. **Vercel dashboard** — deployment status **Ready**
-2. **Live site** — complete booth flow: input → camera → backgrounds → magic → result
+2. **Live site** — complete booth flow: input → camera → scenes → result
 3. **Gallery** — photo appears at `/gallery`
 4. **Composited image** — person blended into Berlin scene; GDG sticker **top-right**
 5. **Social post** — I/O Connect Berlin copy with GDG London hashtags

@@ -104,14 +104,9 @@ API_SECRET=long-random-string   # recommended on public Vercel deploy
 
 1. **User enters name & email** (`/input`)
 2. **Captures/uploads portrait** (`/camera`)
-3. **Selects Berlin or I/O Connect background** (`/backgrounds`)
-4. **Picks preset or custom prompt** (`/prompts`)
-5. **System processes** (`/processing`):
-   - Sanitizes prompt
-   - Calls Gemini with portrait + scene direction
-   - Applies GDG London watermark (top-right)
-   - Uploads to Firebase
-6. **Result** — download, print, AI social post, gallery (`/result`)
+3. **Selects scene** (`/scenes`) — background + magic preset in one step
+4. **Processing** (`/processing`) — Gemini compositing, watermark, Firebase upload
+5. **Result** — download, print, cached AI social posts, gallery (`/result`)
 
 ## Troubleshooting
 

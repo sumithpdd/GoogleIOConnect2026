@@ -37,12 +37,13 @@ External Services (Firebase, Gemini AI)
 **Pages** (What users see):
 ```
 app/
-├── page.tsx              # Landing (/)
+├── page.tsx              # Landing (/) + LandingBeyondSocial
 ├── layout.tsx            # Root layout
-├── input/page.tsx        # User enters name
+├── input/page.tsx        # User details + workshop track
 ├── camera/page.tsx       # Camera or upload photo
-├── backgrounds/page.tsx  # Choose Berlin / I/O Connect scene
-├── prompts/page.tsx      # Choose magic preset
+├── scenes/page.tsx       # Combined scene + magic picker
+├── backgrounds/page.tsx  # Redirect → /scenes
+├── prompts/page.tsx      # Redirect → /scenes
 ├── processing/page.tsx   # Gemini loader
 ├── result/page.tsx       # Final photo + share
 ├── gallery/page.tsx      # Community gallery
@@ -79,7 +80,7 @@ Reusable building blocks:
 
 ```
 components/
-├── io-connect/           # Wizard, logos, PageMotion, decorations
+├── io-connect/           # Wizard, LandingBeyondSocial, logos, PageMotion
 ├── photo-booth/          # SocialSharePanel, PhotoPreviewModal
 ├── common/               # GDPR, shared layout helpers
 ├── providers/            # AppConfigProvider, API session bootstrap
@@ -98,6 +99,7 @@ lib/
 ├── gemini-image.ts       # Gemini image generation client
 ├── io-connect-brand.ts   # Brand rules, assets, image guardrails
 ├── linkedin/             # Social post copy & OAuth helpers
+├── social-posts-storage.ts  # Browser localStorage caption cache (by email)
 ├── validators.ts         # Zod validation schemas
 ├── hooks.ts              # Custom React hooks
 └── utils.ts              # Helper functions
@@ -110,7 +112,7 @@ Zustand stores (like a data container):
 ```
 store/
 └── photo-booth.ts       # Photo booth session state
-    - userName, userEmail
+    - userName, userEmail, attendeeProfile (workshopTrack, sessionTakeaway)
     - selectedBackground, selectedPrompt
     - capturedPhoto, compositedPhoto
     - isProcessing, photoCode
@@ -153,23 +155,15 @@ types/
    ↓
    Photo stored in: usePhotoBoothStore.capturedPhoto = base64
 
-4. BACKGROUND SELECTION (backgrounds/page.tsx)
+4. SCENE SELECTION (scenes/page.tsx)
    Component reads: usePhotoBoothStore.capturedPhoto
-   User selects background
+   User selects curated scene (background + prompt) or custom prompt
    ↓
-   Component calls: usePhotoBoothStore.setSelectedBackground()
+   Component calls: setSelectedBackground() + setSelectedPrompt()
    ↓
-   Zustand updates: selectedBackground = { id, name, ... }
+   Zustand updates both selections from booth-scenes.ts
 
-5. PROMPT SELECTION (prompts/page.tsx)
-   Component reads: usePhotoBoothStore
-   User selects prompt
-   ↓
-   Component calls: usePhotoBoothStore.setSelectedPrompt()
-   ↓
-   Zustand updates: selectedPrompt = { id, title, ... }
-
-6. PROCESSING SCREEN (processing/page.tsx)
+5. PROCESSING SCREEN (processing/page.tsx)
    Component shows loading animation
    ↓
    Component calls: useMutation to POST /api/composit-image
@@ -179,20 +173,30 @@ types/
    - Calls: Google Gemini AI
    - Returns: compositedPhoto (base64)
 
-7. RESULT SCREEN (result/page.tsx)
+6. RESULT SCREEN (result/page.tsx)
    Component receives: compositedPhoto
    ↓
-   User clicks "Save to Gallery"
+   Upload runs during processing; result shows photo + SocialSharePanel
    ↓
-   Component calls: useMutation to POST /api/upload-photo
+   Social captions: load from localStorage by email, or POST /api/social/caption
    ↓
-   API ROUTE HANDLER (api/upload-photo/route.ts)
-   - Saves photo to Firebase Storage
-   - Saves metadata to Firestore
-   - Returns: photoId, photoCode, photoUrl
+   Saved captions stored in social-posts-storage.ts (browser)
 
-8. RESULT DISPLAYED
-   Component shows final photo with sharing options
+7. RESULT DISPLAYED
+   Download, print, share, regenerate AI photo or social caption
+```
+
+### Example 2: Home-page social post (no photo)
+
+```
+1. LANDING (LandingBeyondSocial)
+   User enters email + workshop track + optional takeaway
+   ↓
+   POST /api/social/caption (via apiFetch)
+   ↓
+   Caption saved to localStorage keyed by email
+   ↓
+   User can list, select, copy, or regenerate posts
 ```
 
 ## Key Concepts
@@ -286,6 +290,18 @@ const { mutate, isPending } = useMutation({
 ```
 
 ## Data Models
+
+### AttendeeProfile
+Extended profile on session (optional fields for social AI):
+```typescript
+{
+  fullName: "Jane Doe",
+  workshopTrack: "ai",
+  sessionTakeaway: "Gemini multimodal API clicked for me",
+  company?: "...",
+  role?: "..."
+}
+```
 
 ### PhotoBoothSession
 Represents a user's current session:

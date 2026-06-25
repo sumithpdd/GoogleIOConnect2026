@@ -904,6 +904,168 @@ body {
   background: color-mix(in srgb, var(--google-blue, #4285f4) 8%, var(--io-surface));
 }
 
+.landing-beyond-form {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--io-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.landing-beyond-form__title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--io-text);
+}
+
+.landing-beyond-form__hint {
+  font-size: 0.85rem;
+  color: var(--io-subtle);
+  line-height: 1.5;
+}
+
+.landing-beyond-form__grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+@media (min-width: 640px) {
+  .landing-beyond-form__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.landing-beyond-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.landing-beyond-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.landing-beyond-field__label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--io-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.landing-beyond-input {
+  width: 100%;
+  border-radius: 0.65rem;
+  border: 1px solid var(--io-border);
+  background: var(--io-surface);
+  color: var(--io-text);
+  padding: 0.65rem 0.85rem;
+  font-size: 0.95rem;
+}
+
+.landing-beyond-input:focus {
+  outline: 2px solid color-mix(in srgb, var(--google-blue, #4285f4) 50%, transparent);
+  outline-offset: 1px;
+}
+
+.landing-beyond-input--textarea {
+  resize: vertical;
+  min-height: 88px;
+  line-height: 1.5;
+}
+
+.landing-beyond-caption {
+  min-height: 160px;
+  font-size: 0.9rem;
+}
+
+.landing-beyond-tracks--select {
+  margin-top: 0.25rem;
+}
+
+.landing-beyond-track--select {
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.landing-beyond-track--selected {
+  border-color: var(--google-blue, #4285f4);
+  background: color-mix(in srgb, var(--google-blue, #4285f4) 10%, var(--io-surface));
+}
+
+.landing-beyond-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  align-items: center;
+}
+
+.landing-beyond-generate-btn {
+  border: none;
+  cursor: pointer;
+}
+
+.landing-beyond-copy-btn {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.landing-beyond-posts {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--io-border);
+}
+
+.landing-beyond-posts__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.landing-beyond-posts__toggle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--google-blue, #4285f4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.landing-beyond-posts__list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.landing-beyond-posts-empty {
+  margin-top: 1rem;
+}
+
+.landing-beyond-feedback {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.landing-beyond-feedback--ok {
+  color: #4ade80;
+}
+
+.landing-beyond-feedback--err {
+  color: #f87171;
+}
+
 .workshop-track-option {
   display: flex;
   align-items: flex-start;

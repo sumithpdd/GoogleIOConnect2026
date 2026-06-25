@@ -74,7 +74,7 @@ All static files live in **`public/branding/`** — see [public/branding/README.
 | `FestiveLights` | `components/io-connect/LandingDecorations.tsx` | SVG string lights with glowing bulbs |
 | `PageMotion` | `components/io-connect/PageMotion.tsx` | Page enter + stagger wrappers |
 
-**Card system:** `.io-gradient-rim`, `.io-inset-panel`, `.io-btn-white` — gradient border cards on backgrounds/prompts pages.
+**Card system:** `.io-gradient-rim`, `.io-inset-panel`, `.io-btn-white` — gradient border cards on scenes/gallery pages.
 
 ---
 
@@ -100,7 +100,7 @@ Animations respect **`prefers-reduced-motion`** (disabled automatically for user
 |-------|--------|
 | `.io-page-content` | Wizard page fade/slide in |
 | `.io-stagger-block` | Stagger direct children (sections, form blocks) |
-| `.io-stagger-grid` | Stagger grid items (backgrounds, gallery, prompts) |
+| `.io-stagger-grid` | Stagger grid items (scenes, gallery) |
 | `.io-heading-block` | Eyebrow → title → subtitle cascade |
 | `.io-modal-backdrop` / `.io-modal-panel` | Gallery preview modal |
 | `.io-logo-float` | Header logo gentle float |

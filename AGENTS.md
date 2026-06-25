@@ -8,7 +8,9 @@ Guidance for AI agents (Cursor) working in this repository. Human docs live in `
 
 **Preset:** `APP_PRESET=io-connect-2026` (default)
 
-**Flow:** `/` → `/input` → `/camera` → `/backgrounds` → `/prompts` → `/processing` → `/result` · `/gallery` · `/admin` · `/summary`
+**Flow:** `/` → `/input` → `/camera` → `/scenes` → `/processing` → `/result` · `/gallery` · `/admin` · `/summary`
+
+(`/backgrounds` and `/prompts` redirect to `/scenes`.)
 
 **Flutter reference** (feature parity): `C:\code\flutter\photo_booth_ai`
 
@@ -33,18 +35,21 @@ Guidance for AI agents (Cursor) working in this repository. Human docs live in `
 - Firebase (Firestore, Storage, Admin on server)
 - Google Gemini — image compositing + social captions (**server-only**)
 - Tailwind CSS, React Hook Form + Zod
+- Browser **localStorage** for AI social post history (keyed by attendee email)
 
 ## API Routes
 
 | Method | Path | Purpose |
 |--------|------|---------|
 | GET | `/api/config` | Branding + backgrounds/prompts |
-| GET | `/api/auth/session` | API session cookie (`API_SECRET`) |
+| POST | `/api/auth/session` | API session token (`API_SECRET`) |
 | POST | `/api/composit-image` | Gemini compositing |
 | POST | `/api/upload-photo` | Firebase Storage + Firestore |
 | GET | `/api/gallery` | Gallery list |
+| POST | `/api/social/caption` | AI social post text + hashtags |
 | POST | `/api/admin/login` | Staff → signed httpOnly cookie |
 | GET/PATCH/DELETE | `/api/admin/photos` | Moderation |
+| `/api/linkedin/*` | Optional OAuth share |
 
 ## Folder Structure
 
@@ -52,16 +57,18 @@ Guidance for AI agents (Cursor) working in this repository. Human docs live in `
 src/
 ├── app/                 # Pages + API routes
 ├── components/
-│   ├── io-connect/      # Brand UI, WizardLayout, ThemePullSwitch
+│   ├── io-connect/      # Wizard, LandingBeyondSocial, PageMotion
 │   ├── booth/           # BoothLogo, BoothBackdrop
 │   ├── photo-booth/     # SocialSharePanel, PhotoPreviewModal
 │   └── providers/       # AppConfig, Theme, ApiSessionBootstrap
 ├── lib/
 │   ├── core/            # app-config, api-auth, api-client
-│   ├── io-connect-brand.ts
-│   └── branding.ts
+│   ├── social-posts-storage.ts  # localStorage caption cache
+│   ├── linkedin/        # caption.ts, social-post-copy.ts
+│   └── io-connect-brand.ts
 ├── store/photo-booth.ts
-└── data/                # backgrounds.ts, prompts.ts, io-connect-facts.ts
+└── data/                # booth-scenes.ts, backgrounds.ts, prompts.ts,
+                         # io-connect-workshops.ts, io-connect-facts.ts
 ```
 
 ## Patterns
@@ -71,6 +78,8 @@ src/
 - `resolveAppConfig()` on server; `useAppConfig()` on client.
 - `apiFetch` for secured routes when `API_SECRET` is set.
 - Berlin-first scenes; GDG London community (not London skyline theme).
+- **Workshop track** on input (`workshopTrack`) feeds AI social captions.
+- **Social posts**: generate via `/api/social/caption`, cache in `social-posts-storage.ts`; do not re-call AI when a saved post exists for the same email + photo code.
 - UI: `wizard-*`, `landing-*`, `google-*` tokens — see `docs/BRANDING_GUIDE.md`.
 
 ## Security

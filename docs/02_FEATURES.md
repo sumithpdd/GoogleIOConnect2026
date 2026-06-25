@@ -2,30 +2,30 @@
 
 Overview of the booth flow, AI pipeline, gallery, admin, and social sharing for **Google I/O Connect Berlin 2026** (GDG London community).
 
-## Booth flow (7 steps)
+## Booth flow (4 wizard steps)
 
 | # | Route | Purpose |
 |---|-------|---------|
-| 1 | `/` | Landing — animated hero, start CTA, gallery link |
-| 2 | `/input` | Name, email, GDPR consent → session created |
-| 3 | `/camera` | Webcam or file upload; portrait 3:4 capture |
-| 4 | `/backgrounds` | Pick Berlin landmark or I/O Connect scene |
-| 5 | `/prompts` | Pick Gemini preset or write custom prompt |
-| 6 | `/processing` | AI compositing + Firebase upload |
-| 7 | `/result` | Download, print, share, regenerate |
+| 1 | `/input` | Name, email, workshop/session, optional takeaway, GDPR → session created |
+| 2 | `/camera` | Webcam or file upload; portrait 3:4 capture |
+| 3 | `/scenes` | Pick curated **scene + magic** pair (or custom prompt) |
+| 4 | `/processing` → `/result` | AI compositing, Firebase upload, download/share |
 
-Optional: `/summary` keepsake page (enabled in `io-connect-2026` preset).
+**Entry:** `/` landing · **Optional:** `/summary` keepsake · **Public:** `/gallery` · **Staff:** `/admin`
+
+Legacy `/backgrounds` and `/prompts` **redirect** to `/scenes`.
 
 ---
 
 ## 1. Landing page
 
-**File:** `src/app/page.tsx`
+**Files:** `src/app/page.tsx` · `src/components/io-connect/LandingBeyondSocial.tsx`
 
 - Black I/O Connect theme with Google gradient accents
 - Animated decorations: floating orbs, `{ }` braces, festive string lights
 - Hero: **“Send a Smile From Berlin”** — GDG London at I/O Connect Berlin 2026
 - Staggered step cards and pulsing CTA
+- **Go beyond the basics** — interactive social post generator (see [Social sharing](#social-sharing--go-beyond-the-basics))
 - Footer: GDG London attribution + link to [RSVP page](https://rsvp.withgoogle.com/events/ioconnect-berlin-2026)
 
 ---
@@ -35,9 +35,11 @@ Optional: `/summary` keepsake page (enabled in `io-connect-2026` preset).
 **File:** `src/app/input/page.tsx`
 
 - Collects **full name** and **email** (validated with Zod)
+- **Workshop / session attended** (required): AI, Android, Chrome, Cloud, or View Lounge — feeds AI social captions
+- Optional **key takeaway / light-bulb moment** (max 280 chars)
 - GDPR terms + optional gallery sharing consent
 - Creates booth session in Zustand + `POST /api/session`
-- Twinkling sparkle icons and staggered form entrance
+- Attendee profile includes `workshopTrack` and `sessionTakeaway` (persisted to Firestore via session upload)
 
 ---
 
@@ -45,47 +47,31 @@ Optional: `/summary` keepsake page (enabled in `io-connect-2026` preset).
 
 **File:** `src/app/camera/page.tsx` · **Hook:** `src/lib/hooks.ts`
 
-- Live webcam preview with **I/O Connect Berlin banner** centered on feed
+- Live webcam preview with **GDG watermark top-right** (small; does not block the face)
 - Pulsing capture ring while camera is active
-- Portrait capture: center-crop to **3:4**, full-frame (no tiny corner thumbnail)
+- Portrait capture: center-crop to **3:4**, full-frame
 - Upload from gallery as alternative
 - Retake clears hook + store state and restarts camera
 
 ---
 
-## 4. Background selection
+## 4. Scene selection (background + magic)
 
-**File:** `src/app/backgrounds/page.tsx` · **Data:** `src/data/backgrounds.ts`
+**File:** `src/app/scenes/page.tsx` · **Data:** `src/data/booth-scenes.ts`, `src/data/backgrounds.ts`, `src/data/prompts.ts`
+
+One tap selects a **curated experience** — background image + Gemini prompt together.
 
 **Filters:** All · **Berlin** · **I/O Connect**
 
-Berlin scenes include Brandenburg Gate, TV Tower, Reichstag, East Side Gallery, Oberbaum Bridge, United Buddy Bears, Hello Berlin art, and more.
+Featured scenes include Hello Berlin Portal, Buddy Bears, East Side Gallery, I/O Connect braces studio, Gemini sparkle, and more.
 
-I/O Connect scenes include gradient braces studio, Berlin landmarks collage, GDG sticker art, Gemini sparkle studio.
-
-Cards use gradient-rim design with staggered grid animation and hover lift.
-
----
-
-## 5. Magic / prompts
-
-**File:** `src/app/prompts/page.tsx` · **Data:** `src/data/prompts.ts`
-
-**Categories:**
-
-| Filter | Content |
-|--------|---------|
-| **Berlin** | Hello Berlin, Buddy Bears, East Side Gallery, GDG London at I/O Connect stage, etc. |
-| **I/O Connect** | Official event art, Gemini sparkle, community motifs |
-| **Share** | Berlin postcard, LinkedIn-ready headshot |
-
-- Preset cards or **custom prompt** (sanitized server-side)
-- Quick suggestion chips for common Berlin prompts
-- All prompts instruct Gemini to **remove the webcam background** and blend the person into the scene
+- **Custom magic** option — write your own prompt (sanitized server-side)
+- Cards use gradient-rim design with staggered grid animation
+- Sets both `selectedBackground` and `selectedPrompt` in Zustand before processing
 
 ---
 
-## 6. AI processing
+## 5. AI processing
 
 **Files:** `src/app/processing/page.tsx` · `src/app/api/composit-image/route.ts` · `src/lib/gemini-image.ts`
 
@@ -105,19 +91,75 @@ Cards use gradient-rim design with staggered grid animation and hover lift.
 
 ---
 
-## 7. Result & sharing
+## 6. Result & sharing
 
-**File:** `src/app/result/page.tsx`
+**File:** `src/app/result/page.tsx` · **Component:** `src/components/photo-booth/SocialSharePanel.tsx`
 
 - Side-by-side **Original** and **AI Enhanced** when both exist
 - Photo code (prefix **`IO26`**) for gallery lookup
 - Download, print, **Regenerate AI Photo**
-- **Social share panel** (`SocialSharePanel`):
-  - AI-generated LinkedIn post about **I/O Connect Berlin 2026** + GDG London
-  - Hashtags: `#GoogleIOConnect #IOConnect2026 #GoogleDevelopers #GDGLondon #BuildWithGemini #Berlin`
-  - Optional LinkedIn OAuth post with image
+- **Social share panel** — see below
+- Optional `/summary` keepsake page with social panel
 
-**Caption generation:** `src/lib/linkedin/social-post-copy.ts` + `src/lib/linkedin/caption.ts`
+---
+
+## Social sharing — Go beyond the basics
+
+Attendees share what they learned at I/O Connect with AI-written captions. **No login** — posts are listed by **email** and stored in the browser.
+
+### Where it appears
+
+| Location | Component |
+|----------|-----------|
+| Home `/` | `LandingBeyondSocial` |
+| Result `/result` | `SocialSharePanel` |
+| Summary `/summary` | `SocialSharePanel` |
+| Gallery modal | `SocialSharePanel` (compact) |
+| Admin preview | `SocialSharePanel` (compact) |
+
+### Workshop context
+
+**Data:** `src/data/io-connect-workshops.ts`
+
+| Track | Label |
+|-------|--------|
+| `ai` | AI — Gemini, ML & generative AI |
+| `android` | Android development |
+| `chrome` | Chrome & web platform |
+| `cloud` | Google Cloud |
+| `view-lounge` | View Lounge session |
+
+Captured on `/input`; passed to caption generation as `workshopTrackLabel`.
+
+### Hashtags (appended automatically)
+
+`#GoogleIOConnect` · `#BuildWithGemini` · `#IOConnect2026` · `#GoogleDevelopers` · `#GDGLondon` · `#Berlin` · `@GoogleDevelopers`
+
+**Copy:** `src/lib/linkedin/social-post-copy.ts`  
+**Generation:** `src/lib/linkedin/caption.ts` · `POST /api/social/caption`
+
+Photo codes and internal IDs are **not** included in generated post text.
+
+### Saved posts (localStorage)
+
+**File:** `src/lib/social-posts-storage.ts`  
+**Key:** `io_connect_social_posts_v1` (object keyed by normalized email)
+
+Each saved post stores: caption, timestamp, optional `photoCode`, workshop label, takeaway, scene metadata.
+
+**Behaviour:**
+
+- On load, if a saved post exists for **email + photo code** → use it (**no Gemini call**)
+- **Regenerate with AI** → new Gemini call → new entry in the list
+- User can **select any saved post** from the list to load its caption
+- Home page and booth flow share the **same list** per email on that device
+- Last-used email remembered: `io_connect_last_email_v1`
+
+**Limit:** 40 posts per email (oldest trimmed).
+
+### Optional LinkedIn OAuth
+
+When `LINKEDIN_CLIENT_ID` / `LINKEDIN_CLIENT_SECRET` are set, result/gallery panels offer **Connect LinkedIn** and post image + caption to the member feed.
 
 ---
 
@@ -128,7 +170,7 @@ Cards use gradient-rim design with staggered grid animation and hover lift.
 - Public grid of shared photos (respects moderation flags)
 - Search by name or photo code
 - Filter: All · Berlin · I/O Connect
-- Tap to open preview modal (animated entrance)
+- Tap to open preview modal — download, print, social share (with saved posts if `userEmail` on record)
 - Staggered card grid animation
 
 ---
@@ -137,9 +179,9 @@ Cards use gradient-rim design with staggered grid animation and hover lift.
 
 **File:** `src/app/admin/page.tsx` · **API:** `/api/admin/*`
 
-- Protected by **`ADMIN_SECRET`**
+- Protected by **`ADMIN_SECRET`** (signed session cookie)
 - Hide/show/delete photos from public gallery
-- View composited images and metadata
+- View composited images, metadata, and social share panel
 
 ---
 

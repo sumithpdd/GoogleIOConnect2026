@@ -2,7 +2,7 @@
 
 AI-powered event photo booth for **Google I/O Connect Berlin 2026**, presented by **GDG London**.
 
-Guests capture a selfie, pick a **Berlin** or **I/O Connect** scene, apply Gemini “magic”, then download, print, or share. Photos upload to Firebase for a public gallery and staff moderation.
+Guests capture a selfie, pick a curated **Berlin / I/O Connect scene** (background + Gemini magic in one step), then download, print, or share. **Gemini** also writes ready-to-post social captions — on the home page or after your photo. Posts are saved per email in the browser (no login). Photos upload to Firebase for a public gallery and staff moderation.
 
 **Repository:** [github.com/sumithpdd/GoogleIOConnect2026](https://github.com/sumithpdd/GoogleIOConnect2026)  
 **Live (example):** [google-io-connect2026.vercel.app](https://google-io-connect2026.vercel.app)  
@@ -13,15 +13,28 @@ Guests capture a selfie, pick a **Berlin** or **I/O Connect** scene, apply Gemin
 
 | Step | Screen | Description |
 |------|--------|-------------|
-| 1 | Landing | Animated hero — “Send a Smile From Berlin”, festive lights, floating Google orbs |
-| 2 | Your details | Name, email, GDPR consent |
-| 3 | Camera | Webcam capture or upload; live preview with I/O Connect logo overlay |
-| 4 | Backgrounds | Berlin landmarks (Gate, TV Tower, Buddy Bears, East Side Gallery…) + I/O Connect art |
-| 5 | Magic | Gemini presets — Berlin, I/O Connect, Share — or custom prompt |
-| 6 | Processing | AI compositing (background removal + scene merge) + GDG sticker watermark |
-| 7 | Result | Download, print, gallery, AI LinkedIn post text, optional LinkedIn OAuth share |
+| 1 | Landing (`/`) | Hero — “Send a Smile From Berlin”; **Go beyond the basics** — generate AI social posts & view saved captions by email |
+| 2 | Your details (`/input`) | Name, email, workshop/session attended, optional takeaway, GDPR consent |
+| 3 | Camera (`/camera`) | Webcam capture or upload; GDG watermark top-right on live preview |
+| 4 | Scenes (`/scenes`) | One-tap **scene + magic** pairs (Berlin landmarks & I/O Connect art); optional custom prompt |
+| 5 | Processing (`/processing`) | AI compositing + Firebase upload |
+| 6 | Result (`/result`) | Download, print, gallery, cached AI social posts, optional LinkedIn OAuth share |
 
-**Admin:** `/admin` — hide/show/delete gallery photos (protected by `ADMIN_SECRET`).
+**Also:** `/gallery` · `/summary` (keepsake) · `/admin` (staff moderation)
+
+Legacy routes `/backgrounds` and `/prompts` redirect to `/scenes`.
+
+## Go beyond the basics (social posts)
+
+On the **home page** and in the **booth result flow**, attendees can:
+
+- Pick a workshop track: **AI**, **Android**, **Chrome**, **Cloud**, or **View Lounge**
+- Add a key takeaway, new feature, or light-bulb moment
+- **Generate** an AI caption with `#GoogleIOConnect`, `#BuildWithGemini`, and other event hashtags
+- **Reuse saved posts** — captions are stored in **localStorage** keyed by email (no account login)
+- **Regenerate** for a new variant without re-calling AI for posts already saved
+
+See [Features — Social sharing](docs/02_FEATURES.md#social-sharing--go-beyond-the-basics).
 
 ## Quick start
 
@@ -58,9 +71,11 @@ Full setup: [docs/FIREBASE_SETUP.md](docs/FIREBASE_SETUP.md)
 ## AI & branding highlights
 
 - **Gemini image edit** — subject background removed and blended into Berlin / I/O Connect scenes (not a pasted collage)
+- **Curated scenes** — `src/data/booth-scenes.ts` pairs backgrounds + prompts for a shorter 4-step booth flow
 - **Watermark** — `gdg-london-berlin-2026.png` applied **top-right** on composited portraits
-- **Social share** — AI-generated LinkedIn post about I/O Connect Berlin 2026 + GDG London (`#GoogleIOConnect #IOConnect2026 …`)
-- **Motion** — page entrances, staggered cards, progress shimmer, camera live ring — see [Branding & motion](docs/BRANDING_GUIDE.md)
+- **Social share** — AI captions about I/O Connect Berlin 2026 + workshop context; hashtags include `#GoogleIOConnect` and `#BuildWithGemini`
+- **Local post cache** — `src/lib/social-posts-storage.ts` (browser localStorage, keyed by email)
+- **Motion** — page entrances, staggered cards, progress shimmer — see [Branding & motion](docs/BRANDING_GUIDE.md)
 
 ## Security — do not commit
 
@@ -79,7 +94,7 @@ Use `.env.example` as a template with placeholder values only.
 | [Getting started](docs/00_GETTING_STARTED.md) | Local dev setup |
 | [Firebase setup](docs/FIREBASE_SETUP.md) | Firebase project & env vars |
 | [Architecture](docs/01_ARCHITECTURE.md) | App structure |
-| [Features](docs/02_FEATURES.md) | Booth flow & features |
+| [Features](docs/02_FEATURES.md) | Booth flow, scenes, social posts |
 | [Branding & motion](docs/BRANDING_GUIDE.md) | Colors, assets, animations |
 | [Vercel deploy](docs/VERCEL_DEPLOY.md) | Production deployment |
 | [Troubleshooting](docs/04_TROUBLESHOOTING.md) | Common fixes |

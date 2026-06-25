@@ -98,13 +98,12 @@ Open [http://localhost:3000](http://localhost:3000). You should see the I/O Conn
 
 ## Booth flow
 
-1. **Landing** — animated hero, festive lights, start CTA
-2. **Your details** — name, email, GDPR
-3. **Camera** — capture or upload (portrait crop + I/O Connect logo on live preview)
-4. **Backgrounds** — **Berlin** landmarks or **I/O Connect** studio art
-5. **Choose magic** — Berlin / I/O Connect / Share presets or custom prompt
-6. **Processing** — Gemini compositing + Firebase upload
-7. **Result** — download, print, AI social post text, gallery
+1. **Landing** — animated hero; **Go beyond the basics** — generate AI social posts by email
+2. **Your details** — name, email, workshop/session, optional takeaway, GDPR
+3. **Camera** — capture or upload (portrait crop + GDG watermark top-right)
+4. **Scenes** — one-tap **Berlin / I/O Connect** experiences (background + magic combined)
+5. **Processing** — Gemini compositing + Firebase upload
+6. **Result** — download, print, saved AI social posts, gallery, optional LinkedIn
 
 ## Admin screen (event staff)
 
@@ -135,7 +134,9 @@ See [06_API_SECURITY.md](./06_API_SECURITY.md).
 - [ ] GDG sticker visible **top-right** on enhanced photo
 - [ ] Photo appears on `/gallery`
 - [ ] `/admin` moderation works (if enabled)
-- [ ] “Regenerate with AI” on social post produces I/O Connect Berlin copy
+- [ ] **Go beyond the basics** on home — generate social post, see it in saved list
+- [ ] Result page reuses saved caption on refresh (no duplicate Gemini call for same photo code)
+- [ ] Regenerate social post creates a new saved entry
 
 ## Common issues
 
@@ -174,9 +175,9 @@ npm run build
 GoogleIOConnect2026/
 ├── src/
 │   ├── app/                    # Next.js routes (booth flow, gallery, admin, API)
-│   ├── components/io-connect/  # Wizard, logos, PageMotion, decorations
-│   ├── data/                   # Berlin backgrounds & prompts
-│   ├── lib/                    # Firebase, Gemini, LinkedIn captions, app config
+│   ├── components/io-connect/  # Wizard, LandingBeyondSocial, PageMotion
+│   ├── data/                   # booth-scenes, backgrounds, prompts, workshops
+│   ├── lib/                    # Firebase, Gemini, social-posts-storage, captions
 │   └── store/                  # Zustand state
 ├── public/branding/            # Logos and assets (see public/branding/README.md)
 ├── docs/                       # Documentation (+ docs/images/)

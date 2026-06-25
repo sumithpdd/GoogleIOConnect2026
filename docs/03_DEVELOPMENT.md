@@ -617,6 +617,19 @@ describe('NewButton', () => {
 
 ---
 
+## Booth-specific files (quick reference)
+
+| Task | Start here |
+|------|------------|
+| Add curated scene | `src/data/booth-scenes.ts` + background/prompt IDs |
+| Workshop track labels | `src/data/io-connect-workshops.ts` |
+| Social caption copy | `src/lib/linkedin/social-post-copy.ts` |
+| Social post cache | `src/lib/social-posts-storage.ts` |
+| Home social UI | `src/components/io-connect/LandingBeyondSocial.tsx` |
+| Result social UI | `src/components/photo-booth/SocialSharePanel.tsx` |
+
+---
+
 **Next Steps:**
 - [Troubleshooting](./04_TROUBLESHOOTING.md) — Fix common problems
 - [Feature Guides](./02_FEATURES.md) — Details on each feature
